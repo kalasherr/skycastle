@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://rp5vdyk62ni3"]
+
+[ext_resource type="Script" uid="uid://b2fcitgajuuic" path="res://scripts/game_scene.gd" id="1_w5aja"]
+
+[node name="GameScene" type="Node2D"]
+texture_filter = 3
+script = ExtResource("1_w5aja")
+
+[node name="TileManager" type="Node2D" parent="."]

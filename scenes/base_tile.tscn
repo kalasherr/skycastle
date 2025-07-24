@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cywoew7f5texx"]
+
+[ext_resource type="Script" uid="uid://fe2atnyrqe6k" path="res://scripts/base_tile.gd" id="1_lbxks"]
+[ext_resource type="Texture2D" uid="uid://x6wxhwnq805t" path="res://sprites/tiles/base_tile.png" id="2_qq5sh"]
+
+[node name="BaseTile" type="Node2D"]
+script = ExtResource("1_lbxks")
+
+[node name="SpriteTree" type="Sprite2D" parent="."]
+texture = ExtResource("2_qq5sh")
+centered = false
+
+[node name="MainSprite" type="Sprite2D" parent="SpriteTree"]
