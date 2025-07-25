@@ -8,7 +8,7 @@ var tile_coords = Vector2.ZERO
 var tile_moves = [Vector2(1,0), Vector2(0,1), Vector2(-1,0), Vector2(0,-1)]
 
 func init():
-	self.position = tile_size * tile_coords
+	self.position = tile_size.x * tile_coords
 	var node = Node2D.new()
 	effects = node
 	node.name = "Effects"
@@ -49,3 +49,16 @@ func able():
 	get_node("Button").disabled = false
 	while get_node("Button").visible == false:
 		get_node("Button").visible = true
+
+func move(coords):
+	var move_player = false
+	if G.player.player_coords == tile_coords:
+		move_player = true
+	if G.GS.get_tile(coords):
+		G.GS.get_tile(coords).move(coords * 2 - tile_coords)
+	tile_coords = coords
+	position = tile_size * tile_coords
+	if move_player:
+		G.player.player_coords = coords
+		G.player.position = tile_size * coords + Vector2(0, 1)
+	

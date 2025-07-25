@@ -4,6 +4,14 @@
 
 [node name="GameScene" type="Node2D"]
 texture_filter = 3
+scale = Vector2(2, 2)
 script = ExtResource("1_w5aja")
 
 [node name="TileManager" type="Node2D" parent="."]
+
+[node name="Camera" type="Camera2D" parent="."]
+
+[node name="NextTile" type="Sprite2D" parent="Camera"]
+position = Vector2(203, 0)
+
+[node name="TileMoves" type="Node2D" parent="."]

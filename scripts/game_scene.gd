@@ -1,18 +1,24 @@
 extends Node2D
 
-var board_size = Vector2(6,6)
+var board_size = Vector2(4,4)
 var tile_deck = []
+var current_deck = []
 var game_phase = "tile"
 var player
 
+@onready var tile_moves = get_node("TileMoves")
+@onready var camera = get_node("Camera")
+
 func _ready():
+	camera.position = G.tile_size * board_size / 2 - G.tile_size / 2
+	
 	G.GS = self
 	fill_deck()
 	generate_field()
 	
 	await disable_buttons()
 	
-	add_player(Vector2(5,5))
+	add_player()
 	
 	next_turn()
 
@@ -27,7 +33,8 @@ func add_player(coords = board_size - Vector2(1,1)):
 	player.init(coords)
 	
 func generate_field():
-	var deck_to_pick = tile_deck.duplicate()
+	current_deck = tile_deck.duplicate()
+	var deck_to_pick = current_deck
 	
 	var start_tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
 	start_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1)]
@@ -60,17 +67,6 @@ func generate_field():
 	second_tile.tile_coords = Vector2(board_size.x-1, board_size.y-2)
 	second_tile.init()
 	
-	second_tile = deck_to_pick.pick_random()
-	while true:
-		deck_to_pick.shuffle()
-		second_tile = deck_to_pick.pick_random()
-		if second_tile.tile_moves.find(Vector2(0,1)) != -1:
-			break
-	get_node("TileManager").add_child(second_tile)
-	deck_to_pick.pop_at(deck_to_pick.find(second_tile))
-	second_tile.tile_coords = Vector2(board_size.x-1, board_size.y-2)
-	second_tile.init()
-
 	var end_tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
 	end_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1), Vector2(1,0), Vector2(0,1)]
 	get_node("TileManager").add_child(end_tile)
@@ -135,10 +131,21 @@ func button_pressed(tile):
 	next_turn()
 
 func next_turn():
-	await disable_buttons()
-	game_phase = "player"
-	await get_player_moves()
-	get_tile(Vector2(5,4)).visible = true
+	if game_phase == "player":
+		await disable_buttons()
+		await get_player_moves()
+		game_phase = "tile"
+	else:
+		await disable_buttons()
+		for i in [-1, board_size.x]:
+			for j in range(0, board_size.y):
+				create_tile_move(Vector2(i,j))
+		for j in [-1, board_size.y]:
+			for i in range(0, board_size.x):
+				create_tile_move(Vector2(i,j))
+		await get_tile_moves()
+		game_phase = "player"
+		
 
 func get_tile(coords):
 	for tile in get_node("TileManager").get_children():
@@ -157,3 +164,78 @@ func get_player_moves():
 		move.able()
 	
 	return
+
+func get_tile_moves():
+	var tiles = []
+	
+func create_tile_move(coords):
+	var move = TileMove.new()
+	move.tile_coords = coords
+	move.position = coords * G.tile_size - G.tile_size / 2
+	move.texture_click_mask = load("res://sprites/tiles/tile_bitmap.png")
+	move.texture_normal = load("res://sprites/tiles/tile_focus.png")
+	move.connect("pressed", tile_move)
+	tile_moves.add_child(move)
+
+func tile_move():
+	var tile
+	for move in tile_moves.get_children():
+		var coords
+		if move.is_hovered():
+			if move.tile_coords.x < 0:
+				get_tile(Vector2(0,move.tile_coords.y)).move(Vector2(1,move.tile_coords.y))
+				coords = Vector2(0,move.tile_coords.y)
+			elif move.tile_coords.y < 0:
+				get_tile(Vector2(move.tile_coords.x,0)).move(Vector2(move.tile_coords.x,1))
+				coords = Vector2(move.tile_coords.x,0)
+			elif move.tile_coords.x >= board_size.x:
+				get_tile(Vector2(board_size.x - 1,move.tile_coords.y)).move(Vector2(board_size.x - 2,move.tile_coords.y))
+				coords = Vector2(board_size.x - 1,move.tile_coords.y)
+			elif move.tile_coords.y >= board_size.y:
+				get_tile(Vector2(move.tile_coords.x,board_size.y - 1)).move(Vector2(move.tile_coords.x,board_size.x - 2))
+				coords = Vector2(move.tile_coords.x, board_size.y - 1)
+		if coords:
+			tile = current_deck[0]
+			current_deck.pop_front()
+			get_node("TileManager").add_child(tile)
+			tile.tile_coords = coords
+			tile.init()
+			break
+	tile = current_deck[0]
+	for move in tile_moves.get_children():
+		move.queue_free()
+	match tile.tile_moves.size():
+		1: 
+			get_node("Camera/NextTile").texture = load("res://sprites/tiles/basic_dead_end.png")
+			match tile.tile_moves[0]:
+				Vector2(-1,0):
+					get_node("Camera/NextTile").rotation = deg_to_rad(90)
+				Vector2(1,0):
+					get_node("Camera/NextTile").rotation = deg_to_rad(-90)
+				Vector2(0,-1):
+					get_node("Camera/NextTile").rotation = deg_to_rad(180)
+		2:
+			if tile.tile_moves[0] + tile.tile_moves[1] == Vector2.ZERO:
+				get_node("Camera/NextTile").texture = load("res://sprites/tiles/basic_i.png")
+				if tile.tile_moves.find(Vector2(1,0)) != -1:
+					get_node("Camera/NextTile").rotation = deg_to_rad(90)
+			else:
+				get_node("Camera/NextTile").texture = load("res://sprites/tiles/basic_r.png")
+				if tile.tile_moves.find(Vector2(-1,0)) != -1 and tile.tile_moves.find(Vector2(0,1)) != -1:
+					get_node("Camera/NextTile").rotation = deg_to_rad(90)
+				elif tile.tile_moves.find(Vector2(0,-1)) != -1 and tile.tile_moves.find(Vector2(-1,0)) != -1:
+					get_node("Camera/NextTile").rotation = deg_to_rad(180)
+				elif tile.tile_moves.find(Vector2(1,0)) != -1 and tile.tile_moves.find(Vector2(0,-1)) != -1:
+					get_node("Camera/NextTile").rotation = deg_to_rad(-90)
+		3:
+			get_node("Camera/NextTile").texture = load("res://sprites/tiles/basic_t.png")
+			if tile.tile_moves.find(Vector2(1,0)) == -1:
+				get_node("Camera/NextTile").rotation = deg_to_rad(90)
+			elif tile.tile_moves.find(Vector2(-1,0)) == -1:
+				get_node("Camera/NextTile").rotation = deg_to_rad(-90)
+			elif tile.tile_moves.find(Vector2(0,1)) == -1:
+				get_node("Camera/NextTile").rotation = deg_to_rad(180)
+		4:
+			get_node("Camera/NextTile").texture = load("res://sprites/tiles/basic_crossroad.png")
+
+	next_turn()
