@@ -1,7 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://dhakvg8yofuk1"]
+[gd_scene load_steps=3 format=3 uid="uid://dhakvg8yofuk1"]
 
 [ext_resource type="Script" uid="uid://bhrym0aoruhrq" path="res://scripts/tiles/crown_tile.gd" id="1_to6c6"]
+[ext_resource type="Texture2D" uid="uid://db4g1mfj5madi" path="res://sprites/tiles/basic_crossroad.png" id="2_5kbf3"]
 
 [node name="CrownTile" type="Node2D"]
 script = ExtResource("1_to6c6")
 metadata/_custom_type_script = "uid://fe2atnyrqe6k"
+
+[node name="SpriteTree" type="Sprite2D" parent="."]
+
+[node name="MainSprite" type="Sprite2D" parent="SpriteTree"]
+texture = ExtResource("2_5kbf3")

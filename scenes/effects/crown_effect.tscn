@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://dft54i23yv7l7"]
+[gd_scene load_steps=3 format=3 uid="uid://dft54i23yv7l7"]
 
 [ext_resource type="Script" uid="uid://blrlkoqpf8kan" path="res://scripts/effects/crown_effect.gd" id="1_bxidd"]
+[ext_resource type="Texture2D" uid="uid://dgamsi4dewxpw" path="res://sprites/Effects/crown_effect.png" id="2_yx7y7"]
 
 [node name="CrownEffect" type="Node2D"]
 script = ExtResource("1_bxidd")
 metadata/_custom_type_script = "uid://d0usnce3x1l5o"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_yx7y7")

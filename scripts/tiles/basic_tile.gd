@@ -5,7 +5,6 @@ class_name BasicTile
 @onready var main_sprite = $SpriteTree/MainSprite
 
 func define_sprite():
-
 	match tile_moves.size():
 		1: 
 			main_sprite.texture = load("res://sprites/tiles/basic_dead_end.png")
