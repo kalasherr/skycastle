@@ -7,16 +7,24 @@ var tile_size = Vector2(32,32)
 var tile_coords = Vector2.ZERO
 var tile_moves = [Vector2(1,0), Vector2(0,1), Vector2(-1,0), Vector2(0,-1)]
 var is_destroying = false
+var effects_to_add = []
+
 
 func init():
 	self.position = tile_size.x * tile_coords
 	var node = Node2D.new()
 	effects = node
 	node.name = "Effects"
+	
 	add_child(node)
+
+
 	define_sprite()
 	add_button()
 	post_init()
+
+	for effect in effects_to_add:
+		add_effect(effect)
 
 func tile_effect():
 	pass
@@ -32,7 +40,12 @@ func on_enter():
 		effect.on_enter()
 
 func add_effect(effect):
-	get_node("Effects").add_child(load("res://scenes/effects/"+effect+"_effect.tscn").instantiate())
+	if effects_to_add == null:
+		effects_to_add = []
+	if check_node("Effects"):
+		effects.add_child(load("res://scenes/effects/"+effect+"_effect.tscn").instantiate())
+	else:
+		effects_to_add.append(effect)
 
 func add_button():
 	var button = TextureButton.new()
@@ -99,3 +112,9 @@ func destroy():
 
 func get_sprite():
 	return null
+
+func check_node(node_name):
+	for node in get_children():
+		if node.name == node_name:
+			return true
+	return false

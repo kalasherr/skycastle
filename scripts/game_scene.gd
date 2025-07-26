@@ -39,6 +39,7 @@ func generate_field():
 	for i in range(0, tile_deck.size()):
 		current_deck.append(tile_deck[i].duplicate())
 		current_deck[i].tile_moves = tile_deck[i].tile_moves
+		current_deck[i].effects_to_add = tile_deck[i].effects_to_add
 		
 	var deck_to_pick = current_deck
 	
@@ -78,16 +79,19 @@ func generate_field():
 	end_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1), Vector2(1,0), Vector2(0,1)]
 	get_node("TileManager").add_child(end_tile)
 	end_tile.tile_coords = Vector2(0, 0)
-	end_tile.init()
 	end_tile.add_effect("crown")
+	end_tile.init()
+	
 
 	for i in range (0,board_size.x):
 		for j in range (0,board_size.y):
 			if check_availability(Vector2(i,j)):
 				var tile = deck_to_pick.pick_random()
 				deck_to_pick.pop_at(deck_to_pick.find(tile))
+
 				get_node("TileManager").add_child(tile)
 				tile.tile_coords = Vector2(i,j)
+
 				tile.init()
 
 				
@@ -123,7 +127,10 @@ func fill_deck():
 			moves.pop_front()
 		var tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
 		tile.tile_moves = moves
+		tile.add_effect("spikes")
 		tile_deck.append(tile)
+		
+
 
 
 func randomize_exits():
