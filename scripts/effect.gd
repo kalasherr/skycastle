@@ -2,5 +2,5 @@ extends Node2D
 
 class_name TileEffect
 
-func apply():
+func on_enter():
 	pass

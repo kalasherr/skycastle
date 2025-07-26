@@ -1,4 +1,4 @@
 extends TileEffect
 
-func apply():
-	G.player.lose_hp()
+func on_enter():
+	G.player.take_damage(1)

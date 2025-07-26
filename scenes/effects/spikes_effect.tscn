@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://civl1ngrr4y8s"]
+[gd_scene load_steps=3 format=3 uid="uid://civl1ngrr4y8s"]
 
 [ext_resource type="Script" uid="uid://8fs37i4va15p" path="res://scripts/effects/spikes_effect.gd" id="1_3dsk4"]
+[ext_resource type="Texture2D" uid="uid://bxs7yyhimks32" path="res://sprites/Effects/spikes_effect.png" id="2_idiim"]
 
 [node name="SpikesEffect" type="Node2D"]
 script = ExtResource("1_3dsk4")
 metadata/_custom_type_script = "uid://d0usnce3x1l5o"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_idiim")
