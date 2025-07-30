@@ -3,7 +3,7 @@ extends Node2D
 var board_size = Vector2(4,4)
 var tile_deck = []
 var current_deck = []
-var game_phase = "tile"
+var game_phase = "player"
 var player
 var stage_transfer = false
 var focused = false
@@ -15,6 +15,7 @@ var focused_tile
 func _ready():
 	camera.position = G.tile_size * board_size / 2 - G.tile_size / 2
 	
+	game_phase = "player"
 	G.GS = self
 	fill_deck()
 	generate_field()
@@ -32,6 +33,8 @@ func _process(delta):
 func disable_buttons():
 	for tile in get_node("TileManager").get_children():
 		tile.disable()
+	for move in get_node("TileMoves").get_children():
+		move.queue_free()
 	return
 
 func add_player(coords = board_size - Vector2(1,1)):
@@ -154,9 +157,16 @@ func button_pressed(tile):
 	next_turn()
 
 func next_turn():
-	var tile = current_deck[0]
+	var tile
+	if current_deck.size() > 0:
+		tile = current_deck[0]
+		update_next_tile(tile.get_sprite()[0], tile.get_sprite()[1])
+	else:
+		camera.get_node("NextTile").texture = null
+		camera.get_node("DeckLeft").text = str(0)
+		restart_game()
 	
-	update_next_tile(tile.get_sprite()[0], tile.get_sprite()[1])
+	
 
 	if !stage_transfer:
 		if game_phase == "player":
@@ -192,10 +202,13 @@ func get_player_moves():
 	var moves = []
 	for move in tile.tile_moves:
 		if get_tile(tile.tile_coords + move):
-			if get_tile(tile.tile_coords + move).tile_moves.has(-move):
+			if get_tile(tile.tile_coords + move).tile_moves.has(-move) and !get_tile(tile.tile_coords + move).is_destroying:
 				moves.append(get_tile(tile.tile_coords + move))
-	for move in moves:
-		move.able()
+	if moves != []:
+		for move in moves:
+			move.able()
+	else:
+		restart_game()
 	
 	return
 
@@ -244,7 +257,12 @@ func tile_move():
 			elif move.tile_coords.y >= board_size.y:
 				await tile.move(tile.tile_coords + Vector2(0,-1))
 			break
-	tile = current_deck[0]
+	if current_deck.size() > 0:
+		tile = current_deck[0]
+	else:
+		camera.get_node("NextTile").texture = null
+		camera.get_node("DeckLeft").text = str(0)
+		restart_game()
 	for move in tile_moves.get_children():
 		move.queue_free()
 
@@ -252,7 +270,7 @@ func tile_move():
 
 func next_stage():
 	stage_transfer = true
-
+	disable_buttons()
 	for move in get_node("TileMoves").get_children():
 		move.queue_free()
 		
@@ -273,18 +291,36 @@ func next_stage():
 		board_size.x += 1
 	
 	var init_time = 2.0
-	var curr_time = init_time
+	var curr_time = 0.0
 	var old_pos = start_tile.position
 	var new_pos = (board_size - Vector2(1,1)) * G.tile_size
 	var old_camera_pos = camera.position
 	var new_camera_pos = G.tile_size * board_size / 2 - G.tile_size / 2
 	
-	while curr_time > 0:
-		start_tile.replace((1 - curr_time / init_time) * new_pos + curr_time / init_time * old_pos)
-		camera.position = (1 - curr_time / init_time) * new_camera_pos + curr_time / init_time * old_camera_pos
-		player.replace((1 - curr_time / init_time) * new_pos + curr_time / init_time * old_pos + Vector2(0,1))
-		curr_time -= get_process_delta_time()
+	var graph = func(curr):
+		#if curr < 1.0:
+			#return (4 * (curr/init_time - 0.25)) ** 2 - 1
+		#else:
+			#return 2 * (1 - pow(4, -(curr/init_time - 0.5)))
+			
+		if curr < 0.4:
+			return 0.75 * (((curr/init_time - 0.1) ** 2) * 10.0 - 0.1)
+		else:
+			return - ((curr/init_time - 1) ** 2) * 1.25 * 1.25 + 1
+
+# 		return (sin(curr/init_time * PI / 2) ** 3)
+
+	while curr_time < init_time:
+		print(graph.call(curr_time))
+		start_tile.replace(graph.call(curr_time) * new_pos + (1 - graph.call(curr_time)) * old_pos)
+		camera.position = graph.call(curr_time) * new_camera_pos + (1 - graph.call(curr_time)) * old_camera_pos
+		player.replace(graph.call(curr_time) * new_pos + (1 - graph.call(curr_time)) * old_pos + start_tile.get_player_offset())
+		curr_time += get_process_delta_time()
 		await get_tree().process_frame
+	start_tile.replace(new_pos)
+	camera.position = new_camera_pos
+	player.replace(new_pos + start_tile.get_player_offset())
+	
 	start_tile.tile_coords = board_size - Vector2(1,1)
 	player.player_coords = board_size - Vector2(1,1)
 	start_tile.position = new_pos
@@ -316,13 +352,14 @@ func light_off_tiles():
 
 func restart_game():
 	await disable_buttons()
-	player.queue_free()
-	board_size = Vector2(4,4)
+	if player:
+		player.queue_free()
+	print("Board size: ", board_size)
 	await destroy_all_tiles()
+	board_size = Vector2(4,4)
 	_ready()
 
 func destroy_all_tiles():
-	board_size = Vector2(4,4)
 	tile_deck = []
 	current_deck = []
 	game_phase = "tile"
@@ -330,8 +367,11 @@ func destroy_all_tiles():
 	stage_transfer = false
 	focused = false
 	focused_tile = null
-	for tile in get_node("TileManager").get_children():
-		tile.destroy()
+	for i in range(0, board_size.x + board_size.y - 1):
+		for tile in get_node("TileManager").get_children():
+			if tile.tile_coords.x + tile.tile_coords.y == i:
+				print("Deleted: ", tile.tile_coords)
+				tile.destroy()
 		await get_tree().create_timer(0.05).timeout
 	while get_node("TileManager").get_children().size() != 0:
 		await get_tree().process_frame

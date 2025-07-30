@@ -18,12 +18,15 @@ func replace(coords):
 	position = coords
 
 func init(coords):
+	G.player = self
+	G.GS.player = self
+	G.GS.change_hp(hp)
 	player_coords = coords
-	replace(coords * G.tile_size + Vector2(0,1))
+	replace(coords * G.tile_size + G.GS.get_tile(coords).get_player_offset())
 
 func move(tile):
 	self.player_coords = tile.tile_coords
-	replace(player_coords * G.tile_size + Vector2(0,1))
+	replace(player_coords * G.tile_size + tile.get_player_offset())
 	tile.on_enter()
 
 func take_damage(amount):

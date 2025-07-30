@@ -50,10 +50,11 @@ func replace(coords):
 	
 func _process(delta):
 	time_from_init += get_process_delta_time()
-	if G.GS.player.player_coords == tile_coords:
-		position = curr_position
-	else:
-		position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
+	if G.GS.player:
+		if G.GS.player.player_coords == tile_coords:
+			position = curr_position
+		else:
+			position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
 
 func define_sprite():
 	pass
@@ -114,7 +115,7 @@ func move(coords):
 	while current_time > 0:
 		i += 1
 		if move_player:
-			G.player.position = position  + Vector2(0,1)
+			G.player.position = position  + get_player_offset()
 		replace(tile_size * tile_coords * (1 - current_time / init_time) + current_time / init_time * old_position)
 		current_time -= get_process_delta_time()
 		await get_tree().process_frame
@@ -122,7 +123,7 @@ func move(coords):
 
 	if move_player:
 		G.player.player_coords = coords
-		G.player.position = tile_size * coords + Vector2(0, 1)
+		G.player.position = tile_size * coords + G.GS.get_tile(coords).get_player_offset()
 	
 	if tile_coords.x < 0 or tile_coords.y < 0 or tile_coords.x >= G.GS.board_size.x or tile_coords.y >= G.GS.board_size.y:
 		destroy()
@@ -130,9 +131,18 @@ func move(coords):
 func destroy():
 	if !is_destroying:
 		is_destroying = true
+		var destroy_player = false
+		if G.player:
+			if G.player.player_coords == tile_coords:
+				destroy_player = true
 		while scale.x > 0:
 			scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
+			if G.player:
+				if destroy_player:
+					G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
 			await get_tree().process_frame
+		if destroy_player:
+			G.GS.restart_game()
 		queue_free()
 
 func get_sprite():
@@ -143,3 +153,6 @@ func check_node(node_name):
 		if node.name == node_name:
 			return true
 	return false
+
+func get_player_offset():
+	return Vector2(0,2)
