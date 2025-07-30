@@ -6,6 +6,8 @@ var current_deck = []
 var game_phase = "tile"
 var player
 var stage_transfer = false
+var focused = false
+var focused_tile
 
 @onready var tile_moves = get_node("TileMoves")
 @onready var camera = get_node("Camera")
@@ -22,6 +24,10 @@ func _ready():
 	add_player()
 	
 	next_turn()
+
+func _process(delta):
+	if Input.is_action_just_pressed("ui_accept"):
+		restart_game()
 
 func disable_buttons():
 	for tile in get_node("TileManager").get_children():
@@ -58,6 +64,7 @@ func generate_field():
 		second_tile = deck_to_pick.pick_random()
 		if second_tile.tile_moves.find(Vector2(1,0)) != -1:
 			break
+
 	get_node("TileManager").add_child(second_tile)
 	deck_to_pick.pop_at(deck_to_pick.find(second_tile))
 	second_tile.tile_coords = Vector2(board_size.x-2, board_size.y-1)
@@ -127,8 +134,8 @@ func fill_deck():
 			moves.pop_front()
 		var tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
 		tile.tile_moves = moves
-		tile.add_effect("spikes")
 		tile_deck.append(tile)
+		tile.add_effect("spikes")
 		
 
 
@@ -148,12 +155,14 @@ func button_pressed(tile):
 
 func next_turn():
 	var tile = current_deck[0]
-	get_node("Camera/NextTile").texture = tile.get_sprite()[0]
-	get_node("Camera/NextTile").rotation = tile.get_sprite()[1]
+	
+	update_next_tile(tile.get_sprite()[0], tile.get_sprite()[1])
+
 	if !stage_transfer:
 		if game_phase == "player":
 			await disable_buttons()
 			await get_player_moves()
+			G.GS.light_off_tiles()
 			game_phase = "tile"
 		else:
 			await disable_buttons()
@@ -164,8 +173,13 @@ func next_turn():
 				for i in range(1, board_size.x):
 					create_tile_move(Vector2(i,j))
 			await get_tile_moves()
+			G.GS.light_off_tiles()
 			game_phase = "player"
 		
+func update_next_tile(texture, texture_rotation):
+	get_node("Camera/NextTile").texture = texture
+	get_node("Camera/NextTile").rotation = texture_rotation
+	get_node("Camera/DeckLeft").text = str(current_deck.size())
 
 func get_tile(coords):
 	for tile in get_node("TileManager").get_children():
@@ -199,6 +213,10 @@ func create_tile_move(coords):
 
 func tile_move():
 	var tile
+	light_off_tiles()
+	for move in tile_moves.get_children():
+		move.modulate[3] = 0
+		move.disconnect("pressed", tile_move)
 	for move in tile_moves.get_children():
 		var coords
 		if move.is_hovered():
@@ -216,6 +234,7 @@ func tile_move():
 			get_node("TileManager").add_child(tile)
 			tile.tile_coords = coords
 			tile.init()
+			disable_buttons()
 			if move.tile_coords.x < 0:
 				await tile.move(tile.tile_coords + Vector2(1,0))
 			elif move.tile_coords.y < 0:
@@ -261,9 +280,9 @@ func next_stage():
 	var new_camera_pos = G.tile_size * board_size / 2 - G.tile_size / 2
 	
 	while curr_time > 0:
-		start_tile.position = (1 - curr_time / init_time) * new_pos + curr_time / init_time * old_pos
+		start_tile.replace((1 - curr_time / init_time) * new_pos + curr_time / init_time * old_pos)
 		camera.position = (1 - curr_time / init_time) * new_camera_pos + curr_time / init_time * old_camera_pos
-		player.position = (1 - curr_time / init_time) * new_pos + curr_time / init_time * old_pos + Vector2(0,1)
+		player.replace((1 - curr_time / init_time) * new_pos + curr_time / init_time * old_pos + Vector2(0,1))
 		curr_time -= get_process_delta_time()
 		await get_tree().process_frame
 	start_tile.tile_coords = board_size - Vector2(1,1)
@@ -281,3 +300,39 @@ func next_stage():
 func change_hp(amount):
 	print("Current hp: ", amount)
 	
+func light_up_tiles(coords_arr, color = "premove"):
+	for coords in coords_arr:
+		var sprite = Sprite2D.new()
+		sprite.texture = load("res://sprites/tiles/tile_" + color + ".png")
+		sprite.name = "Focus"
+		get_tile(coords).get_node("SpriteTree/Focus").add_child(sprite)
+
+func light_off_tiles():
+	for tile in get_node("TileManager").get_children():
+		for sprite in tile.get_node("SpriteTree").get_children():
+			if sprite.name == "Focus":
+				for child in sprite.get_children():
+					child.queue_free()
+
+func restart_game():
+	await disable_buttons()
+	player.queue_free()
+	board_size = Vector2(4,4)
+	await destroy_all_tiles()
+	_ready()
+
+func destroy_all_tiles():
+	board_size = Vector2(4,4)
+	tile_deck = []
+	current_deck = []
+	game_phase = "tile"
+	player = null
+	stage_transfer = false
+	focused = false
+	focused_tile = null
+	for tile in get_node("TileManager").get_children():
+		tile.destroy()
+		await get_tree().create_timer(0.05).timeout
+	while get_node("TileManager").get_children().size() != 0:
+		await get_tree().process_frame
+	return

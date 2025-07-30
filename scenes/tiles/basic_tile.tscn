@@ -9,3 +9,5 @@ metadata/_custom_type_script = "uid://fe2atnyrqe6k"
 [node name="SpriteTree" type="Sprite2D" parent="."]
 
 [node name="MainSprite" type="Sprite2D" parent="SpriteTree"]
+
+[node name="Focus" type="Node2D" parent="SpriteTree"]

@@ -55,8 +55,8 @@ func get_sprite():
 		2:
 			if tile_moves[0] + tile_moves[1] == Vector2.ZERO:
 				sprite = load("res://sprites/tiles/basic_i.png")
-			if tile_moves.find(Vector2(1,0)) != -1:
-				rot = deg_to_rad(90)
+				if tile_moves.find(Vector2(1,0)) != -1:
+					rot = deg_to_rad(90)
 			else:
 				sprite = load("res://sprites/tiles/basic_r.png")
 				if tile_moves.find(Vector2(-1,0)) != -1 and tile_moves.find(Vector2(0,1)) != -1:

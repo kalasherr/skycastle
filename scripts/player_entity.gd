@@ -3,6 +3,7 @@ extends Node2D
 var player_current_health = 3
 var player_coords
 var hp = 3
+var curr_position = position
 
 func _ready():
 	G.player = self
@@ -11,15 +12,18 @@ func _ready():
 
 func lose_hp():
 	player_current_health -= 1
-	print(player_current_health)
+
+func replace(coords):
+	curr_position = coords
+	position = coords
 
 func init(coords):
 	player_coords = coords
-	position = coords * G.tile_size + Vector2(0,1)
+	replace(coords * G.tile_size + Vector2(0,1))
 
 func move(tile):
 	self.player_coords = tile.tile_coords
-	self.position = player_coords * G.tile_size + Vector2(0,1)
+	replace(player_coords * G.tile_size + Vector2(0,1))
 	tile.on_enter()
 
 func take_damage(amount):

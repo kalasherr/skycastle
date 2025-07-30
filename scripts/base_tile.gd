@@ -3,15 +3,18 @@ extends Node2D
 class_name Tile
 
 var effects
-var tile_size = Vector2(32,32)
+var tile_size = G.tile_size
 var tile_coords = Vector2.ZERO
 var tile_moves = [Vector2(1,0), Vector2(0,1), Vector2(-1,0), Vector2(0,-1)]
 var is_destroying = false
 var effects_to_add = []
-
+var time_from_init = 0
+var curr_position = position
 
 func init():
-	self.position = tile_size.x * tile_coords
+	self.scale = Vector2.ZERO
+
+	replace(tile_size.x * tile_coords)
 	var node = Node2D.new()
 	effects = node
 	node.name = "Effects"
@@ -21,13 +24,36 @@ func init():
 
 	define_sprite()
 	add_button()
+	if self.tile_coords.x < G.GS.board_size.x and self.tile_coords.x >= 0 and self.tile_coords.y < G.GS.board_size.y and self.tile_coords.y >= 0:
+		var init_time = 0.2
+		var curr_time = init_time
+		while curr_time > 0:
+			var curr_scale = 1 - curr_time / init_time
+			scale = Vector2(curr_scale, curr_scale)
+			await get_tree().process_frame
+			curr_time -= get_process_delta_time()
+	self.scale = Vector2(1,1)
 	post_init()
-
+	
+		
+   
 	for effect in effects_to_add:
 		add_effect(effect)
 
 func tile_effect():
 	pass
+
+func replace(coords):
+	z_index = - int(G.GS.board_size.y) + int(coords.y) / int(tile_size.y) 
+	self.position = coords
+	curr_position = coords
+	
+func _process(delta):
+	time_from_init += get_process_delta_time()
+	if G.GS.player.player_coords == tile_coords:
+		position = curr_position
+	else:
+		position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
 
 func define_sprite():
 	pass
@@ -49,7 +75,7 @@ func add_effect(effect):
 
 func add_button():
 	var button = TextureButton.new()
-	button.position = - tile_size / 2
+	button.position =- tile_size / 2
 	button.name = "Button"
 	button.texture_normal = load("res://sprites/tiles/tile_focus.png")
 	button.texture_click_mask = load("res://sprites/tiles/tile_bitmap.png")
@@ -88,12 +114,12 @@ func move(coords):
 	while current_time > 0:
 		i += 1
 		if move_player:
-			G.player.position = position + Vector2(0,1)
-		position = tile_size * tile_coords * (1 - current_time / init_time) + current_time / init_time * old_position
+			G.player.position = position  + Vector2(0,1)
+		replace(tile_size * tile_coords * (1 - current_time / init_time) + current_time / init_time * old_position)
 		current_time -= get_process_delta_time()
 		await get_tree().process_frame
-	position = tile_size * tile_coords
-	
+	replace(tile_size * tile_coords)
+
 	if move_player:
 		G.player.player_coords = coords
 		G.player.position = tile_size * coords + Vector2(0, 1)
@@ -108,7 +134,6 @@ func destroy():
 			scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
 			await get_tree().process_frame
 		queue_free()
-	
 
 func get_sprite():
 	return null
