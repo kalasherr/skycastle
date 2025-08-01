@@ -2,6 +2,7 @@ extends Node2D
 
 var player_current_health = 3
 var player_coords
+var max_hp = 3
 var hp = 3
 var curr_position = position
 
@@ -11,7 +12,14 @@ func _ready():
 	G.GS.change_hp(hp)
 
 func lose_hp():
-	player_current_health -= 1
+	hp -= 1
+
+func heal(amount = 1):
+	if hp + amount <= max_hp:
+		hp += amount
+	G.GS.change_hp(hp)
+	
+		
 
 func replace(coords):
 	curr_position = coords
@@ -30,11 +38,15 @@ func move(tile):
 	tile.on_enter()
 
 func take_damage(amount):
-	for i in range(0,10):
-		if self.modulate[3] != 0:
-			self.modulate[3] = 0
-		else:
-			self.modulate[3] = 1
-		await get_tree().create_timer(0.1).timeout
 	hp -= 1
 	G.GS.change_hp(hp)
+	if hp == 0:
+		G.GS.restart_game()
+	else:
+		for i in range(0,10):
+			if self.modulate[3] != 0:
+				self.modulate[3] = 0
+			else:
+				self.modulate[3] = 1
+			await get_tree().create_timer(0.1).timeout
+	

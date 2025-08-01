@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://6rhyssu7kp1y"]
+
+[ext_resource type="Script" uid="uid://lji0aei53n5" path="res://scripts/effects/bandage_effect.gd" id="1_m567g"]
+[ext_resource type="Texture2D" uid="uid://b2wbtienljawv" path="res://sprites/Effects/bandage_effect.png" id="2_sneve"]
+
+[node name="BandageEffect" type="Node2D"]
+script = ExtResource("1_m567g")
+metadata/_custom_type_script = "uid://d0usnce3x1l5o"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_sneve")

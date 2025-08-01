@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://c3ynl0ekyfu10"]
+
+[ext_resource type="Script" uid="uid://nfop03n61uu8" path="res://scripts/tiles/bell_tile.gd" id="1_anqlo"]
+
+[node name="BellTile" type="Node2D"]
+script = ExtResource("1_anqlo")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"
+
+[node name="SpriteTree" type="Sprite2D" parent="."]
+
+[node name="MainSprite" type="Sprite2D" parent="SpriteTree"]
+
+[node name="Focus" type="Node2D" parent="SpriteTree"]

@@ -10,18 +10,15 @@ var is_destroying = false
 var effects_to_add = []
 var time_from_init = 0
 var curr_position = position
+var tile_in_deck
 
 func init():
 	self.scale = Vector2.ZERO
-
 	replace(tile_size.x * tile_coords)
 	var node = Node2D.new()
 	effects = node
 	node.name = "Effects"
-	
 	add_child(node)
-
-
 	define_sprite()
 	add_button()
 	if self.tile_coords.x < G.GS.board_size.x and self.tile_coords.x >= 0 and self.tile_coords.y < G.GS.board_size.y and self.tile_coords.y >= 0:
@@ -34,9 +31,6 @@ func init():
 			curr_time -= get_process_delta_time()
 	self.scale = Vector2(1,1)
 	post_init()
-	
-		
-   
 	for effect in effects_to_add:
 		add_effect(effect)
 
@@ -128,7 +122,7 @@ func move(coords):
 	if tile_coords.x < 0 or tile_coords.y < 0 or tile_coords.x >= G.GS.board_size.x or tile_coords.y >= G.GS.board_size.y:
 		destroy()
 	
-func destroy():
+func destroy(flag = ""):
 	if !is_destroying:
 		is_destroying = true
 		var destroy_player = false
@@ -141,7 +135,7 @@ func destroy():
 				if destroy_player:
 					G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
 			await get_tree().process_frame
-		if destroy_player:
+		if destroy_player and flag != "leave_player":
 			G.GS.restart_game()
 		queue_free()
 
