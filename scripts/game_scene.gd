@@ -31,6 +31,8 @@ func _ready():
 func _process(delta):
 	if Input.is_action_just_pressed("ui_accept"):
 		restart_game("forced")
+	if Input.is_action_just_pressed("ui_cancel"):
+		show_all_deck()
 
 func disable_buttons():
 	for tile in get_node("TileManager").get_children():
@@ -52,39 +54,37 @@ func generate_field():
 		current_deck[i].tile_moves = tile_deck[i].tile_moves
 		current_deck[i].effects_to_add = tile_deck[i].effects_to_add
 		current_deck[i].tile_in_deck = tile_deck[i]
-		
-	var deck_to_pick = current_deck
 	
 	if !get_tile(board_size - Vector2(1,1)):
 		var start_tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
 		start_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1)]
 		get_node("TileManager").add_child(start_tile)
-		deck_to_pick.pop_at(deck_to_pick.find(start_tile))
 		start_tile.tile_coords = Vector2(board_size.x-1, board_size.y-1)
 		start_tile.init()
 	
 	
-	var second_tile = deck_to_pick.pick_random()
+	var second_tile = current_deck.pick_random()
 	while true:
-		deck_to_pick.shuffle()
-		second_tile = deck_to_pick.pick_random()
+		current_deck.shuffle()
+		rotate_deck(current_deck)
+		second_tile = current_deck.pick_random()
 		if second_tile.tile_moves.find(Vector2(1,0)) != -1:
 			break
 
 	get_node("TileManager").add_child(second_tile)
-	deck_to_pick.pop_at(deck_to_pick.find(second_tile))
+	current_deck.pop_at(current_deck.find(second_tile))
 	second_tile.tile_coords = Vector2(board_size.x-2, board_size.y-1)
 	second_tile.init()
 	
 	
-	second_tile = deck_to_pick.pick_random()
+	second_tile = current_deck.pick_random()
 	while true:
-		deck_to_pick.shuffle()
-		second_tile = deck_to_pick.pick_random()
+		current_deck.shuffle()
+		second_tile = current_deck.pick_random()
 		if second_tile.tile_moves.find(Vector2(0,1)) != -1:
 			break
 	get_node("TileManager").add_child(second_tile)
-	deck_to_pick.pop_at(deck_to_pick.find(second_tile))
+	current_deck.pop_at(current_deck.find(second_tile))
 	second_tile.tile_coords = Vector2(board_size.x-1, board_size.y-2)
 	second_tile.init()
 	
@@ -99,8 +99,8 @@ func generate_field():
 	for i in range (0,board_size.x):
 		for j in range (0,board_size.y):
 			if check_availability(Vector2(i,j)):
-				var tile = deck_to_pick.pick_random()
-				deck_to_pick.pop_at(deck_to_pick.find(tile))
+				var tile = current_deck.pick_random()
+				current_deck.pop_at(current_deck.find(tile))
 
 				get_node("TileManager").add_child(tile)
 				tile.tile_coords = Vector2(i,j)
@@ -152,7 +152,12 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 		
-
+func rotate_deck(deck):
+	for tile in deck:
+		var rot = round(randf_range(-0.5, 3.5))
+		rot *= 90
+		for move in tile.tile_moves:
+			move = move.rotated(deg_to_rad(rot))
 
 
 func randomize_exits():
@@ -433,4 +438,30 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 			await get_tree().process_frame
 		return
 
-	
+func show_all_deck():
+	var found = false
+	for child in camera.get_children():
+		if child.name == "DeckSpace":
+			found = true
+	if !found:
+		var space = ColorRect.new()
+		space.z_index = 1
+		space.size = Vector2(2000,2000)
+		space.position = - Vector2(space.size.x / 2, get_viewport_rect().size.y / 2 + 20) 
+		space.color = Color.BLACK
+		space.name = "DeckSpace"
+		camera.add_child(space)
+		var width = 6
+		var tile_space = Vector2(100,100)
+		for i in range(0, current_deck.size()):
+			var tile = current_deck[i]
+			var sprite = Sprite2D.new()
+			sprite.z_index = 1
+			sprite.texture = tile.get_sprite()[0]
+			sprite.rotation = tile.get_sprite()[1]
+			sprite.position.x = (space.size.x / 2) - (((float(width) / 2) - i % width - 0.5) * tile_space.x) 
+			sprite.position.y = (i / width) * tile_space.y + G.tile_size.y + 50
+			space.add_child(sprite)
+		return true
+	else:
+		camera.get_node("DeckSpace").queue_free()

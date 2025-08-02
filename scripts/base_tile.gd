@@ -133,9 +133,10 @@ func destroy(flag = ""):
 			scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
 			if G.player:
 				if destroy_player:
-					G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
+					if G.player.scale.x > 0:
+						G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
 			await get_tree().process_frame
-		if destroy_player and flag != "leave_player":
+		if destroy_player and flag != "leave_player" and !G.GS.restarting:
 			G.GS.restart_game()
 		queue_free()
 

@@ -1,5 +1,7 @@
 extends Node2D
 
+class_name Player
+
 var player_current_health = 3
 var player_coords
 var max_hp = 3
@@ -17,10 +19,10 @@ func lose_hp():
 func heal(amount = 1):
 	if hp + amount <= max_hp:
 		hp += amount
-	G.GS.change_hp(hp)
+		G.GS.change_hp(hp)
+		return true
+	return false
 	
-		
-
 func replace(coords):
 	curr_position = coords
 	position = coords
