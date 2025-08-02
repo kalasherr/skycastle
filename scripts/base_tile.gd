@@ -71,6 +71,7 @@ func add_effect(effect):
 func add_button():
 	var button = TextureButton.new()
 	button.position =- tile_size / 2
+	button.visible = false
 	button.name = "Button"
 	button.texture_normal = load("res://sprites/tiles/tile_focus.png")
 	button.texture_click_mask = load("res://sprites/tiles/tile_bitmap.png")

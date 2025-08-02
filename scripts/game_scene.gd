@@ -20,7 +20,7 @@ func _ready():
 	game_phase = "player"
 	G.GS = self
 	fill_deck()
-	generate_field()
+	await generate_field()
 	
 	await disable_buttons()
 	
@@ -62,7 +62,17 @@ func generate_field():
 		start_tile.tile_coords = Vector2(board_size.x-1, board_size.y-1)
 		start_tile.init()
 	
+	await get_tree().create_timer(0.1).timeout
 	
+	var end_tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
+	end_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1), Vector2(1,0), Vector2(0,1)]
+	get_node("TileManager").add_child(end_tile)
+	end_tile.tile_coords = Vector2(0, 0)
+	end_tile.add_effect("crown")
+	end_tile.init()
+	
+	await get_tree().create_timer(0.1).timeout
+		
 	var second_tile = current_deck.pick_random()
 	while true:
 		current_deck.shuffle()
@@ -76,7 +86,6 @@ func generate_field():
 	second_tile.tile_coords = Vector2(board_size.x-2, board_size.y-1)
 	second_tile.init()
 	
-	
 	second_tile = current_deck.pick_random()
 	while true:
 		current_deck.shuffle()
@@ -88,24 +97,24 @@ func generate_field():
 	second_tile.tile_coords = Vector2(board_size.x-1, board_size.y-2)
 	second_tile.init()
 	
-	var end_tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
-	end_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1), Vector2(1,0), Vector2(0,1)]
-	get_node("TileManager").add_child(end_tile)
-	end_tile.tile_coords = Vector2(0, 0)
-	end_tile.add_effect("crown")
-	end_tile.init()
-	
+	await get_tree().create_timer(0.1).timeout
 
-	for i in range (0,board_size.x):
-		for j in range (0,board_size.y):
-			if check_availability(Vector2(i,j)):
+	for i in range (0,board_size.x + board_size.y):
+		var i1 = board_size.x + board_size.y - 1 - i
+		var found = false
+		for j in range (0,board_size.x + board_size.y):
+			var j1 = board_size.x + board_size.y - 1 - j
+			if check_availability(Vector2(i1 - j1, j1)):
+				found = true
 				var tile = current_deck.pick_random()
 				current_deck.pop_at(current_deck.find(tile))
-
 				get_node("TileManager").add_child(tile)
-				tile.tile_coords = Vector2(i,j)
-
+				tile.tile_coords = Vector2(i1 - j1, j1)
 				tile.init()
+		if found:
+			await get_tree().create_timer(0.1).timeout
+
+	return
 
 				
 func fill_deck():
@@ -165,7 +174,9 @@ func randomize_exits():
 
 func check_availability(coords):
 	for tile in get_node("TileManager").get_children():
-		if tile.tile_coords == coords:
+		if get_tile(coords):
+			return false
+		if coords.x < 0 or coords.y < 0 or coords.x >= board_size.x or coords.y >= board_size.y:
 			return false
 	return true
 
@@ -339,7 +350,7 @@ func next_stage():
 	player.player_coords = board_size - Vector2(1,1)
 	start_tile.position = new_pos
 	
-	generate_field()
+	await generate_field()
 	await disable_buttons()
 	game_phase = "player"
 	
