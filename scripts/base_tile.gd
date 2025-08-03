@@ -12,6 +12,8 @@ var time_from_init = 0
 var curr_position = position
 var tile_in_deck
 
+@onready var main_sprite = get_node("SpriteTree/MainSprite")
+
 func init():
 	self.scale = Vector2.ZERO
 	replace(tile_size.x * tile_coords)
@@ -44,9 +46,13 @@ func replace(coords):
 	
 func _process(delta):
 	time_from_init += get_process_delta_time()
-	if G.GS.player:
-		if G.GS.player.player_coords == tile_coords:
-			position = curr_position
+	if G.GS.player or G.GS.generating:
+		if G.GS.player:
+			if G.GS.player.player_coords == tile_coords:
+				position = curr_position
+			else:
+				position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
+
 		else:
 			position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
 

@@ -9,22 +9,24 @@ var stage_transfer = false
 var focused = false
 var focused_tile
 var restarting = false
+var generating = false
 
 @onready var tile_moves = get_node("TileMoves")
 @onready var camera = get_node("Camera")
 
 func _ready():
-
 	camera.position = G.tile_size * board_size / 2 - G.tile_size / 2
 	
 	game_phase = "player"
 	G.GS = self
 	fill_deck()
+	generating = true
 	await generate_field()
 	
 	await disable_buttons()
 	
 	add_player()
+	generating = false
 	change_hp(player.hp)
 	next_turn()
 
@@ -113,7 +115,6 @@ func generate_field():
 				tile.init()
 		if found:
 			await get_tree().create_timer(0.1).timeout
-
 	return
 
 				
@@ -160,6 +161,14 @@ func fill_deck():
 		var tile = load("res://scenes/tiles/bell_tile.tscn").instantiate()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
+	for i in range(0,2):
+		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
+		for j in range(0,3):
+			moves.shuffle()
+			moves.pop_front()
+		var tile = load("res://scenes/tiles/bank_tile.tscn").instantiate()
+		tile.tile_moves = moves
+		tile_deck.append(tile)
 		
 func rotate_deck(deck):
 	for tile in deck:
@@ -189,9 +198,14 @@ func next_turn():
 	if current_deck.size() > 0:
 		tile = current_deck[0]
 		if tile:
-			update_next_tile(tile.get_sprite()[0], tile.get_sprite()[1])
+			var effects = []
+			for effect in tile.effects_to_add:
+				effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
+			update_next_tile(tile.get_sprite()[0], tile.get_sprite()[1], effects)
 	else:
 		camera.get_node("NextTile").texture = null
+		for effect in camera.get_node("NextTile").get_children():
+			effect.queue_free()
 		camera.get_node("DeckLeft").text = str(0)
 		restart_game()
 	
@@ -215,9 +229,16 @@ func next_turn():
 			G.GS.light_off_tiles()
 			game_phase = "player"
 		
-func update_next_tile(texture, texture_rotation):
-	get_node("Camera/NextTile").texture = texture
-	get_node("Camera/NextTile").rotation = texture_rotation
+func update_next_tile(texture, texture_rotation, effects = []):
+	var next = get_node("Camera/NextTile")
+	next.texture = texture
+	next.rotation = texture_rotation
+	for child in next.get_node("Effects").get_children():
+		child.queue_free()
+	for effect in effects:
+		next.get_node("Effects").add_child(Sprite2D.new())
+		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).rotation = - next.rotation
+		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).texture = effect
 	get_node("Camera/DeckLeft").text = str(current_deck.size())
 
 func get_tile(coords):
@@ -450,6 +471,10 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 		return
 
 func show_all_deck():
+	var deck_to_show = copy_current_deck()
+	
+	deck_to_show.shuffle()
+
 	var found = false
 	for child in camera.get_children():
 		if child.name == "DeckSpace":
@@ -464,15 +489,33 @@ func show_all_deck():
 		camera.add_child(space)
 		var width = 6
 		var tile_space = Vector2(100,100)
-		for i in range(0, current_deck.size()):
+
+		for i in range(0, deck_to_show.size()):
 			var tile = current_deck[i]
 			var sprite = Sprite2D.new()
 			sprite.z_index = 1
 			sprite.texture = tile.get_sprite()[0]
 			sprite.rotation = tile.get_sprite()[1]
+	
 			sprite.position.x = (space.size.x / 2) - (((float(width) / 2) - i % width - 0.5) * tile_space.x) 
 			sprite.position.y = (i / width) * tile_space.y + G.tile_size.y + 50
 			space.add_child(sprite)
+			for effect in tile.effects_to_add:
+				sprite.add_child(Sprite2D.new())
+				sprite.get_child(sprite.get_children().size() - 1).rotation = - sprite.rotation
+				sprite.get_child(sprite.get_children().size() - 1).texture = load("res://sprites/effects/" + effect + "_effect.png")
 		return true
 	else:
 		camera.get_node("DeckSpace").queue_free()
+
+func update_money(amount):
+	camera.get_node("PlayerMoney").text = str(amount)
+
+func copy_current_deck():
+	var to_return = []
+	for i in range(0, current_deck.size()):
+		to_return.append(current_deck[i].duplicate())
+		to_return[i].tile_moves = current_deck[i].tile_moves
+		to_return[i].effects_to_add = current_deck[i].effects_to_add
+		to_return[i].tile_in_deck = current_deck[i]
+	return to_return

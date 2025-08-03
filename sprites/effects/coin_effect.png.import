@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bxs7yyhimks32"
-path="res://.godot/imported/spikes_effect.png-49bc2db9182d59f925e8578c0b2daae1.ctex"
+uid="uid://b2jx01h5j4uve"
+path="res://.godot/imported/coin_effect.png-1767273c642cf1fd262a9b9025e2b4f2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/Effects/spikes_effect.png"
-dest_files=["res://.godot/imported/spikes_effect.png-49bc2db9182d59f925e8578c0b2daae1.ctex"]
+source_file="res://sprites/effects/coin_effect.png"
+dest_files=["res://.godot/imported/coin_effect.png-1767273c642cf1fd262a9b9025e2b4f2.ctex"]
 
 [params]
 

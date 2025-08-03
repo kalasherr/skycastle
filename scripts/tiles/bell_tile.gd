@@ -2,8 +2,6 @@ extends Tile
 
 class_name BellTile
 
-@onready var main_sprite = get_node("SpriteTree/MainSprite")
-
 func get_sprite():
 	var sprite
 	var rot = 0

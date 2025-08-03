@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dgamsi4dewxpw"
-path="res://.godot/imported/crown_effect.png-d2fc7a6e5e05297c2f917f68865aa4a7.ctex"
+uid="uid://dfl6gdr1fmcmw"
+path="res://.godot/imported/bank.png-fd60a73833dbab65fb6ae1e9b7262eec.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/Effects/crown_effect.png"
-dest_files=["res://.godot/imported/crown_effect.png-d2fc7a6e5e05297c2f917f68865aa4a7.ctex"]
+source_file="res://sprites/tiles/bank.png"
+dest_files=["res://.godot/imported/bank.png-fd60a73833dbab65fb6ae1e9b7262eec.ctex"]
 
 [params]
 

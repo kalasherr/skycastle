@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://c4nuhxjip60pp"]
+
+[ext_resource type="Script" uid="uid://cqvjf4uov4gsq" path="res://scripts/effects/coin_effect.gd" id="1_gyo7b"]
+[ext_resource type="Texture2D" uid="uid://b2jx01h5j4uve" path="res://sprites/Effects/coin_effect.png" id="2_vhljp"]
+
+[node name="CoinEffect" type="Node2D"]
+script = ExtResource("1_gyo7b")
+metadata/_custom_type_script = "uid://d0usnce3x1l5o"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_vhljp")

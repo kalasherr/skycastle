@@ -8,3 +8,6 @@ func on_enter():
 			if effect == "bandage":
 				bound_tile.tile_in_deck.effects_to_add.pop_at(bound_tile.tile_in_deck.effects_to_add.find(effect))
 		queue_free()
+
+func get_effect_name():
+	return "bandage"

@@ -7,6 +7,7 @@ var player_coords
 var max_hp = 3
 var hp = 3
 var curr_position = position
+var money = 0
 
 func _ready():
 	G.player = self
@@ -30,6 +31,7 @@ func replace(coords):
 func init(coords):
 	G.player = self
 	G.GS.player = self
+	G.GS.update_money(money)
 	G.GS.change_hp(hp)
 	player_coords = coords
 	replace(coords * G.tile_size + G.GS.get_tile(coords).get_player_offset())
@@ -52,3 +54,10 @@ func take_damage(amount):
 				self.modulate[3] = 1
 			await get_tree().create_timer(0.1).timeout
 	
+func change_money(amount):
+	if money < -amount:
+		return false
+	else:
+		money += amount
+		G.GS.update_money(money)
+		return true
