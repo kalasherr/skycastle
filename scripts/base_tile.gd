@@ -157,4 +157,4 @@ func check_node(node_name):
 	return false
 
 func get_player_offset():
-	return Vector2(0,2)
+	return Vector2.ZERO

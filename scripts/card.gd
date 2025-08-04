@@ -26,6 +26,7 @@ func _ready():
 func add_button():
 	var button = TextureButton.new()
 	button.name = "Button"
+	button.mouse_filter = Control.MOUSE_FILTER_PASS
 	button.texture_click_mask = load("res://sprites/cards/card_bitmap.png")
 	button.position = - card_size / 2
 	add_child(button)
@@ -52,14 +53,12 @@ func define_sprite():
 	sprite_tree.add_child(sprite)
 
 func check_hover():
-	
 	var found = false
 	for child in get_children():
 		if child.name == "Button":
 			found = true
 	if found:
 		if get_node("Button").is_hovered():
-			print(1)
 			return true
 	return false
 

@@ -204,7 +204,7 @@ func next_turn():
 			update_next_tile(tile.get_sprite()[0], tile.get_sprite()[1], effects)
 	else:
 		camera.get_node("NextTile").texture = null
-		for effect in camera.get_node("NextTile").get_children():
+		for effect in camera.get_node("NextTile/Effects").get_children():
 			effect.queue_free()
 		camera.get_node("DeckLeft").text = str(0)
 		restart_game()
@@ -491,7 +491,7 @@ func show_all_deck():
 		var tile_space = Vector2(100,100)
 
 		for i in range(0, deck_to_show.size()):
-			var tile = current_deck[i]
+			var tile = deck_to_show[i]
 			var sprite = Sprite2D.new()
 			sprite.z_index = 1
 			sprite.texture = tile.get_sprite()[0]
