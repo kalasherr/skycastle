@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://l1bobxedc80k"]
+
+[ext_resource type="Script" uid="uid://e5dbw46rmn01" path="res://scripts/tiles/mausoleum_tile.gd" id="1_bg3y7"]
+
+[node name="MausoleumTile" type="Node2D"]
+script = ExtResource("1_bg3y7")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

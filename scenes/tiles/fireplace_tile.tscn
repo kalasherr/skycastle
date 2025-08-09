@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://by4kv25xse8ob"]
+
+[ext_resource type="Script" uid="uid://k6lok3xeq32k" path="res://scripts/tiles/fireplace_tile.gd" id="1_a6v24"]
+
+[node name="FireplaceTile" type="Node2D"]
+script = ExtResource("1_a6v24")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

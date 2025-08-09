@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ci2wvcdh4jc6"]
+
+[ext_resource type="Script" uid="uid://c1dbujg4nqhh2" path="res://scripts/tiles/stone_tile.gd" id="1_wxisn"]
+
+[node name="StoneTile" type="Node2D"]
+script = ExtResource("1_wxisn")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

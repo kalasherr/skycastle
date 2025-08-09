@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2duflj07nmha"]
+
+[ext_resource type="Script" uid="uid://ceongonwanb7o" path="res://scripts/cards/monolith_card.gd" id="1_5xk1w"]
+
+[node name="MonolithCard" type="Node2D"]
+script = ExtResource("1_5xk1w")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

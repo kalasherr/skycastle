@@ -7,6 +7,7 @@ var init_position = Vector2.ZERO
 var card_size = Vector2(290, 470)
 
 var follow_threshold = 0.1
+
 func apply():
 	pass
 
@@ -29,6 +30,7 @@ func add_button():
 	button.mouse_filter = Control.MOUSE_FILTER_PASS
 	button.texture_click_mask = load("res://sprites/cards/card_bitmap.png")
 	button.position = - card_size / 2
+	button.connect("pressed", pressed)
 	add_child(button)
 
 func _process(delta):
@@ -62,3 +64,21 @@ func check_hover():
 			return true
 	return false
 
+func pressed():
+	if get_parent().get_parent() is CardManager:
+		get_parent().get_parent().destroy_other_cards(self)
+	else:
+		get_parent().get_parent().show_all_cards()
+
+func destroy():
+	queue_free()
+	return
+
+func disable():
+	get_node("Button").disabled = true
+
+func able():
+	get_node("Button").disabled = false
+
+func add_tile_to_deck(tile, moves):
+	G.GS.add_tile_to_deck(tile, moves)

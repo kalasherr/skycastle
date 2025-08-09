@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>onready</w>
+      <w>tscn</w>
     </words>
   </dictionary>
 </component>

@@ -9,7 +9,7 @@ func get_sprite():
 	var sprite
 	var rot = 0
 	sprite = load("res://sprites/tiles/bank.png")
-	match tile_moves[0]:
+	match Vector2(round(tile_moves[0].x), round(tile_moves[0].y)):
 		Vector2(-1,0):
 			rot = deg_to_rad(90)
 		Vector2(1,0):

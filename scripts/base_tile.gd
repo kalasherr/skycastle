@@ -12,15 +12,33 @@ var time_from_init = 0
 var curr_position = position
 var tile_in_deck
 
-@onready var main_sprite = get_node("SpriteTree/MainSprite")
+var main_sprite
+
+func add_essential_nodes():
+	var sprite_tree = false
+	for child in get_children():
+		if child.name == "SpriteTree":
+			sprite_tree = true
+	if !sprite_tree:
+		sprite_tree = Sprite2D.new()
+		sprite_tree.name = "SpriteTree"
+		add_child(sprite_tree)
+		var sprite = Sprite2D.new()
+		sprite.name = "MainSprite"
+		sprite_tree.add_child(sprite)
+		var focus = Node2D.new()
+		sprite_tree.add_child(focus)
+		focus.name = "Focus"
+	main_sprite = get_node("SpriteTree/MainSprite")
 
 func init():
-	self.scale = Vector2.ZERO
-	replace(tile_size.x * tile_coords)
+	add_essential_nodes()
 	var node = Node2D.new()
 	effects = node
 	node.name = "Effects"
 	add_child(node)
+	self.scale = Vector2.ZERO
+	replace(tile_size.x * tile_coords)
 	define_sprite()
 	add_button()
 	if self.tile_coords.x < G.GS.board_size.x and self.tile_coords.x >= 0 and self.tile_coords.y < G.GS.board_size.y and self.tile_coords.y >= 0:
@@ -71,6 +89,7 @@ func add_effect(effect):
 		effects_to_add = []
 	if check_node("Effects"):
 		effects.add_child(load("res://scenes/effects/"+effect+"_effect.tscn").instantiate())
+		effects.get_child(effects.get_children().size() - 1).position = get_player_offset()
 	else:
 		effects_to_add.append(effect)
 
@@ -158,3 +177,13 @@ func check_node(node_name):
 
 func get_player_offset():
 	return Vector2.ZERO
+
+func get_moves():
+	return null
+	
+func rotate_tile(array = tile_moves, rot = 0.0):
+	var moves = []
+	for vector in array:
+		vector = vector.rotated(deg_to_rad(round(rot) * 90))
+		moves.append(vector)
+	return moves

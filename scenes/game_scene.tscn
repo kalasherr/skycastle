@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://rp5vdyk62ni3"]
+[gd_scene load_steps=4 format=3 uid="uid://rp5vdyk62ni3"]
 
 [ext_resource type="Script" uid="uid://b2fcitgajuuic" path="res://scripts/game_scene.gd" id="1_w5aja"]
-[ext_resource type="PackedScene" uid="uid://myaiaeaisodu" path="res://scenes/card.tscn" id="2_onqr8"]
+[ext_resource type="PackedScene" uid="uid://brm4wyhobxawy" path="res://scenes/stuff/card_manager.tscn" id="2_onqr8"]
+[ext_resource type="PackedScene" uid="uid://cc5wi3pd0cj1g" path="res://scenes/stuff/applied_cards.tscn" id="3_ycayy"]
 
 [node name="GameScene" type="Node2D"]
 texture_filter = 3
@@ -10,6 +11,7 @@ script = ExtResource("1_w5aja")
 [node name="TileManager" type="Node2D" parent="."]
 
 [node name="Camera" type="Camera2D" parent="."]
+z_index = 1
 
 [node name="NextTile" type="Sprite2D" parent="Camera"]
 position = Vector2(400, 0)
@@ -45,10 +47,17 @@ text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CardManager" type="Node2D" parent="Camera"]
+[node name="PlayerShield" type="Label" parent="Camera"]
+modulate = Color(0.141176, 0.458824, 0.929412, 1)
+offset_left = 350.0
+offset_top = -212.0
+offset_right = 450.0
+offset_bottom = -172.0
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Cards" type="Node2D" parent="Camera/CardManager"]
+[node name="CardManager" parent="Camera" instance=ExtResource("2_onqr8")]
 
-[node name="Card" parent="Camera/CardManager/Cards" instance=ExtResource("2_onqr8")]
+[node name="AppliedCards" parent="Camera" instance=ExtResource("3_ycayy")]
 
 [node name="TileMoves" type="Node2D" parent="."]

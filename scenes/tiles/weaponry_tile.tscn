@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bnujy4stifskh"]
+
+[ext_resource type="Script" uid="uid://eli8hnv81mcc" path="res://scripts/tiles/weaponry_tile.gd" id="1_07454"]
+
+[node name="WeaponryTile" type="Node2D"]
+script = ExtResource("1_07454")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

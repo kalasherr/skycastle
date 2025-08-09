@@ -1,5 +1,7 @@
 extends TileEffect
 
+class_name CoinEffect
+
 func on_enter():
 	if G.player.change_money(1):
 		for effect in bound_tile.tile_in_deck.effects_to_add:

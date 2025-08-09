@@ -13,8 +13,10 @@ var generating = false
 
 @onready var tile_moves = get_node("TileMoves")
 @onready var camera = get_node("Camera")
+@onready var card_manager = camera.get_node("CardManager")
 
 func _ready():
+	card_manager.init()
 	camera.position = G.tile_size * board_size / 2 - G.tile_size / 2
 	
 	game_phase = "player"
@@ -124,7 +126,7 @@ func fill_deck():
 		for j in range(0,3):
 			moves.shuffle()
 			moves.pop_front()
-		var tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
+		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,10):
@@ -132,7 +134,7 @@ func fill_deck():
 		for j in range(0,2):
 			moves.shuffle()
 			moves.pop_front()
-		var tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
+		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,10):
@@ -140,7 +142,7 @@ func fill_deck():
 		for j in range(0,1):
 			moves.shuffle()
 			moves.pop_front()
-		var tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
+		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 		tile.add_effect("bandage")
@@ -149,27 +151,46 @@ func fill_deck():
 		for j in range(0,0):
 			moves.shuffle()
 			moves.pop_front()
-		var tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
+		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-		tile.add_effect("spikes")
+# 		tile.add_effect("spikes")
 	for i in range(0,2):
-		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
-		for j in range(0,3):
-			moves.shuffle()
-			moves.pop_front()
-		var tile = load("res://scenes/tiles/bell_tile.tscn").instantiate()
-		tile.tile_moves = moves
+		var tile = BellTile.new()
+		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
 	for i in range(0,2):
-		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
-		for j in range(0,3):
-			moves.shuffle()
-			moves.pop_front()
-		var tile = load("res://scenes/tiles/bank_tile.tscn").instantiate()
-		tile.tile_moves = moves
+		var tile = BankTile.new()
+		tile.tile_moves = get_tile_moves(tile)
+		tile_deck.append(tile)
+	for i in range(0,2):
+		var tile = MausoleumTile.new()
+		tile.tile_moves = get_tile_moves(tile)
+		tile_deck.append(tile)
+	for i in range(0,20):
+		var tile = FireplaceTile.new()
+		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
 		
+	rotate_deck(tile_deck)
+
+func get_tile_moves(tile):
+	if tile is BankTile:
+		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	elif tile is BellTile:
+		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	elif tile is CrownTile:
+		return [Vector2(1,0),Vector2(-1,0),Vector2(0,1),Vector2(0,-1)]
+	elif tile is FireplaceTile:
+		var moves = G.rotate_array([Vector2(1,0),Vector2(0,1)], 90 * (round(randf_range(0,4) - 0.5)))
+		return moves
+	elif tile is MausoleumTile:
+		return  G.rotate_array([Vector2(1,0),Vector2(-1,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	elif tile is StoneTile:
+		return []
+	elif tile is WeaponryTile:
+		return  G.rotate_array([Vector2(1,0),Vector2(-1,0)], 90 * round(randf_range(0,4) - 0.5))
+
 func rotate_deck(deck):
 	for tile in deck:
 		var rot = round(randf_range(-0.5, 3.5))
@@ -193,7 +214,7 @@ func button_pressed(tile):
 	await player.move(tile)
 	next_turn()
 
-func next_turn():
+func next_turn(flag = "none"):
 	var tile
 	if current_deck.size() > 0:
 		tile = current_deck[0]
@@ -225,7 +246,6 @@ func next_turn():
 			for j in [-1, board_size.y]:
 				for i in range(1, board_size.x):
 					create_tile_move(Vector2(i,j))
-			await get_tile_moves()
 			G.GS.light_off_tiles()
 			game_phase = "player"
 		
@@ -261,9 +281,6 @@ func get_player_moves():
 		restart_game()
 	
 	return
-
-func get_tile_moves():
-	var tiles = []
 	
 func create_tile_move(coords):
 	var move = TileMove.new()
@@ -356,7 +373,10 @@ func next_stage():
 			return - ((curr/init_time - 1) ** 2) * 1.25 * 1.25 + 1
 
 # 		return (sin(curr/init_time * PI / 2) ** 3)
-
+	card_manager.call_cards()
+	
+	await card_manager.CardApplied
+	
 	while curr_time < init_time:
 		start_tile.replace(graph.call(curr_time) * new_pos + (1 - graph.call(curr_time)) * old_pos)
 		camera.position = graph.call(curr_time) * new_camera_pos + (1 - graph.call(curr_time)) * old_camera_pos
@@ -374,9 +394,9 @@ func next_stage():
 	await generate_field()
 	await disable_buttons()
 	game_phase = "player"
-	
-	
 	stage_transfer = false
+	change_shield(0)
+	
 	next_turn()
 
 func change_hp(amount):
@@ -409,6 +429,8 @@ func restart_game(flag = "none"):
 		await destroy_all_tiles("ignore_player")
 	if player:
 		player.queue_free()
+	for card in camera.get_node("AppliedCards/Cards").get_children():
+		card.queue_free()
 	player = null
 	tile_deck = []
 	current_deck = []
@@ -519,3 +541,13 @@ func copy_current_deck():
 		to_return[i].effects_to_add = current_deck[i].effects_to_add
 		to_return[i].tile_in_deck = current_deck[i]
 	return to_return
+
+func add_tile_to_deck(tile, moves):
+	tile.tile_moves = moves
+	tile_deck.append(tile)
+
+func change_shield(shield):
+	if shield == 0:
+		camera.get_node("PlayerShield").text = ""
+	else:
+		camera.get_node("PlayerShield").text = str(shield)
