@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dv6eyp7rtnpba"]
+
+[ext_resource type="Script" uid="uid://c46twk2ikp0ur" path="res://scripts/tiles/crematorium_tile.gd" id="1_nyc46"]
+
+[node name="CrematoriumTile" type="Node2D"]
+script = ExtResource("1_nyc46")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

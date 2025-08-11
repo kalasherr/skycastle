@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ca5pmgrdsn6ih"]
+
+[ext_resource type="Script" uid="uid://bm4ngfwx6eif7" path="res://scripts/effects/crematorium_effect.gd" id="1_iouy2"]
+
+[node name="CrematoriumEffect" type="Node2D"]
+script = ExtResource("1_iouy2")
+metadata/_custom_type_script = "uid://d0usnce3x1l5o"

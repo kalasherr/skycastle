@@ -41,7 +41,8 @@ func init(coords):
 func move(tile):
 	self.player_coords = tile.tile_coords
 	replace(player_coords * G.tile_size + tile.get_player_offset())
-	tile.on_enter()
+	await tile.on_enter()
+	return
 
 func take_damage(amount = 1):
 	if current_shield > 0:

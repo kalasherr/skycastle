@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1s0n4mcyicou"]
+
+[ext_resource type="Script" uid="uid://dnd6d2i2ifx68" path="res://scripts/effects/monastic_cell_effect.gd" id="1_ssgfg"]
+
+[node name="MonasticCellEffect" type="Node2D"]
+script = ExtResource("1_ssgfg")
+metadata/_custom_type_script = "uid://d0usnce3x1l5o"

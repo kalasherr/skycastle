@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5i4sw22kfdb8"]
+
+[ext_resource type="Script" uid="uid://5v5wh5h31gxp" path="res://scripts/tiles/monastic_cell_tile.gd" id="1_38ibq"]
+
+[node name="MonasticCellTile" type="Node2D"]
+script = ExtResource("1_38ibq")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

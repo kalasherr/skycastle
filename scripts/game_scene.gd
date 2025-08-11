@@ -10,12 +10,14 @@ var focused = false
 var focused_tile
 var restarting = false
 var generating = false
+var next_tile_default_position = Vector2.ZERO
 
 @onready var tile_moves = get_node("TileMoves")
 @onready var camera = get_node("Camera")
 @onready var card_manager = camera.get_node("CardManager")
 
 func _ready():
+	next_tile_default_position = camera.get_node("NextTile").position
 	card_manager.init()
 	camera.position = G.tile_size * board_size / 2 - G.tile_size / 2
 	
@@ -154,7 +156,6 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-# 		tile.add_effect("spikes")
 	for i in range(0,2):
 		var tile = BellTile.new()
 		tile.tile_moves = get_tile_moves(tile)
@@ -167,11 +168,18 @@ func fill_deck():
 		var tile = MausoleumTile.new()
 		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
-	for i in range(0,20):
+	for i in range(0,2):
 		var tile = FireplaceTile.new()
 		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
-		
+	for i in range(0,2):
+		var tile = MonasticCellTile.new()
+		tile.tile_moves = get_tile_moves(tile)
+		tile_deck.append(tile)
+	for i in range(0,20):
+		var tile = CrematoriumTile.new()
+		tile.tile_moves = get_tile_moves(tile)
+		tile_deck.append(tile)
 	rotate_deck(tile_deck)
 
 func get_tile_moves(tile):
@@ -182,25 +190,36 @@ func get_tile_moves(tile):
 	elif tile is CrownTile:
 		return [Vector2(1,0),Vector2(-1,0),Vector2(0,1),Vector2(0,-1)]
 	elif tile is FireplaceTile:
-		var moves = G.rotate_array([Vector2(1,0),Vector2(0,1)], 90 * (round(randf_range(0,4) - 0.5)))
-		return moves
+		return G.rotate_array([Vector2(1,0),Vector2(0,1)], 90 * (round(randf_range(0,4) - 0.5)))
 	elif tile is MausoleumTile:
 		return  G.rotate_array([Vector2(1,0),Vector2(-1,0)], 90 * (round(randf_range(0,4) - 0.5)))
 	elif tile is StoneTile:
 		return []
 	elif tile is WeaponryTile:
 		return  G.rotate_array([Vector2(1,0),Vector2(-1,0)], 90 * round(randf_range(0,4) - 0.5))
+	elif tile is MonasticCellTile:
+		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	elif tile is CrematoriumTile:
+		return [Vector2(1,0), Vector2(-1,0), Vector2(0,1)]
 
 func rotate_deck(deck):
 	for tile in deck:
-		var rot = round(randf_range(-0.5, 3.5))
-		rot *= 90
-		for move in tile.tile_moves:
-			move = move.rotated(deg_to_rad(rot))
+		if tile.rotatable():
+			var rot = round(randf_range(-0.5, 3.5))
+			rot *= 90
+			for move in tile.tile_moves:
+				move = move.rotated(deg_to_rad(rot))
 
-
-func randomize_exits():
-	pass
+func add_tile(scene, current_deck_flag = false):
+	var tile = scene
+	tile.tile_moves = get_tile_moves(tile)
+	tile_deck.append(tile)
+	if current_deck_flag:
+		var tile_copy = tile.duplicate()
+		tile_copy.tile_moves = tile.tile_moves
+		tile_copy.effects_to_add = tile.effects_to_add
+		tile_copy.tile_in_deck = tile.tile_in_deck
+	return true
 
 func check_availability(coords):
 	for tile in get_node("TileManager").get_children():
@@ -222,7 +241,7 @@ func next_turn(flag = "none"):
 			var effects = []
 			for effect in tile.effects_to_add:
 				effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
-			update_next_tile(tile.get_sprite()[0], tile.get_sprite()[1], effects)
+			update_next_tile(tile.get_sprite(), effects)
 	else:
 		camera.get_node("NextTile").texture = null
 		for effect in camera.get_node("NextTile/Effects").get_children():
@@ -249,10 +268,15 @@ func next_turn(flag = "none"):
 			G.GS.light_off_tiles()
 			game_phase = "player"
 		
-func update_next_tile(texture, texture_rotation, effects = []):
+func update_next_tile(array, effects = []):
+	var texture = array[0]
+	var texture_rotation = array[1]
 	var next = get_node("Camera/NextTile")
+	
 	next.texture = texture
 	next.rotation = texture_rotation
+	if array.size() == 3:
+		next.position = next_tile_default_position + array[2]
 	for child in next.get_node("Effects").get_children():
 		child.queue_free()
 	for effect in effects:
@@ -279,7 +303,6 @@ func get_player_moves():
 			move.able()
 	else:
 		restart_game()
-	
 	return
 	
 func create_tile_move(coords):
@@ -314,6 +337,7 @@ func tile_move():
 			get_node("TileManager").add_child(tile)
 			tile.tile_coords = coords
 			tile.init()
+			tile.move_effect()
 			disable_buttons()
 			if move.tile_coords.x < 0:
 				await tile.move(tile.tile_coords + Vector2(1,0))
@@ -410,6 +434,8 @@ func light_up_tiles(coords_arr, color = "premove"):
 			if get_tile(coords):
 				var sprite = Sprite2D.new()
 				sprite.texture = load("res://sprites/tiles/tile_" + color + ".png")
+				if get_tile(coords).get_sprite().size() == 3:
+					sprite.position = -get_tile(coords).get_sprite()[2]
 				sprite.name = "Focus"
 				get_tile(coords).get_node("SpriteTree/Focus").add_child(sprite)
 

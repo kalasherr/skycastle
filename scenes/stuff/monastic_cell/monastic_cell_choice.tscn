@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b0endfnpar02g"]
+
+[ext_resource type="Script" uid="uid://7q8h25yfutij" path="res://scripts/stuff/monastic_cell/monastic_cell_choice.gd" id="1_hadty"]
+
+[node name="MonasticCellChoice" type="Node2D"]
+script = ExtResource("1_hadty")

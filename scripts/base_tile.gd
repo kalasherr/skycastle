@@ -14,6 +14,8 @@ var tile_in_deck
 
 var main_sprite
 
+signal effect_applied
+
 func add_essential_nodes():
 	var sprite_tree = false
 	for child in get_children():
@@ -75,14 +77,18 @@ func _process(delta):
 			position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
 
 func define_sprite():
-	pass
+	main_sprite.texture = get_sprite()[0]
+	main_sprite.rotation = get_sprite()[1]
+	if get_sprite().size() == 3:
+		main_sprite.get_parent().position += get_sprite()[2]
 
 func post_init():
 	pass
 
 func on_enter():
 	for effect in get_node("Effects").get_children():
-		effect.on_enter()
+		await effect.on_enter()
+	return
 
 func add_effect(effect):
 	if effects_to_add == null:
@@ -187,3 +193,9 @@ func rotate_tile(array = tile_moves, rot = 0.0):
 		vector = vector.rotated(deg_to_rad(round(rot) * 90))
 		moves.append(vector)
 	return moves
+
+func move_effect():
+	pass
+
+func rotatable():
+	return true
