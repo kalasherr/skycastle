@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dfimkx0osa2ti"]
+
+[ext_resource type="Script" uid="uid://dnobw8ckpvp0m" path="res://scripts/stuff/ritual_room/smoke.gd" id="1_20vk2"]
+
+[node name="Smoke" type="Node2D"]
+script = ExtResource("1_20vk2")

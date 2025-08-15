@@ -1,6 +1,6 @@
 extends Node2D
 
-class_name MonasticCellChoice
+class_name CrematoriumChoice
 
 signal event_ended
 
@@ -8,24 +8,23 @@ func _ready():
 	init()
 
 func init():
-	var tiles = G.get_tile_pool()
-	tiles.pop_at(tiles.find("basic_tile.tscn"))
-	tiles.pop_at(tiles.find("crown_tile.tscn"))
-	for i in range(0,3):
+	var tiles = []
+	for i in range(1, G.GS.current_deck.size()):
+		tiles.append(G.GS.current_deck[i])
+	for i in range(0,min(3,tiles.size() - 1)):
 		var choice = TileChoice.new()
 		choice.init()
-		var tile_string = tiles.pick_random()
-		tiles.pop_at(tiles.find(tile_string))
-		var tile = load("res://scenes/tiles/" + tile_string).instantiate()
+		var tile = tiles.pick_random()
+		tiles.pop_at(tiles.find(tile))
 		choice.position.x = (i - 1) * 200
 		choice.get_node("Sprite").texture = tile.get_sprite()[0]
 		if tile.get_sprite().size() == 3:
-			choice.get_node("Sprite").position.y = tile.get_sprite()[2]
+			choice.get_node("Sprite").position = tile.get_sprite()[2]
 		choice.bound_tile = tile
 		add_child(choice)
 
 func choose(tile):
-	G.GS.add_tile(tile.bound_tile)
+	G.GS.delete_tile(tile)
 	for child in get_children():
 		child.get_node("Button").disabled = false
 	var init_time = 1.0

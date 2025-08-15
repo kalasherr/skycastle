@@ -24,7 +24,7 @@ func define_sprite():
 	main_sprite.texture = get_sprite()[0]
 	main_sprite.rotation = get_sprite()[1]
 
-func move_effect():
+func deploy_effect():
 	if G.player.hp > 1:
 		G.player.take_damage(1)
 		add_effect("fireplace")

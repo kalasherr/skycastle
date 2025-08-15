@@ -14,6 +14,7 @@ var tile_in_deck
 
 var main_sprite
 
+signal moved
 signal effect_applied
 
 func add_essential_nodes():
@@ -40,6 +41,8 @@ func init():
 	node.name = "Effects"
 	add_child(node)
 	self.scale = Vector2.ZERO
+	for effect in effects_to_add:
+		add_effect(effect)
 	replace(tile_size.x * tile_coords)
 	define_sprite()
 	add_button()
@@ -53,8 +56,7 @@ func init():
 			curr_time -= get_process_delta_time()
 	self.scale = Vector2(1,1)
 	post_init()
-	for effect in effects_to_add:
-		add_effect(effect)
+
 
 func tile_effect():
 	pass
@@ -153,6 +155,7 @@ func move(coords):
 	
 	if tile_coords.x < 0 or tile_coords.y < 0 or tile_coords.x >= G.GS.board_size.x or tile_coords.y >= G.GS.board_size.y:
 		destroy()
+	emit_signal("moved")
 	
 func destroy(flag = ""):
 	if !is_destroying:
@@ -194,8 +197,11 @@ func rotate_tile(array = tile_moves, rot = 0.0):
 		moves.append(vector)
 	return moves
 
-func move_effect():
+func deploy_effect():
 	pass
 
 func rotatable():
 	return true
+
+func get_spawn_priority():
+	return 0

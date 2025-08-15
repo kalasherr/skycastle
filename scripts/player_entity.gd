@@ -10,6 +10,8 @@ var curr_position = position
 var money = 0
 var current_shield = 0
 
+signal player_moved
+
 func _ready():
 	G.player = self
 	G.GS.player = self
@@ -42,6 +44,7 @@ func move(tile):
 	self.player_coords = tile.tile_coords
 	replace(player_coords * G.tile_size + tile.get_player_offset())
 	await tile.on_enter()
+	emit_signal("player_moved")
 	return
 
 func take_damage(amount = 1):

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://b6i1h2a1d1twh"]
+
+[ext_resource type="Script" uid="uid://b6au5dw51rsxh" path="res://scripts/tiles/infirmary_tile.gd" id="1_45oy6"]
+
+[node name="InfirmaryTile" type="Node2D"]
+script = ExtResource("1_45oy6")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

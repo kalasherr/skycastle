@@ -12,6 +12,9 @@ var restarting = false
 var generating = false
 var next_tile_default_position = Vector2.ZERO
 
+signal next_move
+signal ready_to_play
+
 @onready var tile_moves = get_node("TileMoves")
 @onready var camera = get_node("Camera")
 @onready var card_manager = camera.get_node("CardManager")
@@ -32,6 +35,8 @@ func _ready():
 	add_player()
 	generating = false
 	change_hp(player.hp)
+	emit_signal("ready_to_play")
+	
 	next_turn()
 
 func _process(delta):
@@ -48,9 +53,10 @@ func disable_buttons():
 	return
 
 func add_player(coords = board_size - Vector2(1,1)):
-	var player_scene = load("res://scenes/player_entity.tscn").instantiate()
-	add_child(player_scene)
-	player_scene.init(coords)
+	if !player:
+		var player_scene = load("res://scenes/player_entity.tscn").instantiate()
+		add_child(player_scene)
+		player_scene.init(coords)
 	
 func generate_field():
 	current_deck = []
@@ -67,6 +73,9 @@ func generate_field():
 		get_node("TileManager").add_child(start_tile)
 		start_tile.tile_coords = Vector2(board_size.x-1, board_size.y-1)
 		start_tile.init()
+	
+	if !player:
+		add_player()
 	
 	await get_tree().create_timer(0.1).timeout
 	
@@ -104,7 +113,8 @@ func generate_field():
 	second_tile.init()
 	
 	await get_tree().create_timer(0.1).timeout
-
+	
+	var tiles_to_deploy = []
 	for i in range (0,board_size.x + board_size.y):
 		var i1 = board_size.x + board_size.y - 1 - i
 		var found = false
@@ -114,11 +124,23 @@ func generate_field():
 				found = true
 				var tile = current_deck.pick_random()
 				current_deck.pop_at(current_deck.find(tile))
-				get_node("TileManager").add_child(tile)
+				tiles_to_deploy.append(tile)
 				tile.tile_coords = Vector2(i1 - j1, j1)
-				tile.init()
-		if found:
-			await get_tree().create_timer(0.1).timeout
+	var to_pop = []
+	var to_spawn = []
+	for tile in tiles_to_deploy:
+		print(tile.get_spawn_priority())
+		if tile.get_spawn_priority() > 0:
+			to_pop.append(tile)
+			to_spawn.append(tile)
+	for tile in to_pop:
+		tiles_to_deploy.pop_at(tiles_to_deploy.find(tile))
+	for tile in to_spawn:
+		get_node("TileManager").add_child(tile)
+		tile.init()
+	for tile in tiles_to_deploy:
+		get_node("TileManager").add_child(tile)
+		tile.init()
 	return
 
 				
@@ -147,7 +169,6 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-		tile.add_effect("bandage")
 	for i in range (0,10):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,0):
@@ -176,8 +197,16 @@ func fill_deck():
 		var tile = MonasticCellTile.new()
 		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
-	for i in range(0,20):
+	for i in range(0,2):
 		var tile = CrematoriumTile.new()
+		tile.tile_moves = get_tile_moves(tile)
+		tile_deck.append(tile)
+	for i in range(0,2):
+		var tile = InfirmaryTile.new()
+		tile.tile_moves = get_tile_moves(tile)
+		tile_deck.append(tile)
+	for i in range(0,20):
+		var tile = RitualRoomTile.new()
 		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
 	rotate_deck(tile_deck)
@@ -201,6 +230,10 @@ func get_tile_moves(tile):
 		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
 	elif tile is CrematoriumTile:
 		return [Vector2(1,0), Vector2(-1,0), Vector2(0,1)]
+	elif tile is InfirmaryTile:
+		return G.rotate_array([Vector2(1,0),Vector2(-1,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	elif tile is RitualRoomTile:
+		return [Vector2(1,0),Vector2(-1,0),Vector2(0,1),Vector2(0,-1)]
 
 func rotate_deck(deck):
 	for tile in deck:
@@ -267,6 +300,8 @@ func next_turn(flag = "none"):
 					create_tile_move(Vector2(i,j))
 			G.GS.light_off_tiles()
 			game_phase = "player"
+
+	emit_signal("next_move")
 		
 func update_next_tile(array, effects = []):
 	var texture = array[0]
@@ -277,6 +312,8 @@ func update_next_tile(array, effects = []):
 	next.rotation = texture_rotation
 	if array.size() == 3:
 		next.position = next_tile_default_position + array[2]
+	else:
+		next.position = next_tile_default_position
 	for child in next.get_node("Effects").get_children():
 		child.queue_free()
 	for effect in effects:
@@ -337,7 +374,7 @@ func tile_move():
 			get_node("TileManager").add_child(tile)
 			tile.tile_coords = coords
 			tile.init()
-			tile.move_effect()
+			tile.deploy_effect()
 			disable_buttons()
 			if move.tile_coords.x < 0:
 				await tile.move(tile.tile_coords + Vector2(1,0))
@@ -571,6 +608,13 @@ func copy_current_deck():
 func add_tile_to_deck(tile, moves):
 	tile.tile_moves = moves
 	tile_deck.append(tile)
+
+func delete_tile(tile, from_deck = true):
+	current_deck.pop_at(current_deck.find(tile.bound_tile))
+	if from_deck:
+		tile_deck.pop_at(tile_deck.find(tile.bound_tile.tile_in_deck))
+		tile.bound_tile.tile_in_deck.queue_free()
+	tile.bound_tile.queue_free()
 
 func change_shield(shield):
 	if shield == 0:

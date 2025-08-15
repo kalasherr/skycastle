@@ -61,3 +61,5 @@ vertical_alignment = 1
 [node name="AppliedCards" parent="Camera" instance=ExtResource("3_ycayy")]
 
 [node name="TileMoves" type="Node2D" parent="."]
+
+[node name="MapEffects" type="Node2D" parent="."]
