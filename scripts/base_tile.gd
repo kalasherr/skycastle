@@ -92,12 +92,19 @@ func on_enter():
 		await effect.on_enter()
 	return
 
-func add_effect(effect):
+func add_effect(effect, animated = false):
 	if effects_to_add == null:
 		effects_to_add = []
 	if check_node("Effects"):
-		effects.add_child(load("res://scenes/effects/"+effect+"_effect.tscn").instantiate())
-		effects.get_child(effects.get_children().size() - 1).position = get_player_offset()
+		var effect_scene = load("res://scenes/effects/"+effect+"_effect.tscn").instantiate()
+		effects.add_child(effect_scene)
+		if animated:
+			effect_scene.get_node("Sprite").visible = false
+			var effect_spawn = EffectSpawn.new()
+			effect_scene.add_child(effect_spawn)
+			effect_spawn.sprite_frames = load("res://stuff/effects/effect_spawn.tres")
+			effect_spawn.play("default")
+		effect_scene.position = get_player_offset()
 	else:
 		effects_to_add.append(effect)
 

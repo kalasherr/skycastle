@@ -129,10 +129,10 @@ func generate_field():
 	var to_pop = []
 	var to_spawn = []
 	for tile in tiles_to_deploy:
-		print(tile.get_spawn_priority())
 		if tile.get_spawn_priority() > 0:
 			to_pop.append(tile)
 			to_spawn.append(tile)
+	await get_node("Stuff/SmokeManager").refresh_smokes()
 	for tile in to_pop:
 		tiles_to_deploy.pop_at(tiles_to_deploy.find(tile))
 	for tile in to_spawn:
@@ -145,7 +145,7 @@ func generate_field():
 
 				
 func fill_deck():
-	for i in range (0,10):
+	for i in range (0,7):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,3):
 			moves.shuffle()
@@ -153,7 +153,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,10):
+	for i in range (0,7):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,2):
 			moves.shuffle()
@@ -161,7 +161,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,10):
+	for i in range (0,7):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,1):
 			moves.shuffle()
@@ -169,7 +169,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,10):
+	for i in range (0,7):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,0):
 			moves.shuffle()
@@ -205,7 +205,7 @@ func fill_deck():
 		var tile = InfirmaryTile.new()
 		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
-	for i in range(0,20):
+	for i in range(0,2):
 		var tile = RitualRoomTile.new()
 		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
@@ -280,6 +280,7 @@ func next_turn(flag = "none"):
 		for effect in camera.get_node("NextTile/Effects").get_children():
 			effect.queue_free()
 		camera.get_node("DeckLeft").text = str(0)
+		
 		restart_game()
 	
 	
@@ -397,8 +398,12 @@ func tile_move():
 	await next_turn()
 
 func next_stage():
+	
 	stage_transfer = true
 	disable_buttons()
+	
+	get_node("Stuff/SmokeManager").destroy_all_smokes()
+	
 	for move in get_node("TileMoves").get_children():
 		move.queue_free()
 	await destroy_all_tiles("leave_player")
@@ -435,6 +440,8 @@ func next_stage():
 
 # 		return (sin(curr/init_time * PI / 2) ** 3)
 	card_manager.call_cards()
+	
+	
 	
 	await card_manager.CardApplied
 	
@@ -485,6 +492,7 @@ func light_off_tiles():
 
 func restart_game(flag = "none"):
 	restarting = true
+	get_node("Stuff/SmokeManager").destroy_all_smokes()
 	await disable_buttons()
 	if flag != "forced":	
 		await destroy_all_tiles()

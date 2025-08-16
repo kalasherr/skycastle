@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://daxei3iciv5id"]
+
+[ext_resource type="SpriteFrames" uid="uid://bf57oteekklxe" path="res://stuff/effects/effect_spawn.tres" id="1_l2vqc"]
+[ext_resource type="Script" uid="uid://u3tyikq4fjn1" path="res://scripts/stuff/effects/effect_spawn.gd" id="11_gfnnk"]
+
+[node name="EffectSpawn" type="AnimatedSprite2D"]
+sprite_frames = ExtResource("1_l2vqc")
+frame = 9
+frame_progress = 1.0
+script = ExtResource("11_gfnnk")

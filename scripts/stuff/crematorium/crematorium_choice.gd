@@ -26,7 +26,7 @@ func init():
 func choose(tile):
 	G.GS.delete_tile(tile)
 	for child in get_children():
-		child.get_node("Button").disabled = false
+		child.get_node("Button").disabled = true
 	var init_time = 1.0
 	var curr_time = 0.0
 	var curr_scale = get_child(0).scale

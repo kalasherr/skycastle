@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cege756hot43v"]
+
+[ext_resource type="Script" uid="uid://b460uxxfyxoh" path="res://scripts/stuff/ritual_room/smoke_manager.gd" id="1_g0e2x"]
+
+[node name="SmokeManager" type="Node2D"]
+script = ExtResource("1_g0e2x")

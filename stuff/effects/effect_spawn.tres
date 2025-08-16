@@ -1,0 +1,50 @@
+[gd_resource type="SpriteFrames" load_steps=11 format=3 uid="uid://bf57oteekklxe"]
+
+[ext_resource type="Texture2D" uid="uid://qylt7d74tm6i" path="res://sprites/effects/effect_spawn/effect_spawn1.png" id="1_gpihg"]
+[ext_resource type="Texture2D" uid="uid://bm1fk5bo8oe8y" path="res://sprites/effects/effect_spawn/effect_spawn2.png" id="2_05kdr"]
+[ext_resource type="Texture2D" uid="uid://wx6kkrwqpikf" path="res://sprites/effects/effect_spawn/effect_spawn3.png" id="3_0lv1e"]
+[ext_resource type="Texture2D" uid="uid://clftl2yw8he3j" path="res://sprites/effects/effect_spawn/effect_spawn4.png" id="4_k6hqi"]
+[ext_resource type="Texture2D" uid="uid://bufqqa7nuoxrc" path="res://sprites/effects/effect_spawn/effect_spawn5.png" id="5_0lh8n"]
+[ext_resource type="Texture2D" uid="uid://cvburvreb8rvk" path="res://sprites/effects/effect_spawn/effect_spawn6.png" id="6_u45lo"]
+[ext_resource type="Texture2D" uid="uid://b8kltxvv7il7l" path="res://sprites/effects/effect_spawn/effect_spawn7.png" id="7_3bc83"]
+[ext_resource type="Texture2D" uid="uid://b608k74hj2s0j" path="res://sprites/effects/effect_spawn/effect_spawn9.png" id="8_6gqvf"]
+[ext_resource type="Texture2D" uid="uid://c2upvio8sjgc1" path="res://sprites/effects/effect_spawn/effect_spawn11.png" id="9_02ge3"]
+[ext_resource type="Texture2D" uid="uid://b48kos7v03uxk" path="res://sprites/effects/effect_spawn/effect_spawn12.png" id="10_yldpl"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_gpihg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_05kdr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_0lv1e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_k6hqi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_0lh8n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_u45lo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_3bc83")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_6gqvf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_02ge3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_yldpl")
+}],
+"loop": false,
+"name": &"default",
+"speed": 15.0
+}]
