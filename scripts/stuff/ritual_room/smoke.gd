@@ -7,7 +7,7 @@ var rel_coords = Vector2(0,0)
 var spawn_time = 0.3
 
 func _ready():
-	self.z_index = 100
+	self.z_index = 2
 	self.position = coords * G.tile_size
 	self.texture = load("res://sprites/effects/smoke_effect.png")
 	self.modulate[3] = 0

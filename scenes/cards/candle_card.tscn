@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dekc5jujsitv4"]
+
+[ext_resource type="Script" uid="uid://ba6mldyk5pkbi" path="res://scripts/cards/candle_card.gd" id="1_kktqr"]
+
+[node name="CandleCard" type="Node2D"]
+script = ExtResource("1_kktqr")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

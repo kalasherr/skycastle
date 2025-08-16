@@ -20,7 +20,7 @@ func init():
 		choice.position.x = (i - 1) * 200
 		choice.get_node("Sprite").texture = tile.get_sprite()[0]
 		if tile.get_sprite().size() == 3:
-			choice.get_node("Sprite").position.y = tile.get_sprite()[2]
+			choice.get_node("Sprite").position.y = tile.get_sprite()[2].y
 		choice.bound_tile = tile
 		add_child(choice)
 

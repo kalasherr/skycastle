@@ -58,7 +58,7 @@ func destroy_other_cards(card):
 
 func call_cards():
 	for i in range(0,card_count):
-		var card = MonolithCard.new()
+		var card = CandleCard.new()
 		card.init_position.y = 0
 		card.init_position.x = ((960.0 - card_count * card.card_size.x) / (card_count + 1.0)) * (i - card_count / 2) + card.card_size.x * (i - card_count / 2)
 		cards.add_child(card)

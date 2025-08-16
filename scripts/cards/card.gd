@@ -14,9 +14,24 @@ func apply():
 func init():
 	default_init()
 
+func add_labels():
+	var title = Label.new()
+	var text = Label.new()
+	title.size = Vector2(270,20)
+	text.size = Vector2(270,100)
+	title.position = Vector2(-135,60)
+	text.position = Vector2(-135,80)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.text = get_text()[0]
+	text.text = get_text()[1]
+	add_child(title)
+	add_child(text)
+	
 func default_init():
 	define_sprite()
 	add_button()
+	add_labels()
 
 func post_init():
 	pass
@@ -82,3 +97,6 @@ func able():
 
 func add_tile_to_deck(tile, moves):
 	G.GS.add_tile_to_deck(tile, moves)
+
+func get_text():
+	pass

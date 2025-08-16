@@ -14,29 +14,28 @@ var next_tile_default_position = Vector2.ZERO
 
 signal next_move
 signal ready_to_play
+signal next_tile_updated
 
 @onready var tile_moves = get_node("TileMoves")
 @onready var camera = get_node("Camera")
 @onready var card_manager = camera.get_node("CardManager")
 
 func _ready():
+	delete_all_progress()
 	next_tile_default_position = camera.get_node("NextTile").position
 	card_manager.init()
 	camera.position = G.tile_size * board_size / 2 - G.tile_size / 2
-	
+	camera.z_index = 100
 	game_phase = "player"
 	G.GS = self
 	fill_deck()
 	generating = true
 	await generate_field()
-	
 	await disable_buttons()
-	
 	add_player()
 	generating = false
 	change_hp(player.hp)
 	emit_signal("ready_to_play")
-	
 	next_turn()
 
 func _process(delta):
@@ -322,6 +321,7 @@ func update_next_tile(array, effects = []):
 		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).rotation = - next.rotation
 		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).texture = effect
 	get_node("Camera/DeckLeft").text = str(current_deck.size())
+	emit_signal("next_tile_updated")
 
 func get_tile(coords):
 	for tile in get_node("TileManager").get_children():
@@ -629,3 +629,8 @@ func change_shield(shield):
 		camera.get_node("PlayerShield").text = ""
 	else:
 		camera.get_node("PlayerShield").text = str(shield)
+
+func delete_all_progress():
+	for child in camera.get_children():
+		if child is CandleTile:
+			child.queue_free()

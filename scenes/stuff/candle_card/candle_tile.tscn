@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://qmuclhkddf3a"]
+
+[ext_resource type="Script" uid="uid://cv2nt5l22ayxh" path="res://scripts/stuff/candle_card/candle_tile.gd" id="1_fo01b"]
+
+[node name="CandleTile" type="Sprite2D"]
+script = ExtResource("1_fo01b")

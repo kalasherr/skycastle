@@ -10,7 +10,6 @@ func init():
 	G.GS.connect("next_move", refresh_smokes)
 
 func refresh_smokes():
-	print("refresh")
 	var smoke_coords = []
 	if G.player.player_coords != Vector2(0,0):
 		for tile in G.GS.get_node("TileManager").get_children():
@@ -44,6 +43,8 @@ func add_smoke(coords):
 			place = false
 		if !(coords.x >= 0 and coords.y >= 0 and coords.x < G.GS.board_size.x and coords.y < G.GS.board_size.y):
 			place = false
+	if !(coords.x >= 0 and coords.y >= 0 and coords.x < G.GS.board_size.x and coords.y < G.GS.board_size.y):
+		place = false
 	if place:
 		print(coords)
 		var smoke = RitualSmoke.new()

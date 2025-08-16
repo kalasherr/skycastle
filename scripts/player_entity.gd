@@ -22,8 +22,8 @@ func lose_hp():
 	hp -= 1
 
 func heal(amount = 1):
-	if hp + amount <= max_hp:
-		hp += amount
+	if hp < max_hp:
+		hp = min(amount + hp, max_hp)
 		G.GS.change_hp(hp)
 		return true
 	return false
@@ -41,6 +41,7 @@ func init(coords):
 	replace(coords * G.tile_size + G.GS.get_tile(coords).get_player_offset())
 
 func move(tile):
+	G.GS.disable_buttons()
 	self.player_coords = tile.tile_coords
 	replace(player_coords * G.tile_size + tile.get_player_offset())
 	await tile.on_enter()
