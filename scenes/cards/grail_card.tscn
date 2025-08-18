@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://br0x57mn0rw4o"]
+
+[ext_resource type="Script" uid="uid://besi8gbdd8o6q" path="res://scripts/cards/grail_card.gd" id="1_oopiq"]
+
+[node name="GrailCard" type="Node2D"]
+script = ExtResource("1_oopiq")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dq6f3h48encja"]
+
+[ext_resource type="Script" uid="uid://cbluh2fwgy0js" path="res://scripts/stuff/background/background_main.gd" id="1_h8q2q"]
+
+[node name="BackgroundMain" type="ColorRect"]
+custom_minimum_size = Vector2(100, 100)
+mouse_filter = 2
+color = Color(0.6351, 0.79953, 0.87, 1)
+script = ExtResource("1_h8q2q")

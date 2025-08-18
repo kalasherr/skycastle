@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://5vnxn6h6rcfp"]
+
+[ext_resource type="Script" uid="uid://ceumw3qe78l4f" path="res://scripts/cards/smite_card.gd" id="1_ai2dm"]
+
+[node name="SmiteCard" type="Node2D"]
+script = ExtResource("1_ai2dm")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

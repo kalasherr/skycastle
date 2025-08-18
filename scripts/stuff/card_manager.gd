@@ -57,11 +57,21 @@ func destroy_other_cards(card):
 	return
 
 func call_cards():
-	for i in range(0,card_count):
-		var card = CandleCard.new()
+	var to_pick = generate_cards()
+	for card in to_pick:
 		card.init_position.y = 0
-		card.init_position.x = ((960.0 - card_count * card.card_size.x) / (card_count + 1.0)) * (i - card_count / 2) + card.card_size.x * (i - card_count / 2)
+		card.init_position.x = ((960.0 - card_count * card.card_size.x) / (card_count + 1.0)) * (to_pick.find(card) - card_count / 2) + card.card_size.x * (to_pick.find(card) - card_count / 2)
 		cards.add_child(card)
 
 func get_card(card_name):
 	return load("res://scenes/cards/" + card_name + "_card.tscn").instantiate()
+
+func generate_cards():
+	var to_return = []
+	var pool = G.get_card_pool()
+	for i in range(0,card_count):
+		var card_name = pool.pick_random()
+		pool.pop_at(pool.find(card_name))
+		var card = load("res://scenes/cards/" + card_name).instantiate()
+		to_return.append(card)
+	return to_return

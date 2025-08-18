@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://doqw16uk0mehj"]
+
+[ext_resource type="Script" uid="uid://dmscyx2f08d53" path="res://scripts/cards/panacea_card.gd" id="1_gw87p"]
+
+[node name="PanaceaCard" type="Node2D"]
+script = ExtResource("1_gw87p")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://balqvfc4kg8pj"]
+
+[ext_resource type="Script" uid="uid://bt0xvoxrh7mfq" path="res://scripts/cards/hearth_card.gd" id="1_d3p0o"]
+
+[node name="HearthCard" type="Node2D"]
+script = ExtResource("1_d3p0o")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

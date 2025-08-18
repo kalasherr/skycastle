@@ -7,6 +7,6 @@ func on_enter():
 	var choice = MonasticCellChoice.new()
 	G.GS.camera.add_child(choice)
 	await choice.event_ended
-	
+	queue_free()
 	return
 	

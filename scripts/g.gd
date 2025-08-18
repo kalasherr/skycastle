@@ -21,5 +21,13 @@ func get_tile_pool():
 	for a in dir.get_files():
 		arr.append(a)
 	return arr
+
+func get_card_pool():
+	var dir = DirAccess.open("res://scenes/cards")
+	var arr = []
+	for a in dir.get_files():
+		if a != "card.tscn":
+			arr.append(a)
+	return arr
 	
 signal player_spawned

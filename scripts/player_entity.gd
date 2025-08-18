@@ -2,7 +2,6 @@ extends Node2D
 
 class_name Player
 
-var player_current_health = 3
 var player_coords
 var max_hp = 3
 var hp = 3
@@ -73,6 +72,17 @@ func change_money(amount):
 		G.GS.update_money(money)
 		return true
 
-func get_shield(amount):
-	current_shield += 1
+func get_shield(amount = 1):
+	if current_shield >= -amount:
+		current_shield += amount
+	else:
+		current_shield = 0
 	G.GS.change_shield(current_shield)	
+
+func reset():
+	money = 0
+	current_shield = 0
+	hp = max_hp
+	G.GS.update_money(money)
+	G.GS.change_shield(current_shield)
+	G.GS.change_hp(hp)

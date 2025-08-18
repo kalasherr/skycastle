@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://brtojyum2bkvv"]
+
+[ext_resource type="Script" uid="uid://daru8m3vp3a1g" path="res://scripts/tiles/dungeon_tile.gd" id="1_hrhmf"]
+
+[node name="DungeonTile" type="Node2D"]
+script = ExtResource("1_hrhmf")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

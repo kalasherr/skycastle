@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://rp5vdyk62ni3"]
+[gd_scene load_steps=6 format=3 uid="uid://rp5vdyk62ni3"]
 
 [ext_resource type="Script" uid="uid://b2fcitgajuuic" path="res://scripts/game_scene.gd" id="1_w5aja"]
 [ext_resource type="PackedScene" uid="uid://brm4wyhobxawy" path="res://scenes/stuff/card_manager.tscn" id="2_onqr8"]
 [ext_resource type="PackedScene" uid="uid://cc5wi3pd0cj1g" path="res://scenes/stuff/applied_cards.tscn" id="3_ycayy"]
 [ext_resource type="PackedScene" uid="uid://cege756hot43v" path="res://scenes/stuff/ritual_room/smoke_manager.tscn" id="4_bw6k5"]
+[ext_resource type="PackedScene" uid="uid://dq6f3h48encja" path="res://scenes/stuff/background/background_main.tscn" id="4_y3j0m"]
 
 [node name="GameScene" type="Node2D"]
 texture_filter = 3
@@ -60,6 +61,14 @@ vertical_alignment = 1
 [node name="CardManager" parent="Camera" instance=ExtResource("2_onqr8")]
 
 [node name="AppliedCards" parent="Camera" instance=ExtResource("3_ycayy")]
+
+[node name="BackgroundMain" parent="Camera" instance=ExtResource("4_y3j0m")]
+z_index = -1000
+custom_minimum_size = Vector2(2000, 2000)
+offset_left = -1000.0
+offset_top = -1000.0
+offset_right = 1000.0
+offset_bottom = 1000.0
 
 [node name="TileMoves" type="Node2D" parent="."]
 

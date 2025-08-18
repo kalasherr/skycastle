@@ -15,10 +15,12 @@ var next_tile_default_position = Vector2.ZERO
 signal next_move
 signal ready_to_play
 signal next_tile_updated
+signal next_stage_started
 
 @onready var tile_moves = get_node("TileMoves")
 @onready var camera = get_node("Camera")
 @onready var card_manager = camera.get_node("CardManager")
+@onready var background = camera.get_node("BackgroundMain")
 
 func _ready():
 	delete_all_progress()
@@ -126,20 +128,31 @@ func generate_field():
 				tiles_to_deploy.append(tile)
 				tile.tile_coords = Vector2(i1 - j1, j1)
 	var to_pop = []
-	var to_spawn = []
+	var prioritized = []
 	for tile in tiles_to_deploy:
 		if tile.get_spawn_priority() > 0:
 			to_pop.append(tile)
-			to_spawn.append(tile)
+			prioritized.append(tile)
 	await get_node("Stuff/SmokeManager").refresh_smokes()
 	for tile in to_pop:
 		tiles_to_deploy.pop_at(tiles_to_deploy.find(tile))
-	for tile in to_spawn:
-		get_node("TileManager").add_child(tile)
-		tile.init()
-	for tile in tiles_to_deploy:
-		get_node("TileManager").add_child(tile)
-		tile.init()
+	if prioritized != []:
+		for tile in prioritized:
+			get_node("TileManager").add_child(tile)
+			tile.init()
+	var limit = board_size.x + board_size.y + 1
+	for i in range(0,limit):
+		var found = false
+		for tile in tiles_to_deploy:
+			if tile.tile_coords.x + tile.tile_coords.y == limit - i:
+				found = true
+				get_node("TileManager").add_child(tile)
+				tile.init()
+		if found:
+			await get_tree().create_timer(0.1).timeout
+# 	for tile in tiles_to_deploy:
+# 		get_node("TileManager").add_child(tile)
+# 		tile.init()
 	return
 
 				
@@ -208,6 +221,10 @@ func fill_deck():
 		var tile = RitualRoomTile.new()
 		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
+	for i in range(0,2):
+		var tile = TortureChamberTile.new()
+		tile.tile_moves = get_tile_moves(tile)
+		tile_deck.append(tile)
 	rotate_deck(tile_deck)
 
 func get_tile_moves(tile):
@@ -233,6 +250,10 @@ func get_tile_moves(tile):
 		return G.rotate_array([Vector2(1,0),Vector2(-1,0)], 90 * (round(randf_range(0,4) - 0.5)))
 	elif tile is RitualRoomTile:
 		return [Vector2(1,0),Vector2(-1,0),Vector2(0,1),Vector2(0,-1)]
+	elif tile is GunpowderStorageTile:
+		return [Vector2(0,1), Vector2(0,-1)]
+	elif tile is TortureChamberTile:
+		return G.rotate_array([Vector2(1,0), Vector2(0,1), Vector2(-1,0)], 90 * (round(randf_range(0,4) - 0.5)))
 
 func rotate_deck(deck):
 	for tile in deck:
@@ -444,8 +465,11 @@ func next_stage():
 	
 	
 	await card_manager.CardApplied
+	var background_current_modulate = background.modulate
 	
 	while curr_time < init_time:
+		for i in range(0,4):
+			background.modulate[i] = background.get_next_stage_modulate()[i] * (curr_time / init_time) + background_current_modulate[i] * (1 - curr_time/init_time)
 		start_tile.replace(graph.call(curr_time) * new_pos + (1 - graph.call(curr_time)) * old_pos)
 		camera.position = graph.call(curr_time) * new_camera_pos + (1 - graph.call(curr_time)) * old_camera_pos
 		player.replace(graph.call(curr_time) * new_pos + (1 - graph.call(curr_time)) * old_pos + start_tile.get_player_offset())
@@ -464,7 +488,8 @@ func next_stage():
 	game_phase = "player"
 	stage_transfer = false
 	change_shield(0)
-	
+	G.player.get_shield(-G.player.current_shield)
+	emit_signal("next_stage_started")
 	next_turn()
 
 func change_hp(amount):
@@ -502,6 +527,7 @@ func restart_game(flag = "none"):
 		player.queue_free()
 	for card in camera.get_node("AppliedCards/Cards").get_children():
 		card.queue_free()
+	player.reset()
 	player = null
 	tile_deck = []
 	current_deck = []
@@ -511,6 +537,9 @@ func restart_game(flag = "none"):
 	focused_tile = null
 	board_size = Vector2(4,4)
 	restarting = false
+	
+	background.reset()
+	
 	_ready()
 
 func destroy_all_tiles(flag = "cascade", parameters = []):
@@ -527,8 +556,9 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 			if found:
 				await get_tree().create_timer(0.2).timeout
 		if get_tile(player.player_coords):
-			await get_tree().create_timer(0.5).timeout
-			await get_tile(player.player_coords).destroy("leave_player")
+			await get_tree().create_timer(0.1).timeout
+			if get_tile(player.player_coords):
+				await get_tile(player.player_coords).destroy("leave_player")
 		while get_node("TileManager").get_children().size() != 0:
 			await get_tree().process_frame
 		return

@@ -7,4 +7,5 @@ func on_enter():
 	var choice = CrematoriumChoice.new()
 	G.GS.camera.add_child(choice)
 	await choice.event_ended
+	self.queue_free()
 	return

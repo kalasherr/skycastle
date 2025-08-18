@@ -22,11 +22,21 @@ func init():
 			choice.get_node("Sprite").position = tile.get_sprite()[2]
 		choice.bound_tile = tile
 		add_child(choice)
+	var label = Label.new()
+	add_child(label)
+	label.text = "Choose tile to delete from deck"
+	label.position = Vector2(-400,-200)
+	label.modulate = Color.RED
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.size = Vector2(400,100)
+	label.scale = Vector2(2,2)
 
 func choose(tile):
 	G.GS.delete_tile(tile)
 	for child in get_children():
-		child.get_node("Button").disabled = true
+		if child is TileChoice:
+			child.get_node("Button").disabled = true
 	var init_time = 1.0
 	var curr_time = 0.0
 	var curr_scale = get_child(0).scale

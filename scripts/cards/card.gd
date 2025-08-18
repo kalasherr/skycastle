@@ -16,7 +16,9 @@ func init():
 
 func add_labels():
 	var title = Label.new()
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD
 	var text = Label.new()
+	text.autowrap_mode = TextServer.AUTOWRAP_WORD
 	title.size = Vector2(270,20)
 	text.size = Vector2(270,100)
 	title.position = Vector2(-135,60)
@@ -68,6 +70,11 @@ func define_sprite():
 	sprite.texture = load("res://sprites/cards/card_base.png")
 	sprite.name = "MainSprite"
 	sprite_tree.add_child(sprite)
+	var illustration = Sprite2D.new()
+	illustration.texture = load("res://sprites/cards/candle_card.png")
+	illustration.scale = Vector2(2,2)
+	illustration.position.y = -90
+	add_child(illustration)
 
 func check_hover():
 	var found = false

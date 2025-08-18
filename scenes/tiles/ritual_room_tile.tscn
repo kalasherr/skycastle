@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dy074g8fdyfj2"]
 
-[ext_resource type="Script" uid="uid://ih3omrqrlrsn" path="res://scripts/tiles/ritual_room.gd" id="1_j7f43"]
+[ext_resource type="Script" uid="uid://ih3omrqrlrsn" path="res://scripts/tiles/ritual_room_tile.gd" id="1_j7f43"]
 
 [node name="RitualRoom" type="Node2D"]
 script = ExtResource("1_j7f43")

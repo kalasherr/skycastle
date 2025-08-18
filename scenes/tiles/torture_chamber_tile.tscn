@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0pg0yc3g0jwp"]
+
+[ext_resource type="Script" uid="uid://7vqudu0p1u3k" path="res://scripts/tiles/torture_chamber_tile.gd" id="1_t8xkx"]
+
+[node name="TortureChamberTile" type="Node2D"]
+script = ExtResource("1_t8xkx")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"
