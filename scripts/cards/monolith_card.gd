@@ -2,12 +2,14 @@ extends Card
 
 class_name MonolithCard
 
+var stone_amount = 4
+
 func apply():
-	for i in range(0,6):
+	for i in range(0,stone_amount):
 		var tile = load("res://scenes/tiles/stone_tile.tscn").instantiate()
 		var moves = G.GS.get_tile_moves(tile)
 		G.GS.add_tile_to_deck(tile, moves)
 
 #translate
 func get_text():
-	return ["Monolith", "Adds 6 stones to your deck"]
+	return ["Monolith", "Adds {0} stones to your deck".format([stone_amount])]

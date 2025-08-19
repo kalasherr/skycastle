@@ -18,6 +18,8 @@ func add_labels():
 	var title = Label.new()
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD
 	var text = Label.new()
+	title.modulate = Color(143.0/255.0,86.0/255.0,59.0/255.0)
+	text.modulate = Color(143.0/255.0,86.0/255.0,59.0/255.0)
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD
 	title.size = Vector2(270,20)
 	text.size = Vector2(270,100)
@@ -90,7 +92,7 @@ func pressed():
 	if get_parent().get_parent() is CardManager:
 		get_parent().get_parent().destroy_other_cards(self)
 	else:
-		get_parent().get_parent().show_all_cards()
+		get_parent().get_parent().click()
 
 func destroy():
 	queue_free()

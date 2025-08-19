@@ -3,10 +3,13 @@ extends Node2D
 class_name CardManager
 
 var card_count = 3
+
 @onready var cards = get_node("Cards")
+
 signal CardApplied
 
 var card_deck = []
+@onready var applied = get_parent().get_node("AppliedCards")
 
 func init():
 	pass
@@ -50,13 +53,15 @@ func destroy_other_cards(card):
 
 	card.init_position = target_position
 	card.able()
-	card.reparent(get_parent().get_node("AppliedCards/Cards"))
+	card.reparent(applied.get_node("Cards"))
 	await card.apply()
 	emit_signal("CardApplied")
-	
+	applied.enable_cards()
 	return
 
 func call_cards():
+	applied.hide_cards()
+	applied.disable_cards()
 	var to_pick = generate_cards()
 	for card in to_pick:
 		card.init_position.y = 0

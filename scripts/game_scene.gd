@@ -129,10 +129,10 @@ func generate_field():
 				tile.tile_coords = Vector2(i1 - j1, j1)
 	var to_pop = []
 	var prioritized = []
-	for tile in tiles_to_deploy:
-		if tile.get_spawn_priority() > 0:
-			to_pop.append(tile)
-			prioritized.append(tile)
+# 	for tile in tiles_to_deploy:
+# 		if tile.get_spawn_priority() > 0:
+# 			to_pop.append(tile)
+# 			prioritized.append(tile)
 	await get_node("Stuff/SmokeManager").refresh_smokes()
 	for tile in to_pop:
 		tiles_to_deploy.pop_at(tiles_to_deploy.find(tile))
@@ -188,42 +188,6 @@ func fill_deck():
 			moves.pop_front()
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
-		tile_deck.append(tile)
-	for i in range(0,2):
-		var tile = BellTile.new()
-		tile.tile_moves = get_tile_moves(tile)
-		tile_deck.append(tile)
-	for i in range(0,2):
-		var tile = BankTile.new()
-		tile.tile_moves = get_tile_moves(tile)
-		tile_deck.append(tile)
-	for i in range(0,2):
-		var tile = MausoleumTile.new()
-		tile.tile_moves = get_tile_moves(tile)
-		tile_deck.append(tile)
-	for i in range(0,2):
-		var tile = FireplaceTile.new()
-		tile.tile_moves = get_tile_moves(tile)
-		tile_deck.append(tile)
-	for i in range(0,2):
-		var tile = MonasticCellTile.new()
-		tile.tile_moves = get_tile_moves(tile)
-		tile_deck.append(tile)
-	for i in range(0,2):
-		var tile = CrematoriumTile.new()
-		tile.tile_moves = get_tile_moves(tile)
-		tile_deck.append(tile)
-	for i in range(0,2):
-		var tile = InfirmaryTile.new()
-		tile.tile_moves = get_tile_moves(tile)
-		tile_deck.append(tile)
-	for i in range(0,2):
-		var tile = RitualRoomTile.new()
-		tile.tile_moves = get_tile_moves(tile)
-		tile_deck.append(tile)
-	for i in range(0,2):
-		var tile = TortureChamberTile.new()
-		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
 	rotate_deck(tile_deck)
 

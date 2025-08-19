@@ -4,22 +4,39 @@ class_name AppliedCards
 
 var shown = false
 var last_turn
+var default_position = 380
 
-func show_all_cards():
-	if !shown:
-		var cards = get_node("Cards").get_children()
-		for i in range(0,cards.size()):
-			cards[i].init_position.x -= ((cards[i].card_size.x + 20) * i * cards[i].scale.x)
-		G.GS.disable_buttons()
-		if G.GS.game_phase == "player":
-			last_turn = "tile"
-		else:
-			last_turn = "player"
-		shown = true
+func hide_cards():
+	var cards = get_node("Cards").get_children()
+	for i in range(0,cards.size()):
+		cards[i].init_position.x = default_position
+	shown = false
+	G.GS.game_phase = last_turn
+	G.GS.next_turn()
+		
+
+func click():
+	if shown:
+		hide_cards()
 	else:
-		var cards = get_node("Cards").get_children()
-		for i in range(0,cards.size()):
-			cards[i].init_position.x += ((cards[i].card_size.x + 20) * i * cards[i].scale.x)
-		shown = false
-		G.GS.game_phase = last_turn
-		G.GS.next_turn()
+		show_cards()
+
+func show_cards():
+	var cards = get_node("Cards").get_children()
+	for i in range(0,cards.size()):
+# 		cards[i].init_position.x -= ((cards[i].card_size.x + 20) * i * cards[i].scale.x)
+		cards[i].init_position.x = - ((cards[i].card_size.x + 20) * i * cards[i].scale.x) + default_position
+	G.GS.disable_buttons()
+	if G.GS.game_phase == "player":
+		last_turn = "tile"
+	else:
+		last_turn = "player"
+	shown = true
+
+func disable_cards():
+	for card in get_node("Cards").get_children():
+		card.get_node("Button").disabled = true
+
+func enable_cards():
+	for card in get_node("Cards").get_children():
+		card.get_node("Button").disabled = false
