@@ -2,7 +2,7 @@ extends Tile
 
 class_name BankTile
 
-func post_init():
+func init_effects():
 	add_effect("coin")
 
 func get_sprite():

@@ -37,7 +37,7 @@ func default_init():
 	add_button()
 	add_labels()
 
-func post_init():
+func init_effects():
 	pass
 
 func _ready():

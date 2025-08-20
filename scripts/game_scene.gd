@@ -189,6 +189,11 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
+	for i in range(0,20):
+		var tile = ChapelTile.new()
+		tile.tile_moves = get_tile_moves(tile)
+		tile_deck.append(tile)
+		
 	rotate_deck(tile_deck)
 
 func get_tile_moves(tile):
@@ -218,6 +223,12 @@ func get_tile_moves(tile):
 		return [Vector2(0,1), Vector2(0,-1)]
 	elif tile is TortureChamberTile:
 		return G.rotate_array([Vector2(1,0), Vector2(0,1), Vector2(-1,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	elif tile is BridgeTile:
+		return G.rotate_array([Vector2(1,0),Vector2(-1,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	elif tile is WaterTile:
+		return []
+	elif tile is ChapelTile:
+		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
 
 func rotate_deck(deck):
 	for tile in deck:
@@ -254,10 +265,13 @@ func next_turn(flag = "none"):
 	var tile
 	if current_deck.size() > 0:
 		tile = current_deck[0]
+		tile.init_effects()
 		if tile:
 			var effects = []
+			var dir = DirAccess.open("res://sprites/effects")
 			for effect in tile.effects_to_add:
-				effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
+				if dir.get_files().find(effect + "_effect.png") != -1:
+					effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
 			update_next_tile(tile.get_sprite(), effects)
 	else:
 		camera.get_node("NextTile").texture = null
@@ -360,7 +374,7 @@ func tile_move():
 			get_node("TileManager").add_child(tile)
 			tile.tile_coords = coords
 			tile.init()
-			tile.deploy_effect()
+
 			disable_buttons()
 			if move.tile_coords.x < 0:
 				await tile.move(tile.tile_coords + Vector2(1,0))
@@ -371,6 +385,7 @@ func tile_move():
 			elif move.tile_coords.y >= board_size.y:
 				await tile.move(tile.tile_coords + Vector2(0,-1))
 			break
+	tile.deploy_effect()
 	if current_deck.size() > 0:
 		tile = current_deck[0]
 	else:
@@ -579,18 +594,25 @@ func show_all_deck():
 
 		for i in range(0, deck_to_show.size()):
 			var tile = deck_to_show[i]
+			tile.init_effects()
 			var sprite = Sprite2D.new()
 			sprite.z_index = 1
 			sprite.texture = tile.get_sprite()[0]
 			sprite.rotation = tile.get_sprite()[1]
-	
 			sprite.position.x = (space.size.x / 2) - (((float(width) / 2) - i % width - 0.5) * tile_space.x) 
 			sprite.position.y = (i / width) * tile_space.y + G.tile_size.y + 50
+			if tile.get_sprite().size() == 3:
+				sprite.position += tile.get_sprite()[2]
 			space.add_child(sprite)
+			var effects = []
+			var dir = DirAccess.open("res://sprites/effects")
 			for effect in tile.effects_to_add:
+				if dir.get_files().find(effect + "_effect.png") != -1:
+					effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
+			for effect in effects:
 				sprite.add_child(Sprite2D.new())
 				sprite.get_child(sprite.get_children().size() - 1).rotation = - sprite.rotation
-				sprite.get_child(sprite.get_children().size() - 1).texture = load("res://sprites/effects/" + effect + "_effect.png")
+				sprite.get_child(sprite.get_children().size() - 1).texture = effect
 		return true
 	else:
 		camera.get_node("DeckSpace").queue_free()

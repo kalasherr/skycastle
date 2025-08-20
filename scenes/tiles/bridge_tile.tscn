@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://68g4nv2kd8mp"]
+
+[ext_resource type="Script" uid="uid://dh67v46b6bv6x" path="res://scripts/tiles/bridge_tile.gd" id="1_ckxc4"]
+
+[node name="BridgeTile" type="Node2D"]
+script = ExtResource("1_ckxc4")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

@@ -20,6 +20,7 @@ func _ready():
 
 func update():
 	if G.GS.current_deck.size() > 1:
+		G.GS.current_deck[1].init_effects()
 		self.position.x = get_parent().get_node("NextTile").position.x + x_offset
 		for effect in sprite.get_node("Effects").get_children():
 			effect.queue_free()
@@ -29,7 +30,12 @@ func update():
 		var offset = Vector2(0,0)
 		if array.size() == 3:
 			offset = array[2]
+		var effects = []
+		var dir = DirAccess.open("res://sprites/effects")
 		for effect in G.GS.current_deck[1].effects_to_add:
+			if dir.get_files().find(effect + "_effect.png") != -1:
+				effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
+		for effect in effects:
 			sprite.get_node("Effects").add_child(Sprite2D.new())
 			sprite.get_node("Effects").get_child(sprite.get_node("Effects").get_children().size() - 1).rotation = - sprite.rotation
 			sprite.get_node("Effects").get_child(sprite.get_node("Effects").get_children().size() - 1).texture = load("res://sprites/effects/" + effect + "_effect.png")

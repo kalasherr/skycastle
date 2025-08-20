@@ -1,14 +1,11 @@
 extends Tile
 
-class_name MonasticCellTile
-
-func init_effects():
-	add_effect("monastic_cell")
+class_name ChapelTile
 
 func get_sprite():
 	var sprite
 	var rot = 0
-	sprite = load("res://sprites/tiles/monastic_cell.png")
+	sprite = load("res://sprites/tiles/chapel.png")
 	match tile_moves[0]:
 		Vector2(-1,0):
 			rot = deg_to_rad(90)
@@ -18,4 +15,5 @@ func get_sprite():
 			rot = deg_to_rad(180)
 	return [sprite,rot]
 
-
+func init_effects():
+	add_effect("fireplace")

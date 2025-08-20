@@ -55,7 +55,7 @@ func init():
 			await get_tree().process_frame
 			curr_time -= get_process_delta_time()
 	self.scale = Vector2(1,1)
-	post_init()
+	init_effects()
 
 
 func tile_effect():
@@ -84,7 +84,7 @@ func define_sprite():
 	if get_sprite().size() == 3:
 		main_sprite.get_parent().position += get_sprite()[2]
 
-func post_init():
+func init_effects():
 	pass
 
 func on_enter():
@@ -106,7 +106,8 @@ func add_effect(effect, animated = false):
 			effect_spawn.play("default")
 		effect_scene.position = get_player_offset()
 	else:
-		effects_to_add.append(effect)
+		if effects_to_add.find(effect) == -1:
+				effects_to_add.append(effect)
 
 func add_button():
 	var button = TextureButton.new()

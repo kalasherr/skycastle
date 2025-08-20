@@ -2,7 +2,7 @@ extends Tile
 
 class_name InfirmaryTile
 
-func post_init():
+func init_effects():
 	add_effect("infirmary")
 
 func get_sprite():

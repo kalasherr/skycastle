@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bnb2vtcnqxgkh"]
+
+[ext_resource type="Script" uid="uid://cm5flllawdo78" path="res://scripts/tiles/chapel_tile.gd" id="1_mv2qu"]
+
+[node name="ChapelTile" type="Node2D"]
+script = ExtResource("1_mv2qu")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

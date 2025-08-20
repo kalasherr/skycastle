@@ -2,7 +2,7 @@ extends Tile
 
 class_name CrematoriumTile
 
-func post_init():
+func init_effects():
 	add_effect("spikes")
 	add_effect("crematorium")
 

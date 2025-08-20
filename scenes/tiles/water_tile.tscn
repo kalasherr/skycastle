@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckmy5oi0ljefk"]
+
+[ext_resource type="Script" uid="uid://cn0tfa38sylxt" path="res://scripts/tiles/water_tile.gd" id="1_5ehx1"]
+
+[node name="WaterTile" type="Node2D"]
+script = ExtResource("1_5ehx1")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

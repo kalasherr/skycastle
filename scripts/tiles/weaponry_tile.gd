@@ -10,5 +10,5 @@ func get_sprite():
 		rot = deg_to_rad(90)
 	return [sprite,rot]
 
-func post_init():
+func init_effects():
 	add_effect("weaponry")
