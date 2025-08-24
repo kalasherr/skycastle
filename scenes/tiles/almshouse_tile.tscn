@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvafexl78tyws"]
+
+[ext_resource type="Script" uid="uid://drwu32226q580" path="res://scripts/tiles/almshouse_tile.gd" id="1_n6a3q"]
+
+[node name="AlmshouseTile" type="Node2D"]
+script = ExtResource("1_n6a3q")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

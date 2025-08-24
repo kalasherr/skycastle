@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://5dmjmbe03o21"]
+
+[ext_resource type="Script" uid="uid://7qq3nt7gat6w" path="res://scripts/cards/holy_trinity_card.gd" id="1_8fjc4"]
+
+[node name="HolyTrinityCard" type="Node2D"]
+script = ExtResource("1_8fjc4")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

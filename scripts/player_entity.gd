@@ -42,6 +42,15 @@ func init(coords):
 func move(tile):
 	G.GS.disable_buttons()
 	self.player_coords = tile.tile_coords
+	var start_pos = position
+	var end_pos = player_coords * G.tile_size + tile.get_player_offset()
+	var init_time = 0.7
+	var curr_time = 0.0
+	while curr_time < init_time:
+		curr_time += get_process_delta_time()
+		var pos = curr_time / init_time * end_pos + (1 - curr_time / init_time) * start_pos - Vector2(0,sin(curr_time / init_time * PI) * 50)
+		replace(pos)
+		await get_tree().process_frame
 	replace(player_coords * G.tile_size + tile.get_player_offset())
 	await tile.on_enter()
 	emit_signal("player_moved")

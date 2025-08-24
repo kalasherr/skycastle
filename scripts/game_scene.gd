@@ -190,7 +190,7 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range(0,20):
-		var tile = ChapelTile.new()
+		var tile = AlmshouseTile.new()
 		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
 		
@@ -229,6 +229,8 @@ func get_tile_moves(tile):
 		return []
 	elif tile is ChapelTile:
 		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	elif tile is AlmshouseTile:
+		return G.rotate_array([Vector2(1,0),Vector2(0,0)], 90 * (round(randf_range(0,4) - 0.5)))
 
 func rotate_deck(deck):
 	for tile in deck:
@@ -330,6 +332,7 @@ func get_tile(coords):
 
 func get_player_moves():
 	var tile = get_tile(player.player_coords)
+
 	var moves = []
 	for move in tile.tile_moves:
 		if get_tile(tile.tile_coords + move):
