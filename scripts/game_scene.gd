@@ -632,9 +632,11 @@ func copy_current_deck():
 		to_return[i].tile_in_deck = current_deck[i]
 	return to_return
 
-func add_tile_to_deck(tile, moves):
+func add_tile_to_deck(tile, moves, animated = false):
 	tile.tile_moves = moves
 	tile_deck.append(tile)
+	if animated:
+		pass
 
 func delete_tile(tile, from_deck = true):
 	current_deck.pop_at(current_deck.find(tile.bound_tile))

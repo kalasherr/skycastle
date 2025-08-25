@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cgvlgf2sdp6my"]
+
+[ext_resource type="Script" uid="uid://bojk32yttkmxt" path="res://scripts/cards/bifrost_card.gd" id="1_s7ymk"]
+
+[node name="BifrostCard" type="Node2D"]
+script = ExtResource("1_s7ymk")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"
