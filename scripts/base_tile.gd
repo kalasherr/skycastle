@@ -93,6 +93,8 @@ func on_enter():
 	return
 
 func add_effect(effect, animated = false):
+	if tile_moves == []:
+		return
 	if effects_to_add == null:
 		effects_to_add = []
 	if check_node("Effects"):

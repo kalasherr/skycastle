@@ -29,5 +29,13 @@ func get_card_pool():
 		if a != "card.tscn":
 			arr.append(a)
 	return arr
+
+func get_sin_card_pool():
+	var dir = DirAccess.open("res://scenes/sin_cards")
+	var arr = []
+	for a in dir.get_files():
+		if a != "sin_card.tscn":
+			arr.append(a)
+	return arr
 	
 signal player_spawned

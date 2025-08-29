@@ -7,12 +7,44 @@ var queue = []
 
 signal play_next
 
-func play(sprite):
+func play(sprite, sender = null):
 	if !playing:
+		var f = func(x):
+			return (((x * 3.0 - 1.0) ** 2.0) - 1) / 3
+			
+		var next_tile = G.GS.camera.get_node("NextTile")
+		playing = true
 		var node = Sprite2D.new()
-		node.position = Vector2(0, -100)
-		node.modulate[3] = 0
-		node.texture = 
+		node.scale = 0.3 * Vector2(1,1)
+		node.z_index = -1
+		node.modulate[3] = 1
+		node.texture = sprite
+		node.global_position = G.player.global_position
+		G.GS.camera.get_node("NextTile").add_child(node)
+		var start_position = G.player.global_position
+		var final_position = next_tile.global_position + Vector2(0,0)
+		var init_time = 0.6
+		var curr_time = 0.0
+		var threshold_time = 0.25
+		print(final_position)
+		while curr_time < init_time:
+			curr_time += get_process_delta_time()
+			node.scale = (0.3 + ((curr_time / init_time) * 0.7)) * Vector2(1,1)
+			if curr_time < init_time:
+				node.global_position = f.call(curr_time / init_time) * final_position + f.call(1 - curr_time / init_time) * start_position
+			else:
+				node.global_position = final_position
+			await get_tree().process_frame
+		node.queue_free()
+		playing = false
+		if queue != []:
+			play(queue[0][0], queue[0][1])
+			queue.pop_front()
+		else:
+			return
+	else:
+		queue.append([sprite,sender])
+		
 
 func play_sprite():
 	pass

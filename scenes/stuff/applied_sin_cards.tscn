@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bqk0qa32ujkxx"]
+
+[ext_resource type="Script" uid="uid://c50iwt4bcisjw" path="res://scripts/stuff/applied_sin_cards.gd" id="1_awopv"]
+
+[node name="AppliedSinCards" type="Node2D"]
+script = ExtResource("1_awopv")
+
+[node name="Cards" type="Node2D" parent="."]

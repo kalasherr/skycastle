@@ -5,14 +5,12 @@ class_name BridgeTile
 func deploy_effect():
 	for i in [0,1]:
 		var coords = Vector2(round((tile_coords + tile_moves[i].rotated(deg_to_rad(90))).x), round((tile_coords + tile_moves[i].rotated(deg_to_rad(90))).y))
-		print(coords)
 		if G.GS.get_tile(coords):
 			var crown = false
 			for effect in G.GS.get_tile(coords).get_node("Effects").get_children():
 				if effect is CrownEffect:
 					crown = true
 			if !(G.GS.get_tile(coords) is BridgeTile or G.GS.get_tile(coords) is WaterTile or crown):
-				print(G.GS.get_tile(coords))
 				G.GS.tile_deck.pop_at(G.GS.tile_deck.find(G.GS.get_tile(coords).tile_in_deck))
 				G.GS.get_tile(coords).destroy()
 				var tile = WaterTile.new()

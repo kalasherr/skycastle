@@ -46,7 +46,6 @@ func add_smoke(coords):
 	if !(coords.x >= 0 and coords.y >= 0 and coords.x < G.GS.board_size.x and coords.y < G.GS.board_size.y):
 		place = false
 	if place:
-		print(coords)
 		var smoke = RitualSmoke.new()
 		smoke.coords = coords
 		add_child(smoke)

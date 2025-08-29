@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://besnos1eeihr7"]
+
+[ext_resource type="Script" uid="uid://c6b1311p1sjit" path="res://scripts/sin_cards/wrath_card.gd" id="1_fgk62"]
+
+[node name="WrathCard" type="Node2D"]
+script = ExtResource("1_fgk62")
+metadata/_custom_type_script = "uid://dtgerq3hrdtj8"

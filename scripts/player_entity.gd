@@ -17,8 +17,9 @@ func _ready():
 	G.GS.change_hp(hp)
 	G.emit_signal("player_spawned")
 
-func lose_hp():
-	hp -= 1
+func lose_hp(amount = 1):
+	hp -= amount
+	G.GS.change_hp(hp)
 
 func heal(amount = 1):
 	if hp < max_hp:
@@ -75,7 +76,9 @@ func take_damage(amount = 1):
 	
 func change_money(amount):
 	if money < -amount:
-		return false
+		money = 0
+		G.GS.update_money(money)
+		return true
 	else:
 		money += amount
 		G.GS.update_money(money)

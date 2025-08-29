@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://wb3plry3qc65"]
+
+[ext_resource type="Script" uid="uid://b1marf5jmj4ik" path="res://scripts/sin_cards/greed_card.gd" id="1_bhj61"]
+
+[node name="GreedCard" type="Node2D"]
+script = ExtResource("1_bhj61")
+metadata/_custom_type_script = "uid://dtgerq3hrdtj8"

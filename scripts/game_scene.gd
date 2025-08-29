@@ -157,7 +157,7 @@ func generate_field():
 
 				
 func fill_deck():
-	for i in range (0,7):
+	for i in range (0,5):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,3):
 			moves.shuffle()
@@ -165,7 +165,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,7):
+	for i in range (0,5):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,2):
 			moves.shuffle()
@@ -173,7 +173,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,7):
+	for i in range (0,5):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,1):
 			moves.shuffle()
@@ -181,17 +181,13 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,7):
+	for i in range (0,5):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,0):
 			moves.shuffle()
 			moves.pop_front()
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
-		tile_deck.append(tile)
-	for i in range(0,20):
-		var tile = AlmshouseTile.new()
-		tile.tile_moves = get_tile_moves(tile)
 		tile_deck.append(tile)
 		
 	rotate_deck(tile_deck)
@@ -265,6 +261,7 @@ func button_pressed(tile):
 
 func next_turn(flag = "none"):
 	var tile
+	var waiting = false
 	if current_deck.size() > 0:
 		tile = current_deck[0]
 		tile.init_effects()
@@ -276,14 +273,18 @@ func next_turn(flag = "none"):
 					effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
 			update_next_tile(tile.get_sprite(), effects)
 	else:
-		camera.get_node("NextTile").texture = null
-		for effect in camera.get_node("NextTile/Effects").get_children():
-			effect.queue_free()
-		camera.get_node("DeckLeft").text = str(0)
-		
-		restart_game()
-	
-	
+		if camera.get_node("SinCardManager").get_node("Cards").get_children().size() < 7:
+			camera.get_node("SinCardManager").call_cards()
+			waiting = true
+		else:
+			camera.get_node("NextTile").texture = null
+			for effect in camera.get_node("NextTile/Effects").get_children():
+				effect.queue_free()
+			camera.get_node("DeckLeft").text = str(0)
+			
+			restart_game()
+	if waiting:
+		await camera.get_node("SinCardManager").card_applied
 
 	if !stage_transfer and !restarting:
 		if game_phase == "player":
@@ -394,7 +395,6 @@ func tile_move():
 	else:
 		camera.get_node("NextTile").texture = null
 		camera.get_node("DeckLeft").text = str(0)
-		restart_game()
 	for move in tile_moves.get_children():
 		move.queue_free()
 
@@ -632,11 +632,18 @@ func copy_current_deck():
 		to_return[i].tile_in_deck = current_deck[i]
 	return to_return
 
-func add_tile_to_deck(tile, moves, animated = false):
+func add_tile_to_deck(tile, moves, animated = false, to_current = false):
+	camera.get_node("TileAdd").play(tile.get_sprite()[0])
 	tile.tile_moves = moves
 	tile_deck.append(tile)
 	if animated:
 		pass
+	if to_current:
+		current_deck.append(tile.duplicate())
+		current_deck[current_deck.size()-1].tile_moves = tile_deck[tile_deck.size()-1].tile_moves
+		current_deck[current_deck.size()-1].effects_to_add = tile_deck[tile_deck.size()-1].effects_to_add
+		current_deck[current_deck.size()-1].tile_in_deck = tile_deck[tile_deck.size()-1]
+		update_next_tile(current_deck[0].get_sprite())
 
 func delete_tile(tile, from_deck = true):
 	current_deck.pop_at(current_deck.find(tile.bound_tile))
