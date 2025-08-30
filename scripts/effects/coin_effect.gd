@@ -16,8 +16,8 @@ func on_enter():
 			modulate[3] = 0
 		else:
 			modulate[3] = 1
-		curr_time += get_process_delta_time()
-		position.y -= 20.0 * get_process_delta_time()
+		curr_time += get_process_delta_time() * G.animation_time_scale
+		position.y -= 20.0 * get_process_delta_time() * G.animation_time_scale
 		await get_tree().process_frame
 	queue_free()
 

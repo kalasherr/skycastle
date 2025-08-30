@@ -46,16 +46,21 @@ func init():
 	replace(tile_size.x * tile_coords)
 	define_sprite()
 	add_button()
+	
+	var f = func(x):
+		return (-((x * 3 - 2)) ** 2 + 5) / 4
+		
 	if self.tile_coords.x < G.GS.board_size.x and self.tile_coords.x >= 0 and self.tile_coords.y < G.GS.board_size.y and self.tile_coords.y >= 0:
-		var init_time = 0.2
-		var curr_time = init_time
-		while curr_time > 0:
-			var curr_scale = 1 - curr_time / init_time
+		var init_time = 0.3 + randf_range(0.0, 0.1)
+		var curr_time = 0
+		while curr_time < init_time:
+			var curr_scale = f.call(curr_time / init_time)
 			scale = Vector2(curr_scale, curr_scale)
 			await get_tree().process_frame
-			curr_time -= get_process_delta_time()
+			curr_time += get_process_delta_time() * G.animation_time_scale
 	self.scale = Vector2(1,1)
 	init_effects()
+	return
 
 
 func tile_effect():
@@ -67,7 +72,7 @@ func replace(coords):
 	curr_position = coords
 	
 func _process(delta):
-	time_from_init += get_process_delta_time()
+	time_from_init += get_process_delta_time() * G.animation_time_scale
 	if G.GS.player or G.GS.generating:
 		if G.GS.player:
 			if G.GS.player.player_coords == tile_coords:
@@ -155,7 +160,7 @@ func move(coords):
 		if move_player:
 			G.player.position = position  + get_player_offset()
 		replace(tile_size * tile_coords * (1 - current_time / init_time) + current_time / init_time * old_position)
-		current_time -= get_process_delta_time()
+		current_time -= get_process_delta_time() * G.animation_time_scale
 		await get_tree().process_frame
 	replace(tile_size * tile_coords)
 
@@ -175,11 +180,11 @@ func destroy(flag = ""):
 			if G.player.player_coords == tile_coords:
 				destroy_player = true
 		while scale.x > 0:
-			scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
+			scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time() * G.animation_time_scale
 			if G.player:
 				if destroy_player:
 					if G.player.scale.x > 0:
-						G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
+						G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time() * G.animation_time_scale
 			await get_tree().process_frame
 		if destroy_player and flag != "leave_player" and !G.GS.restarting:
 			G.GS.restart_game()

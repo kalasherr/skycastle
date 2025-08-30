@@ -41,6 +41,9 @@ func _ready():
 	next_turn()
 
 func _process(delta):
+	keyboard_controller()
+
+func keyboard_controller():
 	if Input.is_action_just_pressed("ui_accept"):
 		restart_game("forced")
 	if Input.is_action_just_pressed("ui_cancel"):
@@ -78,7 +81,7 @@ func generate_field():
 	if !player:
 		add_player()
 	
-	await get_tree().create_timer(0.1).timeout
+	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 	
 	var end_tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
 	end_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1), Vector2(1,0), Vector2(0,1)]
@@ -87,7 +90,7 @@ func generate_field():
 	end_tile.add_effect("crown")
 	end_tile.init()
 	
-	await get_tree().create_timer(0.1).timeout
+	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 		
 	var second_tile = current_deck.pick_random()
 	while true:
@@ -113,7 +116,7 @@ func generate_field():
 	second_tile.tile_coords = Vector2(board_size.x-1, board_size.y-2)
 	second_tile.init()
 	
-	await get_tree().create_timer(0.1).timeout
+	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 	
 	var tiles_to_deploy = []
 	for i in range (0,board_size.x + board_size.y):
@@ -149,7 +152,7 @@ func generate_field():
 				get_node("TileManager").add_child(tile)
 				tile.init()
 		if found:
-			await get_tree().create_timer(0.1).timeout
+			await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 # 	for tile in tiles_to_deploy:
 # 		get_node("TileManager").add_child(tile)
 # 		tile.init()
@@ -233,8 +236,9 @@ func rotate_deck(deck):
 		if tile.rotatable():
 			var rot = round(randf_range(-0.5, 3.5))
 			rot *= 90
-			for move in tile.tile_moves:
-				move = move.rotated(deg_to_rad(rot))
+			if tile.tile_moves != []:
+				for move in tile.tile_moves:
+					move = move.rotated(deg_to_rad(rot))
 
 func add_tile(scene, current_deck_flag = false):
 	var tile = scene
@@ -455,7 +459,7 @@ func next_stage():
 		start_tile.replace(graph.call(curr_time) * new_pos + (1 - graph.call(curr_time)) * old_pos)
 		camera.position = graph.call(curr_time) * new_camera_pos + (1 - graph.call(curr_time)) * old_camera_pos
 		player.replace(graph.call(curr_time) * new_pos + (1 - graph.call(curr_time)) * old_pos + start_tile.get_player_offset())
-		curr_time += get_process_delta_time()
+		curr_time += get_process_delta_time() * G.animation_time_scale
 		await get_tree().process_frame
 	start_tile.replace(new_pos)
 	camera.position = new_camera_pos
@@ -507,8 +511,8 @@ func restart_game(flag = "none"):
 		await destroy_all_tiles("ignore_player")
 	if player:
 		player.queue_free()
-	for card in camera.get_node("AppliedCards/Cards").get_children():
-		card.queue_free()
+	camera.get_node("AppliedCards").destroy_all_cards()
+	camera.get_node("AppliedSinCards").destroy_all_cards()
 	player.reset()
 	player = null
 	tile_deck = []
@@ -536,9 +540,9 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 					tile.destroy()
 					found = true
 			if found:
-				await get_tree().create_timer(0.2).timeout
+				await get_tree().create_timer(0.2 / G.animation_time_scale).timeout
 		if get_tile(player.player_coords):
-			await get_tree().create_timer(0.1).timeout
+			await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 			if get_tile(player.player_coords):
 				await get_tile(player.player_coords).destroy("leave_player")
 		while get_node("TileManager").get_children().size() != 0:
@@ -554,7 +558,7 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 						tile.destroy()
 						found = true
 				if found:
-					await get_tree().create_timer(0.2).timeout
+					await get_tree().create_timer(0.2 / G.animation_time_scale).timeout
 		await destroy.call()
 		return
 	elif flag == "ignore_player":
@@ -568,7 +572,7 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 					tile.destroy()
 					found = true
 			if found:
-				await get_tree().create_timer(0.2).timeout
+				await get_tree().create_timer(0.2 / G.animation_time_scale).timeout
 		if get_tile(player.player_coords):
 			await get_tile(player.player_coords).destroy("leave_player")
 		while get_node("TileManager").get_children().size() != 0:

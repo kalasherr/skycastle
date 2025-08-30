@@ -39,3 +39,7 @@ func disable_cards():
 func enable_cards():
 	for card in get_node("Cards").get_children():
 		card.get_node("Button").disabled = false
+
+func destroy_all_cards():
+	for child in get_node("Cards").get_children():
+		child.queue_free()

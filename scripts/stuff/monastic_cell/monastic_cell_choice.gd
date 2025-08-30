@@ -44,7 +44,7 @@ func choose(tile):
 		for child in get_children():
 			child.scale = curr_scale * (1 - curr_time / init_time)
 		await get_tree().process_frame
-		curr_time += get_process_delta_time()
+		curr_time += get_process_delta_time() * G.animation_time_scale
 	for child in get_children():
 		child.queue_free()
 	emit_signal("event_ended")

@@ -32,11 +32,11 @@ func destroy(flag = ""):
 			if G.player.player_coords == tile_coords:
 				destroy_player = true
 		while scale.x > 0:
-			scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
+			scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time() * G.animation_time_scale
 			if G.player:
 				if destroy_player:
 					if G.player.scale.x > 0:
-						G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time()
+						G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time() * G.animation_time_scale
 			await get_tree().process_frame
 		if destroy_player and flag != "leave_player" and !G.GS.restarting:
 			G.GS.restart_game()

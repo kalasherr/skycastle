@@ -8,5 +8,5 @@ var begin_pos
 func _process(delta):
 	if !begin_pos:
 		begin_pos = position
-	time += get_process_delta_time()
+	time += get_process_delta_time() * G.animation_time_scale
 	position = begin_pos - sin(time * 2) * 6 * shift

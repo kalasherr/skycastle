@@ -38,7 +38,7 @@ func update():
 		for effect in effects:
 			sprite.get_node("Effects").add_child(Sprite2D.new())
 			sprite.get_node("Effects").get_child(sprite.get_node("Effects").get_children().size() - 1).rotation = - sprite.rotation
-			sprite.get_node("Effects").get_child(sprite.get_node("Effects").get_children().size() - 1).texture = load("res://sprites/effects/" + effect + "_effect.png")
+			sprite.get_node("Effects").get_child(sprite.get_node("Effects").get_children().size() - 1).texture = effect
 		self.position.y = offset.y
 	else:
 		sprite.texture = null

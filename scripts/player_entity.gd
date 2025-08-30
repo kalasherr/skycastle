@@ -48,7 +48,7 @@ func move(tile):
 	var init_time = 0.7
 	var curr_time = 0.0
 	while curr_time < init_time:
-		curr_time += get_process_delta_time()
+		curr_time += get_process_delta_time() * G.animation_time_scale
 		var pos = curr_time / init_time * end_pos + (1 - curr_time / init_time) * start_pos - Vector2(0,sin(curr_time / init_time * PI) * 50)
 		replace(pos)
 		await get_tree().process_frame
@@ -72,7 +72,7 @@ func take_damage(amount = 1):
 					self.modulate[3] = 0
 				else:
 					self.modulate[3] = 1
-				await get_tree().create_timer(0.1).timeout
+				await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 	
 func change_money(amount):
 	if money < -amount:

@@ -23,14 +23,14 @@ func destroy_other_cards(card):
 				
 	await f.call()
 	
-	var init_time = 0.5
+	var init_time = 0.2
 	var curr_time = 0.0
 
-	var target_scale = Vector2(0.3,0.3)
+	var target_scale = Vector2(0.5,0.5)
 	
 	while card.scale > target_scale:
 		card.scale = target_scale * curr_time / init_time + Vector2(1,1) * (1 - curr_time / init_time)
-		curr_time += get_process_delta_time()
+		curr_time += get_process_delta_time() * G.animation_time_scale
 		await get_tree().process_frame
 
 	card.scale = target_scale 
@@ -48,7 +48,7 @@ func destroy_other_cards(card):
 	
 	while curr_time < init_time:
 		card.init_position = graph.call(curr_time) * target_position + (1 - graph.call(curr_time)) * start_position
-		curr_time += get_process_delta_time()
+		curr_time += get_process_delta_time() * G.animation_time_scale
 		await get_tree().process_frame
 
 	card.init_position = target_position
@@ -63,7 +63,7 @@ func call_cards():
 	var to_pick = generate_cards()
 	for card in to_pick:
 		card.init_position.y = 0
-		card.init_position.x = ((960.0 - card_count * card.card_size.x) / (card_count + 1.0)) * (to_pick.find(card) - card_count / 2) + card.card_size.x * (to_pick.find(card) - card_count / 2)
+		card.init_position.x = - 480 + (to_pick.find(card) + 1) * (960.0 - card_count * card.card_size.x) / (card_count + 1) + card.card_size.x * (to_pick.find(card) + 0.5)
 		cards.add_child(card)
 
 func get_card(card_name):

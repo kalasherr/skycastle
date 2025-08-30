@@ -20,7 +20,7 @@ func reset():
 	var curr_time = 0.0
 	var start_point = modulate
 	while curr_time < init_time:
-		curr_time += get_process_delta_time()
+		curr_time += get_process_delta_time() * G.animation_time_scale
 		for i in range(0,4):
 			modulate[i] = start_point[i] * (1 - curr_time / init_time) + default_modulate[i] * curr_time / init_time
 		await get_tree().process_frame
