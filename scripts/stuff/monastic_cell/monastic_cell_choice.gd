@@ -23,17 +23,10 @@ func init():
 			choice.get_node("Sprite").position.y = tile.get_sprite()[2].y
 		choice.bound_tile = tile
 		add_child(choice)
-	var label = Label.new()
-	add_child(label)
-	label.text = "Choose tile to add to deck"
-	label.position = Vector2(-400,-200)
-	label.modulate = Color.GREEN
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.size = Vector2(400,100)
-	label.scale = Vector2(2,2)
+	set_text()
 
 func choose(tile):
-	G.GS.add_tile(tile.bound_tile)
+	G.GS.add_tile_to_deck(tile, G.GS.get_tile_moves(tile))
 	for child in get_children():
 		if child is TileChoice:
 			child.get_node("Button").disabled = false
@@ -48,3 +41,13 @@ func choose(tile):
 	for child in get_children():
 		child.queue_free()
 	emit_signal("event_ended")
+
+func set_text():
+	var label = Label.new()
+	add_child(label)
+	label.text = "Choose tile to add to deck"
+	label.position = Vector2(-400,-200)
+	label.modulate = Color.GREEN
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.size = Vector2(400,100)
+	label.scale = Vector2(2,2)

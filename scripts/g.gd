@@ -2,8 +2,11 @@ extends Node
 
 var GS
 var player
+var CM
+var SCM
+
 var tile_size = Vector2(64,64)
-var animation_time_scale = 1
+var animation_time_scale = 2
 
 func _ready():
 	pass

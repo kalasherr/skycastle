@@ -1,13 +1,15 @@
-[gd_scene load_steps=9 format=3 uid="uid://rp5vdyk62ni3"]
+[gd_scene load_steps=11 format=3 uid="uid://rp5vdyk62ni3"]
 
 [ext_resource type="Script" uid="uid://b2fcitgajuuic" path="res://scripts/game_scene.gd" id="1_w5aja"]
 [ext_resource type="PackedScene" uid="uid://brm4wyhobxawy" path="res://scenes/stuff/card_manager.tscn" id="2_onqr8"]
+[ext_resource type="Script" uid="uid://dxjjb1em87npv" path="res://scripts/camera.gd" id="2_utbpp"]
 [ext_resource type="PackedScene" uid="uid://cc5wi3pd0cj1g" path="res://scenes/stuff/applied_cards.tscn" id="3_ycayy"]
 [ext_resource type="PackedScene" uid="uid://cege756hot43v" path="res://scenes/stuff/ritual_room/smoke_manager.tscn" id="4_bw6k5"]
 [ext_resource type="PackedScene" uid="uid://dq6f3h48encja" path="res://scenes/stuff/background/background_main.tscn" id="4_y3j0m"]
 [ext_resource type="Script" uid="uid://b1i3ju4ale47t" path="res://scripts/stuff/tile_add/tile_add.gd" id="5_rurhu"]
 [ext_resource type="PackedScene" uid="uid://pvaxflquxkv3" path="res://scenes/stuff/sin_card_manager.tscn" id="6_kk2rg"]
 [ext_resource type="PackedScene" uid="uid://bqk0qa32ujkxx" path="res://scenes/stuff/applied_sin_cards.tscn" id="7_b5spy"]
+[ext_resource type="Script" uid="uid://blirdlp26c373" path="res://scripts/environment.gd" id="10_mw25s"]
 
 [node name="GameScene" type="Node2D"]
 texture_filter = 3
@@ -17,6 +19,8 @@ script = ExtResource("1_w5aja")
 
 [node name="Camera" type="Camera2D" parent="."]
 z_index = 1
+zoom = Vector2(2, 2)
+script = ExtResource("2_utbpp")
 
 [node name="NextTile" type="Sprite2D" parent="Camera"]
 position = Vector2(400, 0)
@@ -88,3 +92,8 @@ metadata/_custom_type_script = "uid://b1i3ju4ale47t"
 [node name="Stuff" type="Node2D" parent="."]
 
 [node name="SmokeManager" parent="Stuff" instance=ExtResource("4_bw6k5")]
+
+[node name="Trash" type="Node2D" parent="Stuff"]
+
+[node name="Environment" type="Node2D" parent="."]
+script = ExtResource("10_mw25s")

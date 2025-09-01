@@ -7,7 +7,8 @@ func _ready():
 	
 
 func init():
-	G.GS.connect("next_move", refresh_smokes)
+	if !G.GS.is_connected("next_move", refresh_smokes):
+		G.GS.connect("next_move", refresh_smokes)
 
 func refresh_smokes():
 	var smoke_coords = []

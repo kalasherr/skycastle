@@ -83,12 +83,7 @@ func generate_field():
 	
 	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 	
-	var end_tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
-	end_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1), Vector2(1,0), Vector2(0,1)]
-	get_node("TileManager").add_child(end_tile)
-	end_tile.tile_coords = Vector2(0, 0)
-	end_tile.add_effect("crown")
-	end_tile.init()
+	
 	
 	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 		
@@ -124,7 +119,7 @@ func generate_field():
 		var found = false
 		for j in range (0,board_size.x + board_size.y):
 			var j1 = board_size.x + board_size.y - 1 - j
-			if check_availability(Vector2(i1 - j1, j1)):
+			if check_availability(Vector2(i1 - j1, j1)) and (i1 != 0 or j1 != 0):
 				found = true
 				var tile = current_deck.pick_random()
 				current_deck.pop_at(current_deck.find(tile))
@@ -156,6 +151,13 @@ func generate_field():
 # 	for tile in tiles_to_deploy:
 # 		get_node("TileManager").add_child(tile)
 # 		tile.init()
+
+	var end_tile = CrownTile.new()
+	end_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1), Vector2(1,0), Vector2(0,1)]
+	get_node("TileManager").add_child(end_tile)
+	end_tile.tile_coords = Vector2(0, 0)
+	end_tile.init()
+	
 	return
 
 				
@@ -192,7 +194,16 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-		
+	for i in range (0,5):
+		var tile = GunpowderStorageTile.new()
+		var moves = get_tile_moves(tile)
+		tile.tile_moves = moves
+		tile_deck.append(tile)
+	for i in range (0,5):
+		var tile = MonasticCellTile.new()
+		var moves = get_tile_moves(tile)
+		tile.tile_moves = moves
+		tile_deck.append(tile)
 	rotate_deck(tile_deck)
 
 func get_tile_moves(tile):
@@ -230,6 +241,8 @@ func get_tile_moves(tile):
 		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
 	elif tile is AlmshouseTile:
 		return G.rotate_array([Vector2(1,0),Vector2(0,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	else:
+		print(tile.name)
 
 func rotate_deck(deck):
 	for tile in deck:
@@ -278,7 +291,7 @@ func next_turn(flag = "none"):
 			update_next_tile(tile.get_sprite(), effects)
 	else:
 		if camera.get_node("SinCardManager").get_node("Cards").get_children().size() < 7:
-			camera.get_node("SinCardManager").call_cards()
+			camera.get_node("SinCardManager").call_cards(true)
 			waiting = true
 		else:
 			camera.get_node("NextTile").texture = null
@@ -450,7 +463,7 @@ func next_stage():
 	
 	
 	
-	await card_manager.CardApplied
+	await card_manager.card_applied
 	var background_current_modulate = background.modulate
 	
 	while curr_time < init_time:
@@ -503,6 +516,8 @@ func light_off_tiles():
 
 func restart_game(flag = "none"):
 	restarting = true
+	erase_deck()
+	await deck_erased
 	get_node("Stuff/SmokeManager").destroy_all_smokes()
 	await disable_buttons()
 	if flag != "forced":	
@@ -666,3 +681,50 @@ func delete_all_progress():
 	for child in camera.get_children():
 		if child is CandleTile:
 			child.queue_free()
+
+signal deck_erased
+var dropping = false
+
+func erase_deck():
+	var drop_time = 0.6 / G.animation_time_scale
+	var delay_time = 0.1 / G.animation_time_scale
+	var trash = get_node("Stuff/Trash")
+	var sprites = []
+	var nodes = []
+	camera.get_node("NextTile").texture = null
+	for effect in camera.get_node("NextTile/Effects").get_children():
+		effect.queue_free()
+	for i in range(0, current_deck.size()):
+		var tile = current_deck[current_deck.size() - i - 1] 
+		var node = Node2D.new()
+		trash.add_child(node)
+		var sprite = Sprite2D.new()
+		sprite.texture = tile.get_sprite()[0]
+		sprite.rotation = tile.get_sprite()[1]
+		if tile.get_sprite().size() == 3:
+			sprite.position = tile.get_sprite()[2]
+		node.add_child(sprite)
+		node.global_position = camera.get_node("NextTile").global_position
+		nodes.push_front(node)
+	for node in nodes:
+		drop(node, drop_time)
+		await get_tree().create_timer(delay_time).timeout
+	await get_tree().create_timer(drop_time - delay_time).timeout
+	emit_signal("deck_erased")
+	
+
+func drop(node, time):
+	var variety = randf_range(-200.0,200.0)
+	var start_position = node.position
+	var f = func(x):
+		return - (((x - 1) ** 2) - 1) * 50
+	var init_time = time
+	var curr_time = 0.0
+	while curr_time < init_time:
+		node.position.x = start_position.x + (curr_time / init_time) * variety
+		node.position.y = start_position.y - f.call(curr_time / init_time * 3)
+		node.modulate[3] = 1 - ((curr_time / init_time) ** 2)
+		curr_time += get_process_delta_time()
+		await get_tree().process_frame
+	node.queue_free()
+	

@@ -1,8 +1,6 @@
-extends Node2D
+extends MonasticCellChoice
 
 class_name CrematoriumChoice
-
-signal event_ended
 
 func _ready():
 	init()
@@ -22,15 +20,7 @@ func init():
 			choice.get_node("Sprite").position = tile.get_sprite()[2]
 		choice.bound_tile = tile
 		add_child(choice)
-	var label = Label.new()
-	add_child(label)
-	label.text = "Choose tile to delete from deck"
-	label.position = Vector2(-400,-200)
-	label.modulate = Color.RED
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.size = Vector2(400,100)
-	label.scale = Vector2(2,2)
+	set_text()
 
 func choose(tile):
 	G.GS.delete_tile(tile)
@@ -48,3 +38,14 @@ func choose(tile):
 	for child in get_children():
 		child.queue_free()
 	emit_signal("event_ended")
+
+func set_text():
+	var label = Label.new()
+	add_child(label)
+	label.text = "Choose tile to delete from deck"
+	label.position = Vector2(-400,-200)
+	label.modulate = Color.RED
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.size = Vector2(400,100)
+	label.scale = Vector2(2,2)

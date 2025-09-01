@@ -5,8 +5,7 @@ class_name TileChoice
 var bound_tile
 
 func init():
-	scale = Vector2(1,1) * 2
-	var tile = G.get_tile_pool()
+	scale = Vector2(1,1) * 2 
 	var sprite = Sprite2D.new()
 	sprite.name = "Sprite"
 	add_child(sprite)
@@ -19,4 +18,4 @@ func init():
 	button.connect("pressed", pressed)
 
 func pressed():
-	get_parent().choose(self)
+	get_parent().choose(bound_tile)

@@ -35,23 +35,22 @@ func add_essential_nodes():
 	main_sprite = get_node("SpriteTree/MainSprite")
 
 func init():
+	init_effects()
 	add_essential_nodes()
 	var node = Node2D.new()
 	effects = node
 	node.name = "Effects"
 	add_child(node)
 	self.scale = Vector2.ZERO
-	for effect in effects_to_add:
-		add_effect(effect)
 	replace(tile_size.x * tile_coords)
 	define_sprite()
 	add_button()
-	
+	init_effects()
 	var f = func(x):
 		return (-((x * 3 - 2)) ** 2 + 5) / 4
 		
 	if self.tile_coords.x < G.GS.board_size.x and self.tile_coords.x >= 0 and self.tile_coords.y < G.GS.board_size.y and self.tile_coords.y >= 0:
-		var init_time = 0.3 + randf_range(0.0, 0.1)
+		var init_time = 0.3
 		var curr_time = 0
 		while curr_time < init_time:
 			var curr_scale = f.call(curr_time / init_time)
@@ -59,7 +58,7 @@ func init():
 			await get_tree().process_frame
 			curr_time += get_process_delta_time() * G.animation_time_scale
 	self.scale = Vector2(1,1)
-	init_effects()
+
 	return
 
 
@@ -169,8 +168,11 @@ func move(coords):
 		G.player.position = tile_size * coords + G.GS.get_tile(coords).get_player_offset()
 	
 	if tile_coords.x < 0 or tile_coords.y < 0 or tile_coords.x >= G.GS.board_size.x or tile_coords.y >= G.GS.board_size.y:
-		destroy()
+		await destroy()
+	
 	emit_signal("moved")
+	
+	return
 	
 func destroy(flag = ""):
 	if !is_destroying:
@@ -188,6 +190,9 @@ func destroy(flag = ""):
 			await get_tree().process_frame
 		if destroy_player and flag != "leave_player" and !G.GS.restarting:
 			G.GS.restart_game()
+		elif !G.GS.restarting and G.player.player_coords != Vector2(0,0) and !(tile_coords.x < 0 or tile_coords.y < 0 or tile_coords.x >= G.GS.board_size.x or tile_coords.y >= G.GS.board_size.y):
+			G.GS.get_player_moves()
+		reparent(G.GS.get_node("Stuff/Trash"))
 		queue_free()
 
 func get_sprite():

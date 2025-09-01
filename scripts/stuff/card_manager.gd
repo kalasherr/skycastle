@@ -6,11 +6,14 @@ var card_count = 3
 
 @onready var cards = get_node("Cards")
 
-signal CardApplied
+signal card_applied
 
 var card_deck = []
 @onready var applied = get_parent().get_node("AppliedCards")
 
+func _ready():
+	G.CM = self
+	
 func init():
 	pass
 
@@ -38,6 +41,8 @@ func destroy_other_cards(card):
 	init_time = 1.5
 	curr_time = 0.0
 	var target_position = Vector2(760, 340) / 2
+	if self is SinCardManager:
+		target_position = Vector2(-760, 340) / 2
 	var start_position = card.init_position
 	
 	var graph = func(x):
@@ -55,12 +60,12 @@ func destroy_other_cards(card):
 	card.able()
 	card.reparent(applied.get_node("Cards"))
 	await card.apply()
-	emit_signal("CardApplied")
+	emit_signal("card_applied")
 	applied.enable_cards()
 	return
 
-func call_cards():
-	applied.hide_cards()
+func call_cards(next_turn = false):
+	applied.hide_cards(next_turn)
 	applied.disable_cards()
 	var to_pick = generate_cards()
 	for card in to_pick:
@@ -68,9 +73,6 @@ func call_cards():
 		card.init_position.x = - 480 + (to_pick.find(card) + 1) * (960.0 - card_count * card.card_size.x) / (card_count + 1) + card.card_size.x * (to_pick.find(card) + 0.5)
 # 		card.init_position.x = ((960.0 - card_count * card.card_size.x) / (card_count + 1.0)) * (to_pick.find(card) - card_count / 2) + card.card_size.x * (to_pick.find(card) - card_count / 2)
 		cards.add_child(card)
-
-func get_card(card_name):
-	return load("res://scenes/cards/" + card_name + "_card.tscn").instantiate()
 
 func generate_cards():
 	var to_return = []
