@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://btmmfp3c66s55"]
+
+[ext_resource type="Script" uid="uid://bu70f7sdf1mfs" path="res://scripts/stuff/deck_show/deck_show.gd" id="1_i5v61"]
+
+[node name="DeckShow" type="Node2D"]
+script = ExtResource("1_i5v61")

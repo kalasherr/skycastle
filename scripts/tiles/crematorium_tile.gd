@@ -3,7 +3,6 @@ extends Tile
 class_name CrematoriumTile
 
 func init_effects():
-	add_effect("spikes")
 	add_effect("crematorium")
 
 func get_sprite():

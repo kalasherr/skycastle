@@ -202,6 +202,11 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):
+		var tile = DungeonTile.new()
+		var moves = get_tile_moves(tile)
+		tile.tile_moves = moves
+		tile_deck.append(tile)
+	for i in range (0,5):
 		var tile = CrematoriumTile.new()
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
@@ -243,6 +248,8 @@ func get_tile_moves(tile):
 		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
 	elif tile is AlmshouseTile:
 		return G.rotate_array([Vector2(1,0),Vector2(0,0)], 90 * (round(randf_range(0,4) - 0.5)))
+	elif tile is DungeonTile:
+		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
 	else:
 		print(tile.name)
 
@@ -605,48 +612,19 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 
 func show_all_deck():
 	var deck_to_show = copy_current_deck()
-	
-	deck_to_show.shuffle()
-
 	var found = false
 	for child in camera.get_children():
-		if child.name == "DeckSpace":
+		if child is DeckShow:
 			found = true
 	if !found:
-		var space = ColorRect.new()
-		space.z_index = 1
-		space.size = Vector2(2000,2000)
-		space.position = - Vector2(space.size.x / 2, get_viewport_rect().size.y / 2 + 20) 
-		space.color = Color.BLACK
-		space.name = "DeckSpace"
-		camera.add_child(space)
-		var width = 6
-		var tile_space = Vector2(100,100)
-
-		for i in range(0, deck_to_show.size()):
-			var tile = deck_to_show[i]
-			tile.init_effects()
-			var sprite = Sprite2D.new()
-			sprite.z_index = 1
-			sprite.texture = tile.get_sprite()[0]
-			sprite.rotation = tile.get_sprite()[1]
-			sprite.position.x = (space.size.x / 2) - (((float(width) / 2) - i % width - 0.5) * tile_space.x) 
-			sprite.position.y = (i / width) * tile_space.y + G.tile_size.y + 50
-			if tile.get_sprite().size() == 3:
-				sprite.position += tile.get_sprite()[2]
-			space.add_child(sprite)
-			var effects = []
-			var dir = DirAccess.open("res://sprites/effects")
-			for effect in tile.effects_to_add:
-				if dir.get_files().find(effect + "_effect.png") != -1:
-					effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
-			for effect in effects:
-				sprite.add_child(Sprite2D.new())
-				sprite.get_child(sprite.get_children().size() - 1).rotation = - sprite.rotation
-				sprite.get_child(sprite.get_children().size() - 1).texture = effect
+		var deck_show = DeckShow.new()
+		camera.add_child(deck_show)
+		deck_show.show_deck(deck_to_show)
 		return true
 	else:
-		camera.get_node("DeckSpace").queue_free()
+		for child in camera.get_children():
+			if child is DeckShow:
+				child.queue_free()
 
 func update_money(amount):
 	camera.get_node("PlayerMoney").text = str(amount)
