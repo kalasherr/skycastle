@@ -190,7 +190,7 @@ func destroy(flag = ""):
 			await get_tree().process_frame
 		if destroy_player and flag != "leave_player" and !G.GS.restarting:
 			G.GS.restart_game()
-		elif !G.GS.restarting and G.player.player_coords != Vector2(0,0) and !(tile_coords.x < 0 or tile_coords.y < 0 or tile_coords.x >= G.GS.board_size.x or tile_coords.y >= G.GS.board_size.y):
+		elif !G.GS.restarting and G.player.player_coords != Vector2(0,0) and !(tile_coords.x < 0 or tile_coords.y < 0 or tile_coords.x >= G.GS.board_size.x or tile_coords.y >= G.GS.board_size.y) and G.player:
 			G.GS.get_player_moves()
 		reparent(G.GS.get_node("Stuff/Trash"))
 		queue_free()

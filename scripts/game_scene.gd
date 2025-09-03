@@ -11,6 +11,8 @@ var focused_tile
 var restarting = false
 var generating = false
 var next_tile_default_position = Vector2.ZERO
+var applied_sin_cards
+var applied_cards
 
 signal next_move
 signal ready_to_play
@@ -200,7 +202,7 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):
-		var tile = MonasticCellTile.new()
+		var tile = CrematoriumTile.new()
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
 		tile_deck.append(tile)
@@ -350,12 +352,14 @@ func get_tile(coords):
 
 func get_player_moves():
 	var tile = get_tile(player.player_coords)
-
 	var moves = []
-	for move in tile.tile_moves:
-		if get_tile(tile.tile_coords + move):
-			if get_tile(tile.tile_coords + move).tile_moves.has(-move) and !get_tile(tile.tile_coords + move).is_destroying:
-				moves.append(get_tile(tile.tile_coords + move))
+	if tile:
+		for move in tile.tile_moves:
+			if get_tile(tile.tile_coords + move):
+				if get_tile(tile.tile_coords + move).tile_moves.has(-move) and !get_tile(tile.tile_coords + move).is_destroying:
+					moves.append(get_tile(tile.tile_coords + move))
+	else:
+		restart_game()
 	if moves != []:
 		for move in moves:
 			move.able()
@@ -373,6 +377,10 @@ func create_tile_move(coords):
 	tile_moves.add_child(move)
 
 func tile_move():
+	G.ASC.hide_cards(true)
+	G.AC.hide_cards(true)
+	G.ASC.disable_cards()
+	G.AC.disable_cards()
 	var tile
 	light_off_tiles()
 	for move in tile_moves.get_children():
@@ -414,7 +422,8 @@ func tile_move():
 		camera.get_node("DeckLeft").text = str(0)
 	for move in tile_moves.get_children():
 		move.queue_free()
-
+	G.ASC.enable_cards()
+	G.AC.enable_cards()
 	await next_turn()
 
 func next_stage():
@@ -665,11 +674,11 @@ func add_tile_to_deck(tile, moves, animated = false, to_current = false):
 		update_next_tile(current_deck[0].get_sprite())
 
 func delete_tile(tile, from_deck = true):
-	current_deck.pop_at(current_deck.find(tile.bound_tile))
+	current_deck.pop_at(current_deck.find(tile))
 	if from_deck:
-		tile_deck.pop_at(tile_deck.find(tile.bound_tile.tile_in_deck))
-		tile.bound_tile.tile_in_deck.queue_free()
-	tile.bound_tile.queue_free()
+		tile_deck.pop_at(tile_deck.find(tile.tile_in_deck))
+		tile.tile_in_deck.queue_free()
+	tile.queue_free()
 
 func change_shield(shield):
 	if shield == 0:
@@ -689,7 +698,6 @@ func erase_deck():
 	var drop_time = 0.6 / G.animation_time_scale
 	var delay_time = 0.1 / G.animation_time_scale
 	var trash = get_node("Stuff/Trash")
-	var sprites = []
 	var nodes = []
 	camera.get_node("NextTile").texture = null
 	for effect in camera.get_node("NextTile/Effects").get_children():

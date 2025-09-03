@@ -4,9 +4,13 @@ var GS
 var player
 var CM
 var SCM
+var ASC
+var AC
 
 var tile_size = Vector2(64,64)
 var animation_time_scale = 2
+
+signal player_spawned
 
 func _ready():
 	pass
@@ -42,4 +46,4 @@ func get_sin_card_pool():
 			arr.append(a)
 	return arr
 	
-signal player_spawned
+

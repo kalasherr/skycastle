@@ -6,24 +6,28 @@ var shown = false
 var last_turn
 var default_position = 380
 
+func _ready():
+	G.AC = self
+
 func hide_cards(next_turn = false):
 	var cards = get_node("Cards").get_children()
 	for i in range(0,cards.size()):
 		cards[i].init_position.x = default_position
 	shown = false
-	G.GS.game_phase = last_turn
-	G.GS.next_turn()
+	if !next_turn:
+		G.GS.game_phase = last_turn
+		G.GS.next_turn()
 
 func click():
 	if shown:
 		hide_cards()
 	else:
 		show_cards()
+		G.ASC.hide_cards(true)
 
 func show_cards():
 	var cards = get_node("Cards").get_children()
 	for i in range(0,cards.size()):
-# 		cards[i].init_position.x -= ((cards[i].card_size.x + 20) * i * cards[i].scale.x)
 		cards[i].init_position.x = - ((cards[i].card_size.x + 20) * i * cards[i].scale.x) + default_position
 	G.GS.disable_buttons()
 	if G.GS.game_phase == "player":
