@@ -46,6 +46,7 @@ func init():
 	define_sprite()
 	add_button()
 	init_effects()
+	add_all_effects()
 	var f = func(x):
 		return (-((x * 3 - 2)) ** 2 + 5) / 4
 		
@@ -91,6 +92,10 @@ func define_sprite():
 func init_effects():
 	pass
 
+func add_all_effects():
+	for effect in effects_to_add:
+		add_effect(effect)
+		
 func on_enter():
 	for effect in get_node("Effects").get_children():
 		await effect.on_enter()
@@ -103,6 +108,9 @@ func add_effect(effect, animated = false):
 		effects_to_add = []
 	if check_node("Effects"):
 		var effect_scene = load("res://scenes/effects/"+effect+"_effect.tscn").instantiate()
+		for child in effects.get_children():
+			if child.get_script() == effect_scene.get_script():
+				return
 		effects.add_child(effect_scene)
 		if animated:
 			effect_scene.get_node("Sprite").visible = false
@@ -113,7 +121,7 @@ func add_effect(effect, animated = false):
 		effect_scene.position = get_player_offset()
 	else:
 		if effects_to_add.find(effect) == -1:
-				effects_to_add.append(effect)
+			effects_to_add.append(effect)
 
 func add_button():
 	var button = TextureButton.new()
@@ -176,6 +184,7 @@ func move(coords):
 	
 func destroy(flag = ""):
 	if !is_destroying:
+		disable()
 		is_destroying = true
 		var destroy_player = false
 		if G.player:

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://0c4my4vsokpm"]
+
+[ext_resource type="Script" uid="uid://dgtdqyeop1f6n" path="res://scripts/stuff/deck_show/tile_to_show.gd" id="1_xbqgx"]
+
+[node name="TileToShow" type="Node2D"]
+script = ExtResource("1_xbqgx")

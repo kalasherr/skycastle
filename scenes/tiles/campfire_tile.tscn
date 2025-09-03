@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dtcqdnn5hd4yy"]
+
+[ext_resource type="Script" uid="uid://cogaojjlxkmum" path="res://scripts/tiles/campfire_tile.gd" id="1_yxv7y"]
+
+[node name="CampfireTile" type="Node2D"]
+script = ExtResource("1_yxv7y")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

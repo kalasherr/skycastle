@@ -124,9 +124,10 @@ func generate_field():
 			if check_availability(Vector2(i1 - j1, j1)) and (i1 != 0 or j1 != 0):
 				found = true
 				var tile = current_deck.pick_random()
-				current_deck.pop_at(current_deck.find(tile))
-				tiles_to_deploy.append(tile)
-				tile.tile_coords = Vector2(i1 - j1, j1)
+				if tile:
+					current_deck.pop_at(current_deck.find(tile))
+					tiles_to_deploy.append(tile)
+					tile.tile_coords = Vector2(i1 - j1, j1)
 	var to_pop = []
 	var prioritized = []
 # 	for tile in tiles_to_deploy:
@@ -197,17 +198,12 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):
-		var tile = GunpowderStorageTile.new()
-		var moves = get_tile_moves(tile)
-		tile.tile_moves = moves
-		tile_deck.append(tile)
-	for i in range (0,5):
 		var tile = DungeonTile.new()
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):
-		var tile = CrematoriumTile.new()
+		var tile = CampfireTile.new()
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
 		tile_deck.append(tile)
@@ -250,7 +246,9 @@ func get_tile_moves(tile):
 		return G.rotate_array([Vector2(1,0),Vector2(0,0)], 90 * (round(randf_range(0,4) - 0.5)))
 	elif tile is DungeonTile:
 		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
-	else:
+	elif tile is CampfireTile:
+		return []
+	else:	
 		print(tile.name)
 
 func rotate_deck(deck):
@@ -421,7 +419,7 @@ func tile_move():
 			elif move.tile_coords.y >= board_size.y:
 				await tile.move(tile.tile_coords + Vector2(0,-1))
 			break
-	tile.deploy_effect()
+	await tile.deploy_effect()
 	if current_deck.size() > 0:
 		tile = current_deck[0]
 	else:
@@ -434,7 +432,6 @@ func tile_move():
 	await next_turn()
 
 func next_stage():
-	
 	stage_transfer = true
 	disable_buttons()
 	
@@ -476,8 +473,6 @@ func next_stage():
 
 # 		return (sin(curr/init_time * PI / 2) ** 3)
 	card_manager.call_cards()
-	
-	
 	
 	await card_manager.card_applied
 	var background_current_modulate = background.modulate

@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://br2ce1dhg7sjr"]
+
+[ext_resource type="SpriteFrames" uid="uid://c2v64gyfhb73v" path="res://sprites/effects/campfire/fire_animation.tres" id="1_7vrta"]
+[ext_resource type="Script" uid="uid://b6hu4g1t2utgf" path="res://scripts/stuff/campfire/fire_animation.gd" id="5_abivg"]
+
+[node name="FireAnimation" type="AnimatedSprite2D"]
+sprite_frames = ExtResource("1_7vrta")
+animation = &"new_animation"
+script = ExtResource("5_abivg")
