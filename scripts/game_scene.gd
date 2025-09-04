@@ -13,6 +13,7 @@ var generating = false
 var next_tile_default_position = Vector2.ZERO
 var applied_sin_cards
 var applied_cards
+var choice_modifier = 0
 
 signal next_move
 signal ready_to_play
@@ -38,7 +39,7 @@ func _ready():
 	await disable_buttons()
 	add_player()
 	generating = false
-	change_hp(player.hp)
+	update_hp(player.hp)
 	emit_signal("ready_to_play")
 	next_turn()
 
@@ -203,7 +204,7 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):
-		var tile = CampfireTile.new()
+		var tile = CrematoriumTile.new()
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
 		tile_deck.append(tile)
@@ -297,18 +298,10 @@ func next_turn(flag = "none"):
 					effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
 			update_next_tile(tile.get_sprite(), effects)
 	else:
-		if camera.get_node("SinCardManager").get_node("Cards").get_children().size() < 7:
-			camera.get_node("SinCardManager").call_cards(true)
-			waiting = true
-		else:
-			camera.get_node("NextTile").texture = null
-			for effect in camera.get_node("NextTile/Effects").get_children():
-				effect.queue_free()
-			camera.get_node("DeckLeft").text = str(0)
-			
-			restart_game()
-	if waiting:
-		await camera.get_node("SinCardManager").card_applied
+		camera.get_node("NextTile").texture = null
+		for effect in camera.get_node("NextTile/Effects").get_children():
+			effect.queue_free()
+		camera.get_node("DeckLeft").text = str(0)
 
 	if !stage_transfer and !restarting:
 		if game_phase == "player":
@@ -317,6 +310,16 @@ func next_turn(flag = "none"):
 			G.GS.light_off_tiles()
 			game_phase = "tile"
 		else:
+			if current_deck.size() > 0:
+				pass
+			else:
+				if camera.get_node("SinCardManager").get_node("Cards").get_children().size() < 7:
+					camera.get_node("SinCardManager").call_cards(true)
+					waiting = true
+				else:
+					restart_game()
+			if waiting:
+				await camera.get_node("SinCardManager").card_applied
 			await disable_buttons()
 			for i in [-1, board_size.x]:
 				for j in range(1, board_size.y):
@@ -497,12 +500,12 @@ func next_stage():
 	await disable_buttons()
 	game_phase = "player"
 	stage_transfer = false
-	change_shield(0)
+	update_shield(0)
 	G.player.get_shield(-G.player.current_shield)
 	emit_signal("next_stage_started")
 	next_turn()
 
-func change_hp(amount):
+func update_hp(amount):
 	camera.get_node("PlayerHP").text = str(player.hp) + "/" + str(player.max_hp)
 	if player.hp == 0:
 		restart_game()
@@ -621,9 +624,6 @@ func show_all_deck():
 			if child is DeckShow:
 				child.queue_free()
 
-func update_money(amount):
-	camera.get_node("PlayerMoney").text = str(amount)
-
 func copy_current_deck():
 	var to_return = []
 	for i in range(0, current_deck.size()):
@@ -653,7 +653,10 @@ func delete_tile(tile, from_deck = true):
 		tile.tile_in_deck.queue_free()
 	tile.queue_free()
 
-func change_shield(shield):
+func update_money(amount):
+	camera.get_node("PlayerMoney").text = str(amount)
+
+func update_shield(shield):
 	if shield == 0:
 		camera.get_node("PlayerShield").text = ""
 	else:
@@ -668,7 +671,7 @@ signal deck_erased
 var dropping = false
 
 func erase_deck():
-	var drop_time = 0.6 / G.animation_time_scale
+	var drop_time = 4.0 / current_deck.size() / G.animation_time_scale
 	var delay_time = 0.1 / G.animation_time_scale
 	var trash = get_node("Stuff/Trash")
 	var nodes = []
@@ -695,6 +698,7 @@ func erase_deck():
 	
 
 func drop(node, time):
+	G.GS.camera.get_node("DeckLeft").text = str(int(G.GS.camera.get_node("DeckLeft").text) - 1)
 	var variety = randf_range(-200.0,200.0)
 	var start_position = node.position
 	var f = func(x):

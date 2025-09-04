@@ -16,4 +16,5 @@ func get_shield():
 
 #translate
 func get_text():
-	return ["Guardian angel", "Start every stage with {0} shield bonus".format([shield_amount])]
+	colors["value1"] = shield_amount
+	return ["Guardian angel", "Start every stage with [color={defense}]{value1}[/color] shield bonus".format(colors)]

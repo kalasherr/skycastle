@@ -14,17 +14,17 @@ signal player_moved
 func _ready():
 	G.player = self
 	G.GS.player = self
-	G.GS.change_hp(hp)
+	G.GS.update_hp(hp)
 	G.emit_signal("player_spawned")
 
 func lose_hp(amount = 1):
 	hp -= amount
-	G.GS.change_hp(hp)
+	G.GS.update_hp(hp)
 
 func heal(amount = 1):
 	if hp < max_hp:
 		hp = min(amount + hp, max_hp)
-		G.GS.change_hp(hp)
+		G.GS.update_hp(hp)
 		return true
 	return false
 	
@@ -36,7 +36,7 @@ func init(coords):
 	G.player = self
 	G.GS.player = self
 	G.GS.update_money(money)
-	G.GS.change_hp(hp)
+	G.GS.update_hp(hp)
 	player_coords = coords
 	replace(coords * G.tile_size + G.GS.get_tile(coords).get_player_offset())
 
@@ -60,10 +60,10 @@ func move(tile):
 func take_damage(amount = 1):
 	if current_shield > 0:
 		current_shield -= amount
-		G.GS.change_shield(current_shield)
+		G.GS.update_shield(current_shield)
 	else:
 		hp -= amount
-		G.GS.change_hp(hp)
+		G.GS.update_hp(hp)
 		if hp == 0:
 			G.GS.restart_game()
 		else:
@@ -74,7 +74,7 @@ func take_damage(amount = 1):
 					self.modulate[3] = 1
 				await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 	
-func change_money(amount):
+func update_money(amount):
 	if money < -amount:
 		money = 0
 		G.GS.update_money(money)
@@ -89,12 +89,12 @@ func get_shield(amount = 1):
 		current_shield += amount
 	else:
 		current_shield = 0
-	G.GS.change_shield(current_shield)	
+	G.GS.update_shield(current_shield)	
 
 func reset():
 	money = 0
 	current_shield = 0
 	hp = max_hp
 	G.GS.update_money(money)
-	G.GS.change_shield(current_shield)
-	G.GS.change_hp(hp)
+	G.GS.update_shield(current_shield)
+	G.GS.update_hp(hp)

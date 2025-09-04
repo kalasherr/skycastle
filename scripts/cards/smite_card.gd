@@ -12,4 +12,4 @@ func apply():
 
 #translate
 func get_text():
-	return ["Smite", "Adds weaponry and gunpowder storage to your deck"]
+	return ["Smite", "[color={add}]Adds[/color] weaponry and gunpowder storage to your deck".format(colors)]

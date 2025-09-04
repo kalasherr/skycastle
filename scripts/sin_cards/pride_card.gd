@@ -5,7 +5,7 @@ class_name PrideCard
 func apply():
 	add_stones()
 	G.player.hp = 1
-	G.GS.change_hp(1)
+	G.GS.update_hp(1)
 	return
 
 #translate

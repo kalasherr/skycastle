@@ -8,7 +8,7 @@ func apply():
 	G.GS.add_tile_to_deck(tile, moves)
 
 func heal():
-	G.player.heal(1)
+	G.player.heal(colors["value1"])
 
 func init():
 	G.GS.connect("next_stage_started", heal)
@@ -16,4 +16,5 @@ func init():
 
 #translate
 func get_text():
-	return ["Panacea", "Adds infirmary tile to your deck and heals 1 health when stage starts"]
+	colors["value1"] = 1
+	return ["Panacea", "[color={add}]Adds[/color] infirmary tile to your deck and [color={add}]heals[/color] {value1} health when stage starts".format(colors)]

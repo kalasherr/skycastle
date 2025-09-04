@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bd2xvbyhbbndr"]
+
+[ext_resource type="Script" uid="uid://rwfnqnjpssg8" path="res://scripts/cards/wildfire_card.gd" id="1_aevni"]
+
+[node name="WildfireCard" type="Node2D"]
+script = ExtResource("1_aevni")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

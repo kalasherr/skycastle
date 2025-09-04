@@ -4,7 +4,7 @@ class_name GreedCard
 
 func apply():
 	add_stones()
-	G.player.change_money(- int(G.player.money / 2))
+	G.player.update_money(- int(G.player.money / 2))
 	
 #translate
 func get_text():

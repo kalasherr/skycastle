@@ -7,4 +7,4 @@ func apply():
 
 #translate
 func get_text():
-	return ["Candle", "Shows you one more next tile"]
+	return ["Candle", "Shows you one more next tile".format(colors)]

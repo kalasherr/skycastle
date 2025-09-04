@@ -6,6 +6,15 @@ var card_name = "default"
 var init_position = Vector2.ZERO
 var card_size = Vector2(290, 470)
 
+var colors = {
+	"add" : 106627,
+	"replace" : Color.ORANGE.to_html(),
+	"delete" : Color.RED.to_html(),
+	"defense" : Color.BLUE.to_html(),
+	"value1" : 0,
+	"value2" : 0
+}
+
 var follow_threshold = 0.1
 
 func apply():
@@ -17,9 +26,13 @@ func init():
 func add_labels():
 	var title = Label.new()
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD
-	var text = Label.new()
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var text = RichTextLabel.new()
+	text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	text.bbcode_enabled = true
 	title.modulate = Color(143.0/255.0,86.0/255.0,59.0/255.0)
-	text.modulate = Color(143.0/255.0,86.0/255.0,59.0/255.0)
+	text.theme = load("res://stuff/assets/default_theme.tres")
+	
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD
 	title.size = Vector2(270,20)
 	text.size = Vector2(270,100)

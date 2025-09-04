@@ -16,7 +16,6 @@ func _ready():
 	sprite.add_child(effects)
 	effects.name = "Effects"
 	G.GS.connect("next_tile_updated", update)
-	update()
 
 func update():
 	if G.GS.current_deck.size() > 1:
@@ -42,3 +41,5 @@ func update():
 		self.position.y = offset.y
 	else:
 		sprite.texture = null
+		for effect in sprite.get_node("Effects").get_children():
+			effect.queue_free()

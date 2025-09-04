@@ -165,7 +165,7 @@ func move(coords):
 	while current_time > 0:
 		i += 1
 		if move_player:
-			G.player.position = position  + get_player_offset()
+			G.player.replace(tile_size * tile_coords * (1 - current_time / init_time) + current_time / init_time * old_position  + get_player_offset())
 		replace(tile_size * tile_coords * (1 - current_time / init_time) + current_time / init_time * old_position)
 		current_time -= get_process_delta_time() * G.animation_time_scale
 		await get_tree().process_frame

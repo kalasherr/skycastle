@@ -12,4 +12,4 @@ func apply():
 
 #translate
 func get_text():
-	return ["Grail", "Adds mausoleum and monastic cell to your deck"]
+	return ["Grail", "[color={add}]Adds[/color] mausoleum and monastic cell to your deck".format(colors)]
