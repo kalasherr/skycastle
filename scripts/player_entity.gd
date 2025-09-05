@@ -8,8 +8,16 @@ var hp = 3
 var curr_position = position
 var money = 0
 var current_shield = 0
+var eye1_position = Vector2(-4,-5)
+var eye2_position = Vector2(4,-5)
+
+@onready var main_sprite = get_node("SpriteTree")
 
 signal player_moved
+
+func _process(delta):
+	main_sprite.get_node("Eye1").position = eye1_position - Vector2(sign((global_position + eye1_position - get_global_mouse_position()).x),sign((global_position + eye1_position - get_global_mouse_position()).y)) / 2
+	main_sprite.get_node("Eye2").position = eye2_position - Vector2(sign((global_position + eye2_position - get_global_mouse_position())).x,sign((global_position + eye2_position - get_global_mouse_position()).y)) / 2
 
 func _ready():
 	G.player = self

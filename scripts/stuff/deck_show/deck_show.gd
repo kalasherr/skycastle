@@ -23,7 +23,6 @@ func show_deck(deck_to_show):
 				break
 		if !found:
 			scripts.append(deck_to_show[i].get_script())
-	print(scripts)
 	scripts.sort()
 	var rows = []
 	for script in scripts:
