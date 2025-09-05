@@ -8,7 +8,11 @@ var ASC
 var AC
 
 var tile_size = Vector2(64,64)
-var animation_time_scale = 2
+var animation_time_scale = 1
+var tile_destroy_time = 0.3
+var tile_shake_time = 0.3
+var card_apply_time = 0.8
+var player_jump_time = 0.5
 
 signal player_spawned
 

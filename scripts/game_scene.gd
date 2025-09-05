@@ -584,11 +584,12 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 				for tile in get_node("TileManager").get_children():
 					var difference = tile.tile_coords
 					if abs(difference.x) + abs(difference.y) == board_size.x + board_size.y - i and tile.tile_coords != Vector2.ZERO:
-						tile.destroy()
+						tile.destroy("no_shake")
 						found = true
 				if found:
-					await get_tree().create_timer(0.2 / G.animation_time_scale).timeout
+					await get_tree().create_timer(G.tile_destroy_time / G.animation_time_scale / 2).timeout
 		await destroy.call()
+		
 		return
 	elif flag == "ignore_player":
 		for i in range(0, board_size.x + board_size.y):

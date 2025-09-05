@@ -72,16 +72,17 @@ func replace(coords):
 	curr_position = coords
 	
 func _process(delta):
-	time_from_init += get_process_delta_time() * G.animation_time_scale
-	if G.GS.player or G.GS.generating:
-		if G.GS.player:
-			if G.GS.player.player_coords == tile_coords:
-				position = curr_position
+	if !is_destroying:
+		time_from_init += get_process_delta_time() * G.animation_time_scale
+		if G.GS.player or G.GS.generating:
+			if G.GS.player:
+				if G.GS.player.player_coords == tile_coords:
+					position = curr_position
+				else:
+					position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
+	
 			else:
 				position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
-
-		else:
-			position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
 
 func define_sprite():
 	main_sprite.texture = get_sprite()[0]
@@ -184,20 +185,55 @@ func move(coords):
 	
 func destroy(flag = ""):
 	if !is_destroying:
-		disable()
 		is_destroying = true
+		
+		var init_time = G.tile_shake_time
+		var curr_time = 0.0
+		var start_scale = scale 
+		var finish_scale = Vector2(0.0,0.0)
+		var start_modulate = modulate[3]
+		var finish_modulate = 0
+		var start_position = position
+		
+		var fx = func(x):
+			return x
+		var fy = func(x):
+			return x
+		var fm = func(x):
+			return x * x
+		
+		disable()
+		var multiplier_x = randf_range(-1.0, 1.0)
+		var multiplier_y = randf_range(-1.0, 1.0)
+		var amplitude = 5
+		
+		if flag != "no_shake":
+			while curr_time < init_time:
+				var shake_x = sin(curr_time / init_time * 60.0) * amplitude * randf()
+				var shake_y = cos(curr_time / init_time * 75.0) * amplitude * randf()
+				position = start_position + Vector2(shake_x, shake_y)
+				curr_time += get_process_delta_time()
+				await get_tree().process_frame
+			
+		curr_time = 0.0
+		init_time = G.tile_destroy_time
+		
 		var destroy_player = false
 		if G.player:
 			if G.player.player_coords == tile_coords:
 				destroy_player = true
-		while scale.x > 0:
-			scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time() * G.animation_time_scale
+		while curr_time < init_time:
+			print(scale)
+			scale.x = (1 - fx.call(curr_time / init_time)) * start_scale.x + fx.call(curr_time / init_time) * finish_scale.x
+			scale.y = (1 - fy.call(curr_time / init_time)) * start_scale.y + fy.call(curr_time / init_time) * finish_scale.y
+			modulate[3] = (1 - fm.call(curr_time / init_time)) * start_modulate + fm.call(curr_time / init_time) * finish_modulate
 			if G.player:
 				if destroy_player:
-					if G.player.scale.x > 0:
-						G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time() * G.animation_time_scale
+					G.player.scale = Vector2(max(scale.x, scale.y), max(scale.x, scale.y))
+			curr_time += get_process_delta_time() * G.animation_time_scale
 			await get_tree().process_frame
 		if destroy_player and flag != "leave_player" and !G.GS.restarting:
+			G.GS.disable_buttons()
 			G.GS.restart_game()
 		elif !G.GS.restarting and G.player.player_coords != Vector2(0,0) and !(tile_coords.x < 0 or tile_coords.y < 0 or tile_coords.x >= G.GS.board_size.x or tile_coords.y >= G.GS.board_size.y) and G.player:
 			G.GS.get_player_moves()

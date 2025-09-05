@@ -7,10 +7,10 @@ func _ready():
 
 func init():
 	var tiles = []
-	for i in range(1, G.GS.current_deck.size()):
+	for i in range(0, G.GS.current_deck.size()):
 		tiles.append(G.GS.current_deck[i])
 	if tiles != []:
-		for i in range(0,min(3 + G.GS.choice_modifier,tiles.size() - 1)):
+		for i in range(0,min(3 + G.GS.choice_modifier,tiles.size())):
 			var choice = TileChoice.new()
 			choice.init()
 			var tile = tiles.pick_random()

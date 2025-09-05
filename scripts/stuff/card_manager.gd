@@ -38,8 +38,9 @@ func destroy_other_cards(card):
 
 	card.scale = target_scale 
 	
-	init_time = 1.5
+	init_time = G.card_apply_time
 	curr_time = 0.0
+	
 	var target_position = Vector2(760, 340) / 2
 	if self is SinCardManager:
 		target_position = Vector2(-760, 340) / 2

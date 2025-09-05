@@ -13,6 +13,7 @@ func deploy_effect():
 			if !(G.GS.get_tile(coords) is BridgeTile or G.GS.get_tile(coords) is WaterTile or crown):
 				G.GS.tile_deck.pop_at(G.GS.tile_deck.find(G.GS.get_tile(coords).tile_in_deck))
 				G.GS.get_tile(coords).destroy()
+				await get_tree().create_timer(G.tile_destroy_time / G.animation_time_scale).timeout
 				var tile = WaterTile.new()
 				G.GS.add_tile_to_deck(tile, [])
 				var tile_to_place = WaterTile.new()

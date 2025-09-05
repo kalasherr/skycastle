@@ -49,20 +49,33 @@ func init(coords):
 	replace(coords * G.tile_size + G.GS.get_tile(coords).get_player_offset())
 
 func move(tile):
+	G.ASC.disable_cards()
+	G.AC.disable_cards()
+	
 	G.GS.disable_buttons()
 	self.player_coords = tile.tile_coords
 	var start_pos = position
+	var shadow_position = main_sprite.get_node("Shadow").position
 	var end_pos = player_coords * G.tile_size + tile.get_player_offset()
-	var init_time = 0.7
+	var init_time = G.player_jump_time
 	var curr_time = 0.0
 	while curr_time < init_time:
+		await get_tree().process_frame
 		curr_time += get_process_delta_time() * G.animation_time_scale
 		var pos = curr_time / init_time * end_pos + (1 - curr_time / init_time) * start_pos - Vector2(0,sin(curr_time / init_time * PI) * 50)
+		main_sprite.get_node("Shadow").position = shadow_position + Vector2(0,sin(curr_time / init_time * PI) * 50)
+		main_sprite.get_node("Shadow").scale = Vector2(1 - sin(curr_time / init_time * PI),1 - sin(curr_time / init_time * PI))
 		replace(pos)
-		await get_tree().process_frame
+	main_sprite.get_node("Shadow").position = shadow_position
+	main_sprite.get_node("Shadow").scale = Vector2(1,1)
 	replace(player_coords * G.tile_size + tile.get_player_offset())
 	await tile.on_enter()
+	
+	G.ASC.enable_cards()
+	G.AC.enable_cards()
+
 	emit_signal("player_moved")
+	
 	return
 
 func take_damage(amount = 1):
