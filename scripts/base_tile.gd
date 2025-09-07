@@ -223,7 +223,6 @@ func destroy(flag = ""):
 			if G.player.player_coords == tile_coords:
 				destroy_player = true
 		while curr_time < init_time:
-			print(scale)
 			scale.x = (1 - fx.call(curr_time / init_time)) * start_scale.x + fx.call(curr_time / init_time) * finish_scale.x
 			scale.y = (1 - fy.call(curr_time / init_time)) * start_scale.y + fy.call(curr_time / init_time) * finish_scale.y
 			modulate[3] = (1 - fm.call(curr_time / init_time)) * start_modulate + fm.call(curr_time / init_time) * finish_modulate

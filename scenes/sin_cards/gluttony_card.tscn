@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://c35i3x4nqchu1"]
+
+[ext_resource type="Script" uid="uid://cn3qn4hafa2d5" path="res://scripts/sin_cards/gluttony_card.gd" id="1_i156g"]
+
+[node name="GluttonyCard" type="Node2D"]
+script = ExtResource("1_i156g")
+metadata/_custom_type_script = "uid://dtgerq3hrdtj8"

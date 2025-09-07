@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://djtd5etpxydno"]
+
+[ext_resource type="Script" uid="uid://dd20pa5nxjeku" path="res://scripts/stuff/dev_console.gd" id="1_sug2w"]
+
+[node name="DevConsole" type="Node2D"]
+script = ExtResource("1_sug2w")

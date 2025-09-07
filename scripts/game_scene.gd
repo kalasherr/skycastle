@@ -44,7 +44,8 @@ func _ready():
 	next_turn()
 
 func _process(delta):
-	keyboard_controller()
+	if !G.CONSOLE.visible: 
+		keyboard_controller()
 
 func keyboard_controller():
 	if Input.is_action_just_pressed("ui_accept"):
@@ -174,7 +175,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,5):
+	for i in range (0,1):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,2):
 			moves.shuffle()
@@ -182,7 +183,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,5):
+	for i in range (0,1):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,1):
 			moves.shuffle()
@@ -190,7 +191,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,5):
+	for i in range (0,1):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,0):
 			moves.shuffle()
@@ -200,6 +201,7 @@ func fill_deck():
 		tile_deck.append(tile)
 	for i in range (0,5):
 		var tile = DungeonTile.new()
+		tile.add_effect("bandage")
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
 		tile_deck.append(tile)
@@ -262,6 +264,8 @@ func rotate_deck(deck):
 					move = move.rotated(deg_to_rad(rot))
 
 func add_tile(scene, current_deck_flag = false):
+	if scene is String:
+		scene = get_tile_scene(scene)
 	var tile = scene
 	tile.tile_moves = get_tile_moves(tile)
 	tile_deck.append(tile)
@@ -634,12 +638,15 @@ func copy_current_deck():
 		to_return[i].tile_in_deck = current_deck[i]
 	return to_return
 
-func add_tile_to_deck(tile, moves, animated = false, to_current = false):
-	camera.get_node("TileAdd").play(tile.get_sprite()[0])
+func add_tile_to_deck(tile, moves = null, animated = true, to_current = false):
+	if tile is String:
+		tile = get_tile_scene(tile)
+	if !moves:
+		moves = get_tile_moves(tile)
 	tile.tile_moves = moves
 	tile_deck.append(tile)
 	if animated:
-		pass
+		camera.get_node("TileAdd").play(tile.get_sprite()[0])
 	if to_current:
 		current_deck.append(tile.duplicate())
 		current_deck[current_deck.size()-1].tile_moves = tile_deck[tile_deck.size()-1].tile_moves
@@ -672,7 +679,7 @@ signal deck_erased
 var dropping = false
 
 func erase_deck():
-	var drop_time = 4.0 / current_deck.size() / G.animation_time_scale
+	var drop_time = 4.0 / max(8.0, current_deck.size()) / G.animation_time_scale
 	var delay_time = 0.1 / G.animation_time_scale
 	var trash = get_node("Stuff/Trash")
 	var nodes = []
@@ -697,6 +704,8 @@ func erase_deck():
 	await get_tree().create_timer(drop_time - delay_time).timeout
 	emit_signal("deck_erased")
 	
+func get_tile_scene(tile):
+	return load("res://scenes/tiles/" + tile + "_tile.tscn").instantiate()
 
 func drop(node, time):
 	G.GS.camera.get_node("DeckLeft").text = str(int(G.GS.camera.get_node("DeckLeft").text) - 1)

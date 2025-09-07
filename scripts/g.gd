@@ -6,6 +6,7 @@ var CM
 var SCM
 var ASC
 var AC
+var CONSOLE
 
 var tile_size = Vector2(64,64)
 var animation_time_scale = 1
@@ -17,7 +18,7 @@ var player_jump_time = 0.5
 signal player_spawned
 
 func _ready():
-	pass
+	get_parent().add_child.call_deferred(DevConsole.new())
 
 func rotate_array(array, rot):
 	var arr = []

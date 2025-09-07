@@ -9,9 +9,10 @@ func apply():
 			if i != 0 or j != 0:
 				var tile = G.GS.get_tile(G.player.player_coords + Vector2(i,j)) 
 				if tile:
-					await tile.add_effect("spikes", true)
-					if tile.tile_moves != [] and tile.tile_in_deck:
-						tile.tile_in_deck.add_effect("spikes")
+					if !(tile is CrownTile):
+						await tile.add_effect("spikes", true)
+						if tile.tile_moves != [] and tile.tile_in_deck :
+							tile.tile_in_deck.add_effect("spikes")
 	return
 
 #translate

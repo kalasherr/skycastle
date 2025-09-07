@@ -111,7 +111,7 @@ func get_text():
 	pass
 	
 func add_stones():
-	for i in range(0,4):
+	for i in range(0,2):
 		var tile = load("res://scenes/tiles/stone_tile.tscn").instantiate()
 		var moves = G.GS.get_tile_moves(tile)
 		G.GS.add_tile_to_deck(tile, moves, false, true)
