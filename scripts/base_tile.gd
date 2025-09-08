@@ -11,7 +11,7 @@ var effects_to_add = []
 var time_from_init = 0
 var curr_position = position
 var tile_in_deck
-
+var offset = Vector2.ZERO
 var main_sprite
 
 signal moved
@@ -44,6 +44,7 @@ func init():
 	self.scale = Vector2.ZERO
 	replace(tile_size.x * tile_coords)
 	define_sprite()
+	offset = (get_sprite()[0].size - G.tile_size) / 2
 	add_button()
 	init_effects()
 	add_all_effects()

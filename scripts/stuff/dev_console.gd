@@ -6,21 +6,23 @@ var lineedit
 var accept
 
 func _ready():
+	self.visible = false
 	name = "Console"
 	lineedit = LineEdit.new()
 	G.CONSOLE = self
 	add_child(lineedit)
-	lineedit.size = Vector2(500,30)
+	lineedit.size = Vector2(400,30)
 	lineedit.position = - get_viewport_rect().size / 2 / G.GS.camera.zoom.x + Vector2(100,100)
 	accept = Button.new()
 	add_child(accept)
-	accept.size = Vector2(30,30)
+	accept.size = Vector2(30,31)
 	accept.position = lineedit.position + Vector2(500,0)
 	accept.connect("pressed", call_function)
 	
 func _process(delta):
 	input_check()
-	lineedit.position = - get_viewport_rect().size / 2 / G.GS.camera.zoom.x + Vector2(100,100)
+	lineedit.global_position = G.GS.camera.global_position + Vector2(-210,0)
+	accept.global_position =  G.GS.camera.global_position + Vector2(200,0)
 	
 func open_console():
 	if visible:

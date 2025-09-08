@@ -9,13 +9,14 @@ func init():
 	var tiles = []
 	for i in range(0, G.GS.current_deck.size()):
 		tiles.append(G.GS.current_deck[i])
-	if tiles != []:
-		for i in range(0,min(3 + G.GS.choice_modifier,tiles.size())):
+	if tiles != [] and tiles.size() + G.GS.choice_modifier > 0:
+		var tiles_count = min(3 ,tiles.size()) + G.GS.choice_modifier
+		for i in range(0,tiles_count):
 			var choice = TileChoice.new()
 			choice.init()
 			var tile = tiles.pick_random()
 			tiles.pop_at(tiles.find(tile))
-			choice.position.x = (i - 1) * 200
+			choice.position.x = - 480 + (i + 1) * (960.0 - tiles_count * G.tile_size.x) / (tiles_count + 1) + G.tile_size.x * (i + 0.5)
 			choice.get_node("Sprite").texture = tile.get_sprite()[0]
 			if tile.get_sprite().size() == 3:
 				choice.get_node("Sprite").position = tile.get_sprite()[2]
@@ -42,8 +43,10 @@ func choose(tile):
 		for child in get_children():
 			child.queue_free()
 		emit_signal("event_ended")
+		queue_free()
 	else:
 		emit_signal("event_ended")
+		queue_free()
 		G.GS.next_turn()
 
 func set_text():

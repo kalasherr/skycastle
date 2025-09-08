@@ -5,8 +5,9 @@ class_name Card
 var card_name = "default"
 var init_position = Vector2.ZERO
 var card_size = Vector2(290, 470)
+var option = ""
 
-var colors = {
+var values = {
 	"add" : 106627,
 	"replace" : Color.ORANGE.to_html(),
 	"delete" : Color.RED.to_html(),

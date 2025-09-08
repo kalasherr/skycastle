@@ -13,5 +13,5 @@ func apply():
 
 #translate
 func get_text():	
-	colors["value1"] = stone_amount
-	return ["Monolith", "[color={add}]Adds[/color] {value1} stones to your deck".format(colors)]
+	values["value1"] = stone_amount
+	return ["Monolith", "[color={add}]Adds[/color] {value1} stones to your deck".format(values)]

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dmpuuh2fexwfc"]
+
+[ext_resource type="Script" uid="uid://cu88fvmgbmfjq" path="res://scripts/sin_cards/sloth_card.gd" id="1_3det3"]
+
+[node name="SlothCard" type="Node2D"]
+script = ExtResource("1_3det3")
+metadata/_custom_type_script = "uid://dtgerq3hrdtj8"

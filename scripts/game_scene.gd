@@ -14,6 +14,8 @@ var next_tile_default_position = Vector2.ZERO
 var applied_sin_cards
 var applied_cards
 var choice_modifier = 0
+var unused_sin_cards = []
+var unused_cards = []
 
 signal next_move
 signal ready_to_play
@@ -26,6 +28,8 @@ signal next_stage_started
 @onready var background = camera.get_node("BackgroundMain")
 
 func _ready():
+	choice_modifier = 0
+	fill_cards()
 	delete_all_progress()
 	next_tile_default_position = camera.get_node("NextTile").position
 	card_manager.init()
@@ -86,9 +90,6 @@ func generate_field():
 		add_player()
 	
 	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
-	
-	
-	
 	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 		
 	var second_tile = current_deck.pick_random()
@@ -206,7 +207,7 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):
-		var tile = CrematoriumTile.new()
+		var tile = MonasticCellTile.new()
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
 		tile_deck.append(tile)
@@ -723,3 +724,6 @@ func drop(node, time):
 		await get_tree().process_frame
 	node.queue_free()
 	
+func fill_cards():
+	unused_sin_cards = G.get_sin_card_pool()
+	unused_cards = G.get_card_pool()

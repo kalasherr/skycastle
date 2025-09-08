@@ -15,11 +15,12 @@ func init():
 
 func generate_cards():
 	var to_return = []
-	var pool = G.get_sin_card_pool()
-	for i in range(0,card_count):
+	var pool = G.GS.unused_sin_cards
+	for i in range(0,max(1, card_count + G.GS.choice_modifier)):
 		var card_name = pool.pick_random()
 		pool.pop_at(pool.find(card_name))
 		var card = load("res://scenes/sin_cards/" + card_name).instantiate()
+		card.option = card_name
 		to_return.append(card)
 	return to_return
 

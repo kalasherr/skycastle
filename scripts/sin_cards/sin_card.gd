@@ -5,7 +5,7 @@ class_name SinCard
 var card_name = "default"
 var init_position = Vector2.ZERO
 var card_size = Vector2(290, 470)
-
+var option = ""
 var follow_threshold = 0.1
 
 func apply():
