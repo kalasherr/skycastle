@@ -57,30 +57,28 @@ func destroy_other_cards(card):
 			return 0.75 * (((x/init_time - 0.1) ** 2) * 10.0 - 0.1)
 		else:
 			return - ((x/init_time - 1) ** 2) * 1.25 * 1.25 + 1
+			
+	back.destroy()
 	
 	while curr_time < init_time:
 		card.init_position = graph.call(curr_time) * target_position + (1 - graph.call(curr_time)) * start_position
 		curr_time += get_process_delta_time() * G.animation_time_scale
 		await get_tree().process_frame
+		
+	if back:
+		await get_tree().create_timer(max(0,back.destroy_time - G.card_apply_time)).timeout
 
 	card.init_position = target_position
 	card.able()
 	card.reparent(applied.get_node("Cards"))
+	card.light_mask = 1
 	await card.apply()
 	emit_signal("card_applied")
 	applied.enable_cards()
-	back.destroy()
 	return
 
 func call_cards(next_turn = false):
-	back = load("res://scenes/stuff/cards/card_manager_background.tscn").instantiate()
-	back.name = "Background"
-	back.position.x = -1000
-	back.position.y = -1000
-	back.modulate[3] = 0
-	back.z_index = -1
-	back.inited = true
-	add_child(back)
+	call_background()
 	applied.hide_cards(next_turn)
 	applied.disable_cards()
 	var to_pick = generate_cards()
@@ -88,6 +86,7 @@ func call_cards(next_turn = false):
 		card.position.y = -1000
 		card.init_position.y = 0
 		card.init_position.x = - 480 + (to_pick.find(card) + 1) * (960.0 - to_pick.size() * card.card_size.x) / (to_pick.size() + 1) + card.card_size.x * (to_pick.find(card) + 0.5)
+		card.light_mask = 2
 		cards.add_child(card)
 	var init_time = 0.2
 	var curr_time = 0.0
@@ -106,3 +105,13 @@ func generate_cards():
 		card.option = card_name
 		to_return.append(card)
 	return to_return
+
+func call_background():
+	back = load("res://scenes/stuff/cards/card_manager_background.tscn").instantiate()
+	back.name = "Background"
+	back.position.x = -1000
+	back.position.y = -1000
+	back.modulate[3] = 0
+	back.z_index = -1
+	back.inited = true
+	add_child(back)

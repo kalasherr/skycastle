@@ -177,7 +177,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,10):
+	for i in range (0,1):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,2):
 			moves.shuffle()
@@ -185,7 +185,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,10):
+	for i in range (0,1):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,1):
 			moves.shuffle()
@@ -199,11 +199,6 @@ func fill_deck():
 			moves.shuffle()
 			moves.pop_front()
 		var tile = BasicTile.new()
-		tile.tile_moves = moves
-		tile_deck.append(tile)
-	for i in range (0,5):
-		var tile = MirrorChamberTile.new()
-		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):

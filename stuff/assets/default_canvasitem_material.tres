@@ -1,3 +1,4 @@
 [gd_resource type="CanvasItemMaterial" format=3 uid="uid://cbtkpoui5gd0s"]
 
 [resource]
+light_mode = 1

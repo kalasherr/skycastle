@@ -123,6 +123,16 @@ func pressed():
 		get_parent().get_parent().click()
 
 func destroy():
+	var f = func(x):
+		return x * x
+	var goal_position = init_position + Vector2(0,-1000)
+	var start_position = init_position
+	var init_time = 0.6
+	var curr_time = 0.0
+	while curr_time < init_time:
+		init_position = start_position * (1 - f.call(curr_time / init_time)) + goal_position * f.call(curr_time / init_time)
+		curr_time += get_process_delta_time()
+		await get_tree().process_frame
 	queue_free()
 	return
 
