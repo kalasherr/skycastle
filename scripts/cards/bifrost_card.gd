@@ -11,4 +11,4 @@ func apply():
 #translate
 func get_text():
 	values["value1"] = 7
-	return ["Bifrost", "[color={add}]Adds[/color] {value1} bridges to your deck".format(values)]
+	return ["Bifrost", "[color={add}]Add[/color] {value1} bridges to your deck".format(values)]

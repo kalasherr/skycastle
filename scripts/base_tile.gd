@@ -44,7 +44,7 @@ func init():
 	self.scale = Vector2.ZERO
 	replace(tile_size.x * tile_coords)
 	define_sprite()
-	offset = (get_sprite()[0].size - G.tile_size) / 2
+	
 	add_button()
 	init_effects()
 	add_all_effects()
@@ -185,6 +185,9 @@ func move(coords):
 	return
 	
 func destroy(flag = ""):
+	default_destroy()
+
+func default_destroy(flag = ""):
 	if !is_destroying:
 		is_destroying = true
 		

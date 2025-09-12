@@ -3,6 +3,8 @@ extends Node2D
 class_name CardManager
 
 var card_count = 3
+var back
+var front
 
 @onready var cards = get_node("Cards")
 
@@ -67,16 +69,32 @@ func destroy_other_cards(card):
 	await card.apply()
 	emit_signal("card_applied")
 	applied.enable_cards()
+	back.destroy()
 	return
 
 func call_cards(next_turn = false):
+	back = load("res://scenes/stuff/cards/card_manager_background.tscn").instantiate()
+	back.name = "Background"
+	back.position.x = -1000
+	back.position.y = -1000
+	back.modulate[3] = 0
+	back.z_index = -1
+	back.inited = true
+	add_child(back)
 	applied.hide_cards(next_turn)
 	applied.disable_cards()
 	var to_pick = generate_cards()
 	for card in to_pick:
+		card.position.y = -1000
 		card.init_position.y = 0
 		card.init_position.x = - 480 + (to_pick.find(card) + 1) * (960.0 - to_pick.size() * card.card_size.x) / (to_pick.size() + 1) + card.card_size.x * (to_pick.find(card) + 0.5)
 		cards.add_child(card)
+	var init_time = 0.2
+	var curr_time = 0.0
+	while init_time > curr_time:
+		curr_time += get_process_delta_time()
+		back.modulate[3] = curr_time / init_time * 0.6
+		await get_tree().process_frame
 
 func generate_cards():
 	var to_return = []

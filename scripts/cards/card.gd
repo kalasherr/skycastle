@@ -8,7 +8,7 @@ var card_size = Vector2(290, 470)
 var option = ""
 
 var values = {
-	"add" : 106627,
+	"add" : "2b7812",
 	"replace" : Color.ORANGE.to_html(),
 	"delete" : Color.RED.to_html(),
 	"defense" : Color.BLUE.to_html(),
@@ -26,6 +26,7 @@ func init():
 
 func add_labels():
 	var title = Label.new()
+	var font = title.get_theme_font("font")
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD
 	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var text = RichTextLabel.new()
@@ -33,16 +34,29 @@ func add_labels():
 	text.bbcode_enabled = true
 	title.modulate = Color(143.0/255.0,86.0/255.0,59.0/255.0)
 	text.theme = load("res://stuff/assets/default_theme.tres")
-	
+	title.theme = load("res://stuff/assets/default_theme.tres")
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD
-	title.size = Vector2(270,20)
+	var size = len(get_text()[0])
+	title.size = Vector2(font.get_string_size(get_text()[0]).x * 1.5,20)
 	text.size = Vector2(270,100)
-	title.position = Vector2(-135,60)
-	text.position = Vector2(-135,80)
+	title.position = Vector2(- title.size.x/2,60)
+	text.position = Vector2(-135,90)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.text = get_text()[0]
 	text.text = get_text()[1]
+	var border1 = Sprite2D.new()
+	var border2 = Sprite2D.new()
+	border1.scale = Vector2((270 - title.size.x - 8) / 4, 1)
+	border2.scale = Vector2((270 - title.size.x - 8) / 4, 1)
+	border1.centered = false
+	border2.centered = false
+	border1.texture = load("res://sprites/stuff/cards/card_title_border.png")
+	border2.texture = load("res://sprites/stuff/cards/card_title_border.png")
+	border1.position = Vector2(-135,title.position.y + 12)
+	border2.position = Vector2(title.size.x / 2 + 4, title.position.y + 12)
+	add_child(border1)
+	add_child(border2)
 	add_child(title)
 	add_child(text)
 	
@@ -87,7 +101,7 @@ func define_sprite():
 	sprite.name = "MainSprite"
 	sprite_tree.add_child(sprite)
 	var illustration = Sprite2D.new()
-	illustration.texture = load("res://sprites/cards/candle_card.png")
+	illustration.texture = load(get_illustration())
 	illustration.scale = Vector2(2,2)
 	illustration.position.y = -90
 	add_child(illustration)
@@ -123,3 +137,6 @@ func add_tile_to_deck(tile, moves):
 
 func get_text():
 	pass
+
+func get_illustration():
+	return "res://sprites/cards/candle_card.png"

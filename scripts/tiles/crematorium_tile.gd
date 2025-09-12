@@ -8,9 +8,9 @@ func init_effects():
 func get_sprite():
 	var sprite
 	var rot = 0
-	var offset = Vector2(0,-8)
 	sprite = load("res://sprites/tiles/crematorium.png")
-	return [sprite,rot,offset]
+	offset = -(sprite.get_size() - G.tile_size) / 2
+	return [sprite, rot, offset]
 
 func rotatable():
 	return false

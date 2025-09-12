@@ -2,7 +2,8 @@ extends Node2D
 
 class_name DeckShow
 
-func show_deck(deck_to_show):
+func show_deck(deck):
+	var deck_to_show = sort(deck)
 	var camera = G.GS.camera
 	var space = ColorRect.new()
 	space.z_index = 1
@@ -69,3 +70,21 @@ func show_deck(deck_to_show):
 				for effect in sprite.get_children():
 					effect.position -= tile.get_sprite()[2]
 			tile_to_show.init()
+
+func sort(deck):
+	var sorted = []
+	var numbers = []
+	for tile in deck:
+		var number = 1000
+		number += tile.tile_moves.size() * 100
+		number += tile.effects_to_add.size() * 10
+		number += tile.get_sprite()[1]
+		numbers.append(number)
+	var i = 0
+	for j in range(0,numbers.size()):
+		numbers[numbers.find(numbers.max())] = i
+		i += 1
+	for j in range(0, deck.size()):
+		sorted.append(deck[numbers.find(j)])
+	return sorted  
+				

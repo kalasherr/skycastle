@@ -21,6 +21,7 @@ signal next_move
 signal ready_to_play
 signal next_tile_updated
 signal next_stage_started
+signal previous_stage_ended
 
 @onready var tile_moves = get_node("TileMoves")
 @onready var camera = get_node("Camera")
@@ -176,7 +177,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,1):
+	for i in range (0,10):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,2):
 			moves.shuffle()
@@ -184,7 +185,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,1):
+	for i in range (0,10):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,1):
 			moves.shuffle()
@@ -201,8 +202,7 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):
-		var tile = DungeonTile.new()
-		tile.add_effect("bandage")
+		var tile = MirrorChamberTile.new()
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
 		tile_deck.append(tile)
@@ -252,6 +252,8 @@ func get_tile_moves(tile):
 		return G.rotate_array([Vector2(1,0)], 90 * (round(randf_range(0,4) - 0.5)))
 	elif tile is CampfireTile:
 		return []
+	elif tile is MirrorChamberTile:
+		return [Vector2(1,0),Vector2(-1,0),Vector2(0,1),Vector2(0,-1)]
 	else:	
 		print(tile.name)
 
@@ -306,7 +308,7 @@ func next_turn(flag = "none"):
 		camera.get_node("NextTile").texture = null
 		for effect in camera.get_node("NextTile/Effects").get_children():
 			effect.queue_free()
-		camera.get_node("DeckLeft").text = str(0)
+		camera.get_node("DeckLeft").text = "x" + str(0)
 
 	if !stage_transfer and !restarting:
 		if game_phase == "player":
@@ -354,7 +356,7 @@ func update_next_tile(array, effects = []):
 		next.get_node("Effects").add_child(Sprite2D.new())
 		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).rotation = - next.rotation
 		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).texture = effect
-	get_node("Camera/DeckLeft").text = str(current_deck.size())
+	get_node("Camera/DeckLeft").text = "x" + str(current_deck.size())
 	emit_signal("next_tile_updated")
 
 func get_tile(coords):
@@ -432,7 +434,7 @@ func tile_move():
 		tile = current_deck[0]
 	else:
 		camera.get_node("NextTile").texture = null
-		camera.get_node("DeckLeft").text = str(0)
+		camera.get_node("DeckLeft").text = "x" + str(0)
 	for move in tile_moves.get_children():
 		move.queue_free()
 	G.ASC.enable_cards()
@@ -441,6 +443,7 @@ func tile_move():
 
 func next_stage():
 	stage_transfer = true
+	emit_signal("previous_stage_ended")
 	disable_buttons()
 	
 	get_node("Stuff/SmokeManager").destroy_all_smokes()
@@ -621,14 +624,24 @@ func show_all_deck():
 		if child is DeckShow:
 			found = true
 	if !found:
+		turn_off_buttons()
 		var deck_show = DeckShow.new()
 		camera.add_child(deck_show)
 		deck_show.show_deck(deck_to_show)
 		return true
 	else:
+		turn_on_buttons()
 		for child in camera.get_children():
 			if child is DeckShow:
 				child.queue_free()
+
+func turn_on_buttons():
+	for button in get_node("TileMoves").get_children():
+		button.mouse_filter = button.MOUSE_FILTER_PASS
+
+func turn_off_buttons():
+	for button in get_node("TileMoves").get_children():
+		button.mouse_filter = button.MOUSE_FILTER_IGNORE
 
 func copy_current_deck():
 	var to_return = []
@@ -656,11 +669,15 @@ func add_tile_to_deck(tile, moves = null, animated = true, to_current = false):
 		update_next_tile(current_deck[0].get_sprite())
 
 func delete_tile(tile, from_deck = true):
-	current_deck.pop_at(current_deck.find(tile))
-	if from_deck:
-		tile_deck.pop_at(tile_deck.find(tile.tile_in_deck))
-		tile.tile_in_deck.queue_free()
-	tile.queue_free()
+	if current_deck.find(tile) != -1:
+		current_deck.pop_at(current_deck.find(tile))
+		if from_deck:
+			tile_deck.pop_at(tile_deck.find(tile.tile_in_deck))
+			tile.tile_in_deck.queue_free()
+		tile.queue_free()
+	elif tile_deck.find(tile) != -1:
+		tile_deck.pop_at(tile_deck.find(tile))
+		tile.queue_free()
 
 func update_money(amount):
 	camera.get_node("PlayerMoney").text = str(amount)
@@ -709,7 +726,7 @@ func get_tile_scene(tile):
 	return load("res://scenes/tiles/" + tile + "_tile.tscn").instantiate()
 
 func drop(node, time):
-	G.GS.camera.get_node("DeckLeft").text = str(int(G.GS.camera.get_node("DeckLeft").text) - 1)
+	G.GS.camera.get_node("DeckLeft").text = "x" + str(max(int(G.GS.camera.get_node("DeckLeft").text) - 1, 0))
 	var variety = randf_range(-200.0,200.0)
 	var start_position = node.position
 	var f = func(x):

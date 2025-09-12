@@ -73,4 +73,4 @@ func get_sprite():
 				rot = deg_to_rad(180)
 		4:
 			sprite = load("res://sprites/tiles/basic_crossroad.png")
-	return [sprite, rot]
+	return [sprite, rot, offset]

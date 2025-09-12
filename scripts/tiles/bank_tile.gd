@@ -16,7 +16,7 @@ func get_sprite():
 			rot = deg_to_rad(-90)
 		Vector2(0,-1):
 			rot = deg_to_rad(180)
-	return [sprite,rot]
+	return [sprite,rot, offset]
 
 
 func define_sprite():

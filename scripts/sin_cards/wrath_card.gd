@@ -17,4 +17,4 @@ func apply():
 
 #translate
 func get_text():
-	return ["Wrath", "Adds spikes on 8 tiles around player"]
+	return ["Wrath", "Add spikes on 8 tiles around player"]

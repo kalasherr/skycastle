@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://brgw02wuq0oo1"]
+
+[ext_resource type="Script" uid="uid://dxackvas702bh" path="res://scripts/cards/censer_card.gd" id="1_eyf07"]
+
+[node name="CenserCard" type="Node2D"]
+script = ExtResource("1_eyf07")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

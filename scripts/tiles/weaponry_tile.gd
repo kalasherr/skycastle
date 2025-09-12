@@ -8,7 +8,7 @@ func get_sprite():
 	sprite = load("res://sprites/tiles/weaponry.png")
 	if tile_moves.find(Vector2(1,0)) != -1:
 		rot = deg_to_rad(90)
-	return [sprite,rot]
+	return [sprite,rot, offset]
 
 func init_effects():
 	add_effect("weaponry")

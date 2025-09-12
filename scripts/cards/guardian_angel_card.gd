@@ -18,3 +18,6 @@ func get_shield():
 func get_text():
 	values["value1"] = shield_amount
 	return ["Guardian angel", "Start every stage with {value1}[color={defense}] shield[/color] bonus".format(values)]
+
+func get_illustration():
+	return "res://sprites/cards/guardian_angel_card.png"

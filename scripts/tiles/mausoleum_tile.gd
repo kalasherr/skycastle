@@ -8,7 +8,7 @@ func get_sprite():
 	sprite = load("res://sprites/tiles/mausoleum.png")
 	if tile_moves.find(Vector2(1,0)) != -1:
 		rot = deg_to_rad(90)
-	return [sprite,rot]
+	return [sprite,rot, offset]
 
 func define_sprite():
 	main_sprite.texture = get_sprite()[0]
@@ -26,18 +26,4 @@ func destroy(flag = ""):
 				to_pick.pop_at(to_pick.find(tile))
 				tile.add_effect("spikes", true)
 				tile.tile_in_deck.add_effect("spikes")
-		is_destroying = true
-		var destroy_player = false
-		if G.player:
-			if G.player.player_coords == tile_coords:
-				destroy_player = true
-		while scale.x > 0:
-			scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time() * G.animation_time_scale
-			if G.player:
-				if destroy_player:
-					if G.player.scale.x > 0:
-						G.player.scale -= Vector2(0.05, 0.05) * 60 * get_process_delta_time() * G.animation_time_scale
-			await get_tree().process_frame
-		if destroy_player and flag != "leave_player" and !G.GS.restarting:
-			G.GS.restart_game()
-		queue_free()
+		default_destroy()

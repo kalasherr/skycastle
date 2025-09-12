@@ -28,10 +28,10 @@ position = Vector2(400, 0)
 [node name="Effects" type="Sprite2D" parent="Camera/NextTile"]
 
 [node name="DeckLeft" type="Label" parent="Camera"]
-offset_left = 350.0
-offset_top = -80.0
-offset_right = 450.0
-offset_bottom = -40.0
+offset_left = 291.0
+offset_top = -20.0
+offset_right = 391.0
+offset_bottom = 20.0
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1

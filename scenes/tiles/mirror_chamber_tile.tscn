@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bd2a3twpbvaqq"]
+
+[ext_resource type="Script" uid="uid://bd0drbj16l8d" path="res://scripts/tiles/mirror_chamber_tile.gd" id="1_fdcu3"]
+
+[node name="MirrorChamberTile" type="Node2D"]
+script = ExtResource("1_fdcu3")
+metadata/_custom_type_script = "uid://fe2atnyrqe6k"

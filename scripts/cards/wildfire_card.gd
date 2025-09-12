@@ -14,4 +14,7 @@ func apply():
 #translate
 func get_text():
 	values["value1"] = 2
-	return ["Wildfire", "[color={add}]Adds[/color] {value1} bonfires and crematorium to your deck".format(values)]
+	return ["Wildfire", "[color={add}]Add[/color] {value1} bonfires and crematorium to your deck".format(values)]
+
+func get_illustration():
+	return "res://sprites/cards/wildfire_card.png"

@@ -5,7 +5,7 @@ class_name CampfireTile
 func get_sprite():
 	var sprite = load("res://sprites/tiles/campfire.png")
 	var rot = 0
-	return [sprite,rot]
+	return [sprite,rot, offset]
 
 func define_sprite():
 	var sprite = load("res://scenes/stuff/campfire/fire_animation.tscn").instantiate()

@@ -47,4 +47,7 @@ func call_function():
 				space = true
 		else:
 			argument += text[i]
-	G.GS.call(function, argument)
+	if argument == "":
+		G.GS.call(function)
+	else:
+		G.GS.call(function, argument)

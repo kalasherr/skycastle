@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://cesocb2ox5tf2"]
+
+[ext_resource type="Script" uid="uid://bwhkxaqh23l6p" path="res://scripts/stuff/cards/card_manager_background.gd" id="1_selfh"]
+
+[sub_resource type="Gradient" id="Gradient_npkf6"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_gyeho"]
+gradient = SubResource("Gradient_npkf6")
+width = 1000
+height = 1000
+fill_from = Vector2(0, 1)
+fill_to = Vector2(0, 0.482906)
+
+[node name="CardManagerBackground" type="Node2D"]
+script = ExtResource("1_selfh")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(1000, 1000)
+scale = Vector2(2, 2)
+color = Color(0.8, 0.464533, 0.208, 1)
+texture = SubResource("GradientTexture2D_gyeho")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+offset_right = 1000.0
+offset_bottom = 1000.0
+scale = Vector2(2, 2)
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

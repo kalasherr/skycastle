@@ -24,6 +24,11 @@ G="*res://scenes/g.tscn"
 window/size/viewport_width=960
 window/size/viewport_height=540
 
+[gui]
+
+theme/custom_font="uid://dnudkxbni5b0y"
+theme/default_font_antialiasing=0
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

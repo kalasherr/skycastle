@@ -11,7 +11,7 @@ func get_sprite():
 	sprite = load("res://sprites/tiles/infirmary2.png")
 	if tile_moves.find(Vector2(1,0)) != -1:
 		sprite = load("res://sprites/tiles/infirmary1.png")
-	return [sprite,rot]
+	return [sprite,rot, offset]
 
 func define_sprite():
 	main_sprite.texture = get_sprite()[0]

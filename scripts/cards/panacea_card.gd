@@ -17,4 +17,7 @@ func init():
 #translate
 func get_text():
 	values["value1"] = 1
-	return ["Panacea", "[color={add}]Adds[/color] infirmary tile to your deck and [color={add}]heals[/color] {value1} health when stage starts".format(values)]
+	return ["Panacea", "[color={add}]Add[/color] infirmary tile to your deck and [color={add}]heals[/color] {value1} health when stage starts".format(values)]
+
+func get_illustration():
+	return "res://sprites/cards/panacea_card.png"

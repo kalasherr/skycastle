@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckp15dyuelu3y"]
+
+[ext_resource type="Script" uid="uid://w0ah6i1k4as8" path="res://scripts/cards/crusader_card.gd" id="1_k13cn"]
+
+[node name="CrusaderCard" type="Node2D"]
+script = ExtResource("1_k13cn")
+metadata/_custom_type_script = "uid://1lrcp2ihnfx3"

@@ -16,6 +16,9 @@ func init():
 func generate_cards():
 	var to_return = []
 	var pool = G.GS.unused_sin_cards
+	for card in G.AC.get_node("Cards").get_children():
+		if card is CenserCard:
+			card_count = 3
 	for i in range(0,max(1, card_count + G.GS.choice_modifier)):
 		var card_name = pool.pick_random()
 		pool.pop_at(pool.find(card_name))

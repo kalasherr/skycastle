@@ -9,7 +9,7 @@ func get_sprite():
 	var sprite
 	var rot = 0
 	sprite = load("res://sprites/tiles/crown_tile.png")
-	return [sprite,rot]
+	return [sprite,rot, offset]
 	
 
 func define_sprite():

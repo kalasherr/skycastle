@@ -2,7 +2,7 @@ extends Card
 
 class_name MonolithCard
 
-var stone_amount = 4
+var stone_amount = 6
 
 func apply():
 
@@ -14,4 +14,4 @@ func apply():
 #translate
 func get_text():	
 	values["value1"] = stone_amount
-	return ["Monolith", "[color={add}]Adds[/color] {value1} stones to your deck".format(values)]
+	return ["Monolith", "[color={add}]Add[/color] {value1} stones to your deck".format(values)]

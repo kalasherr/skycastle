@@ -12,4 +12,4 @@ func apply():
 
 #translate
 func get_text():
-	return ["Hearth", "[color={add}]Adds[/color] fireplace and crematorium to your deck".format(values)]
+	return ["Hearth", "[color={add}]Add[/color] fireplace and crematorium to your deck".format(values)]

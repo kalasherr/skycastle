@@ -17,7 +17,7 @@ func get_sprite():
 	elif int(rad_to_deg(normal.angle())) % 180 == -135:
 		rot = deg_to_rad(180)
 
-	return [sprite,rot]
+	return [sprite,rot, offset]
 
 
 func define_sprite():

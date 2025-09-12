@@ -11,4 +11,7 @@ func apply():
 #translate
 func get_text():
 	values["value1"] = 3
-	return ["Holy Trinity", "[color={add}]Adds[/color] {value1} almshouses to your deck".format(values)]
+	return ["Holy Trinity", "[color={add}]Add[/color] {value1} almshouses to your deck".format(values)]
+
+func get_illustration():
+	return "res://sprites/cards/holy_trinity_card.png"
