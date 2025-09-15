@@ -28,46 +28,34 @@ func destroy_other_cards(card):
 					G.GS.unused_sin_cards.append(child.option)
 				else:
 					G.GS.unused_cards.append(child.option)
-				child.destroy()	
-				
+				child.destroy()		
 	await f.call()
-	
 	var init_time = 0.2
 	var curr_time = 0.0
-
 	var target_scale = Vector2(0.5,0.5)
-	
 	while card.scale > target_scale:
 		card.scale = target_scale * curr_time / init_time + Vector2(1,1) * (1 - curr_time / init_time)
 		curr_time += get_process_delta_time() * G.animation_time_scale
 		await get_tree().process_frame
-
 	card.scale = target_scale 
-	
 	init_time = G.card_apply_time
 	curr_time = 0.0
-	
 	var target_position = Vector2(760, 340) / 2
 	if self is SinCardManager:
 		target_position = Vector2(-760, 340) / 2
 	var start_position = card.init_position
-	
 	var graph = func(x):
 		if x < init_time/5.0:
-			return 0.75 * (((x/init_time - 0.1) ** 2) * 10.0 - 0.1)
+			return 0.75 * (((x - 0.1) ** 2) * 10.0 - 0.1)
 		else:
-			return - ((x/init_time - 1) ** 2) * 1.25 * 1.25 + 1
-			
+			return - ((x - 1.0) ** 2) * 1.25 * 1.25 + 1.0
 	back.destroy()
-	
 	while curr_time < init_time:
-		card.init_position = graph.call(curr_time) * target_position + (1 - graph.call(curr_time)) * start_position
+		card.init_position = graph.call(curr_time / init_time) * target_position + (1 - graph.call(curr_time / init_time)) * start_position
 		curr_time += get_process_delta_time() * G.animation_time_scale
-		await get_tree().process_frame
-		
+		await get_tree().process_frame	
 	if back:
 		await get_tree().create_timer(max(0,back.destroy_time - G.card_apply_time)).timeout
-
 	card.init_position = target_position
 	card.able()
 	card.reparent(applied.get_node("Cards"))
@@ -75,10 +63,12 @@ func destroy_other_cards(card):
 	await card.apply()
 	emit_signal("card_applied")
 	applied.enable_cards()
+	G.GS.controller_enabled = true
 	return
 
 func call_cards(next_turn = false):
 	call_background()
+	G.GS.controller_enabled = false
 	applied.hide_cards(next_turn)
 	applied.disable_cards()
 	var to_pick = generate_cards()

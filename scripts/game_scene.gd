@@ -10,12 +10,12 @@ var focused = false
 var focused_tile
 var restarting = false
 var generating = false
-var next_tile_default_position = Vector2.ZERO
 var applied_sin_cards
 var applied_cards
 var choice_modifier = 0
 var unused_sin_cards = []
 var unused_cards = []
+var controller_enabled = true
 
 signal next_move
 signal ready_to_play
@@ -27,12 +27,18 @@ signal previous_stage_ended
 @onready var camera = get_node("Camera")
 @onready var card_manager = camera.get_node("CardManager")
 @onready var background = camera.get_node("BackgroundMain")
+@onready var hud = camera.hud_root
 
 func _ready():
+	var card = CandleCard.new()
+	
+	start_game()
+	card.apply()
+
+func start_game():
 	choice_modifier = 0
 	fill_cards()
 	delete_all_progress()
-	next_tile_default_position = camera.get_node("NextTile").position
 	card_manager.init()
 	camera.position = G.tile_size * board_size / 2 - G.tile_size / 2
 	camera.z_index = 100
@@ -49,9 +55,9 @@ func _ready():
 	next_turn()
 
 func _process(delta):
-	if !G.CONSOLE.visible: 
+	if !G.CONSOLE.visible and controller_enabled: 
 		keyboard_controller()
-
+		
 func keyboard_controller():
 	if Input.is_action_just_pressed("ui_accept"):
 		restart_game("forced")
@@ -65,109 +71,15 @@ func disable_buttons():
 		move.queue_free()
 	return
 
-func add_player(coords = board_size - Vector2(1,1)):
-	if !player:
-		var player_scene = load("res://scenes/player_entity.tscn").instantiate()
-		add_child(player_scene)
-		player_scene.init(coords)
-	
-func generate_field():
-	current_deck = []
-	
-	for i in range(0, tile_deck.size()):
-		current_deck.append(tile_deck[i].duplicate())
-		current_deck[i].tile_moves = tile_deck[i].tile_moves
-		current_deck[i].effects_to_add = tile_deck[i].effects_to_add
-		current_deck[i].tile_in_deck = tile_deck[i]
-	
-	if !get_tile(board_size - Vector2(1,1)):
-		var start_tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
-		start_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1)]
-		get_node("TileManager").add_child(start_tile)
-		start_tile.tile_coords = Vector2(board_size.x-1, board_size.y-1)
-		start_tile.init()
-	
-	if !player:
-		add_player()
-	
-	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
-	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
-		
-	var second_tile = current_deck.pick_random()
-	while true:
-		current_deck.shuffle()
-		rotate_deck(current_deck)
-		second_tile = current_deck.pick_random()
-		if second_tile.tile_moves.find(Vector2(1,0)) != -1:
-			break
+func rotate_deck(deck):
+	for tile in deck:
+		if tile.rotatable():
+			var rot = round(randf_range(-0.5, 3.5))
+			rot *= 90
+			if tile.tile_moves != []:
+				for move in tile.tile_moves:
+					move = move.rotated(deg_to_rad(rot))
 
-	get_node("TileManager").add_child(second_tile)
-	current_deck.pop_at(current_deck.find(second_tile))
-	second_tile.tile_coords = Vector2(board_size.x-2, board_size.y-1)
-	second_tile.init()
-	
-	second_tile = current_deck.pick_random()
-	while true:
-		current_deck.shuffle()
-		second_tile = current_deck.pick_random()
-		if second_tile.tile_moves.find(Vector2(0,1)) != -1:
-			break
-	get_node("TileManager").add_child(second_tile)
-	current_deck.pop_at(current_deck.find(second_tile))
-	second_tile.tile_coords = Vector2(board_size.x-1, board_size.y-2)
-	second_tile.init()
-	
-	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
-	
-	var tiles_to_deploy = []
-	for i in range (0,board_size.x + board_size.y):
-		var i1 = board_size.x + board_size.y - 1 - i
-		var found = false
-		for j in range (0,board_size.x + board_size.y):
-			var j1 = board_size.x + board_size.y - 1 - j
-			if check_availability(Vector2(i1 - j1, j1)) and (i1 != 0 or j1 != 0):
-				found = true
-				var tile = current_deck.pick_random()
-				if tile:
-					current_deck.pop_at(current_deck.find(tile))
-					tiles_to_deploy.append(tile)
-					tile.tile_coords = Vector2(i1 - j1, j1)
-	var to_pop = []
-	var prioritized = []
-# 	for tile in tiles_to_deploy:
-# 		if tile.get_spawn_priority() > 0:
-# 			to_pop.append(tile)
-# 			prioritized.append(tile)
-	await get_node("Stuff/SmokeManager").refresh_smokes()
-	for tile in to_pop:
-		tiles_to_deploy.pop_at(tiles_to_deploy.find(tile))
-	if prioritized != []:
-		for tile in prioritized:
-			get_node("TileManager").add_child(tile)
-			tile.init()
-	var limit = board_size.x + board_size.y + 1
-	for i in range(0,limit):
-		var found = false
-		for tile in tiles_to_deploy:
-			if tile.tile_coords.x + tile.tile_coords.y == limit - i:
-				found = true
-				get_node("TileManager").add_child(tile)
-				tile.init()
-		if found:
-			await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
-# 	for tile in tiles_to_deploy:
-# 		get_node("TileManager").add_child(tile)
-# 		tile.init()
-
-	var end_tile = CrownTile.new()
-	end_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1), Vector2(1,0), Vector2(0,1)]
-	get_node("TileManager").add_child(end_tile)
-	end_tile.tile_coords = Vector2(0, 0)
-	end_tile.init()
-	
-	return
-
-				
 func fill_deck():
 	for i in range (0,5):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
@@ -193,7 +105,7 @@ func fill_deck():
 		var tile = BasicTile.new()
 		tile.tile_moves = moves
 		tile_deck.append(tile)
-	for i in range (0,1):
+	for i in range (0,10):
 		var moves = [Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]
 		for j in range(0,0):
 			moves.shuffle()
@@ -207,6 +119,89 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	rotate_deck(tile_deck)
+	
+func add_player(coords = board_size - Vector2(1,1)):
+	if !player:
+		var player_scene = load("res://scenes/player_entity.tscn").instantiate()
+		add_child(player_scene)
+		player_scene.init(coords)
+
+func generate_field():
+	current_deck = []
+	for i in range(0, tile_deck.size()):
+		current_deck.append(tile_deck[i].duplicate())
+		current_deck[i].tile_moves = tile_deck[i].tile_moves
+		current_deck[i].effects_to_add = tile_deck[i].effects_to_add
+		current_deck[i].tile_in_deck = tile_deck[i]
+	if !get_tile(board_size - Vector2(1,1)):
+		var start_tile = load("res://scenes/tiles/basic_tile.tscn").instantiate()
+		start_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1)]
+		get_node("TileManager").add_child(start_tile)
+		start_tile.tile_coords = Vector2(board_size.x-1, board_size.y-1)
+		start_tile.init()
+	if !player:
+		add_player()
+	await get_tree().create_timer(0.2 / G.animation_time_scale).timeout
+	var second_tile = current_deck.pick_random()
+	while true:
+		current_deck.shuffle()
+		rotate_deck(current_deck)
+		second_tile = current_deck.pick_random()
+		if second_tile.tile_moves.find(Vector2(1,0)) != -1:
+			break
+	get_node("TileManager").add_child(second_tile)
+	current_deck.pop_at(current_deck.find(second_tile))
+	second_tile.tile_coords = Vector2(board_size.x-2, board_size.y-1)
+	second_tile.init()
+	second_tile = current_deck.pick_random()
+	while true:
+		current_deck.shuffle()
+		second_tile = current_deck.pick_random()
+		if second_tile.tile_moves.find(Vector2(0,1)) != -1:
+			break
+	get_node("TileManager").add_child(second_tile)
+	current_deck.pop_at(current_deck.find(second_tile))
+	second_tile.tile_coords = Vector2(board_size.x-1, board_size.y-2)
+	second_tile.init()
+	await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
+	var tiles_to_deploy = []
+	for i in range (0,board_size.x + board_size.y):
+		var i1 = board_size.x + board_size.y - 1 - i
+		var found = false
+		for j in range (0,board_size.x + board_size.y):
+			var j1 = board_size.x + board_size.y - 1 - j
+			if check_availability(Vector2(i1 - j1, j1)) and (i1 != 0 or j1 != 0):
+				found = true
+				var tile = current_deck.pick_random()
+				if tile:
+					current_deck.pop_at(current_deck.find(tile))
+					tiles_to_deploy.append(tile)
+					tile.tile_coords = Vector2(i1 - j1, j1)
+	var to_pop = []
+	var prioritized = []
+	await get_node("Stuff/SmokeManager").refresh_smokes()
+	for tile in to_pop:
+		tiles_to_deploy.pop_at(tiles_to_deploy.find(tile))
+	if prioritized != []:
+		for tile in prioritized:
+			get_node("TileManager").add_child(tile)
+			tile.init()
+	var limit = board_size.x + board_size.y + 1
+	for i in range(0,limit):
+		var found = false
+		for tile in tiles_to_deploy:
+			if tile.tile_coords.x + tile.tile_coords.y == limit - i:
+				found = true
+				get_node("TileManager").add_child(tile)
+				tile.init()
+		if found:
+			await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
+	var end_tile = CrownTile.new()
+	end_tile.tile_moves = [Vector2(-1,0), Vector2(0,-1), Vector2(1,0), Vector2(0,1)]
+	get_node("TileManager").add_child(end_tile)
+	end_tile.tile_coords = Vector2(0, 0)
+	end_tile.init()
+	return
 
 func get_tile_moves(tile):
 	if tile is BankTile:
@@ -250,16 +245,8 @@ func get_tile_moves(tile):
 	elif tile is MirrorChamberTile:
 		return [Vector2(1,0),Vector2(-1,0),Vector2(0,1),Vector2(0,-1)]
 	else:	
-		print(tile.name)
-
-func rotate_deck(deck):
-	for tile in deck:
-		if tile.rotatable():
-			var rot = round(randf_range(-0.5, 3.5))
-			rot *= 90
-			if tile.tile_moves != []:
-				for move in tile.tile_moves:
-					move = move.rotated(deg_to_rad(rot))
+		push_error("TILE NOT FOUND ", tile) 
+		return []
 
 func add_tile(scene, current_deck_flag = false):
 	if scene is String:
@@ -289,6 +276,7 @@ func button_pressed(tile):
 func next_turn(flag = "none"):
 	var tile
 	var waiting = false
+	
 	if current_deck.size() > 0:
 		tile = current_deck[0]
 		tile.init_effects()
@@ -300,14 +288,14 @@ func next_turn(flag = "none"):
 					effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
 			update_next_tile(tile.get_sprite(), effects)
 	else:
-		camera.get_node("NextTile").texture = null
-		for effect in camera.get_node("NextTile/Effects").get_children():
+		camera.hud_next_tile.texture = null
+		for effect in camera.hud_next_tile.get_node("Effects").get_children():
 			effect.queue_free()
-		camera.get_node("DeckLeft").text = "x" + str(0)
+		camera.hud_deck_left.text = "x" + str(0)
 
 	if !stage_transfer and !restarting:
 		if game_phase == "player":
-			await disable_buttons()
+			disable_buttons()
 			await get_player_moves()
 			G.GS.light_off_tiles()
 			game_phase = "tile"
@@ -331,27 +319,10 @@ func next_turn(flag = "none"):
 					create_tile_move(Vector2(i,j))
 			G.GS.light_off_tiles()
 			game_phase = "player"
-
 	emit_signal("next_move")
 		
 func update_next_tile(array, effects = []):
-	var texture = array[0]
-	var texture_rotation = array[1]
-	var next = get_node("Camera/NextTile")
-	
-	next.texture = texture
-	next.rotation = texture_rotation
-	if array.size() == 3:
-		next.position = next_tile_default_position + array[2]
-	else:
-		next.position = next_tile_default_position
-	for child in next.get_node("Effects").get_children():
-		child.queue_free()
-	for effect in effects:
-		next.get_node("Effects").add_child(Sprite2D.new())
-		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).rotation = - next.rotation
-		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).texture = effect
-	get_node("Camera/DeckLeft").text = "x" + str(current_deck.size())
+	camera.set_next_tile(array, effects)
 	emit_signal("next_tile_updated")
 
 func get_tile(coords):
@@ -413,7 +384,6 @@ func tile_move():
 			get_node("TileManager").add_child(tile)
 			tile.tile_coords = coords
 			tile.init()
-
 			disable_buttons()
 			if move.tile_coords.x < 0:
 				await tile.move(tile.tile_coords + Vector2(1,0))
@@ -428,8 +398,8 @@ func tile_move():
 	if current_deck.size() > 0:
 		tile = current_deck[0]
 	else:
-		camera.get_node("NextTile").texture = null
-		camera.get_node("DeckLeft").text = "x" + str(0)
+		camera.hud_next_tile.texture = null
+		camera.hud_deck_left.text = "x" + str(0)
 	for move in tile_moves.get_children():
 		move.queue_free()
 	G.ASC.enable_cards()
@@ -440,46 +410,28 @@ func next_stage():
 	stage_transfer = true
 	emit_signal("previous_stage_ended")
 	disable_buttons()
-	
 	get_node("Stuff/SmokeManager").destroy_all_smokes()
-	
 	for move in get_node("TileMoves").get_children():
 		move.queue_free()
-	await destroy_all_tiles("leave_player")
-				
+	await destroy_all_tiles("leave_player")		
 	var start_tile = get_tile(player.player_coords)
-	
 	if board_size.x > board_size.y:
 		board_size.y += 1
 	else:
 		board_size.x += 1
-	
 	var init_time = 2.0
 	var curr_time = 0.0
 	var old_pos = start_tile.position
 	var new_pos = (board_size - Vector2(1,1)) * G.tile_size
 	var old_camera_pos = camera.position
 	var new_camera_pos = G.tile_size * board_size / 2 - G.tile_size / 2
-	
 	var graph = func(curr):
-# 		if curr < 1.0:
-# 			return 8 * ((curr/init_time - 0.25) ** 2) - 0.5
-# 		else:
-# 			return - 4 * ((curr/init_time - 1) ** 2)  + 1
-
-		#if curr < 1.0:
-			#return (4 * (curr/init_time - 0.25)) ** 2 - 1
-		#else:
-			#return 2 * (1 - pow(4, -(curr/init_time - 0.5)))
-			
 		if curr < 0.4:
 			return 0.75 * (((curr/init_time - 0.1) ** 2) * 10.0 - 0.1)
 		else:
 			return - ((curr/init_time - 1) ** 2) * 1.25 * 1.25 + 1
-
-# 		return (sin(curr/init_time * PI / 2) ** 3)
 	card_manager.call_cards()
-	
+
 	await card_manager.card_applied
 	var background_current_modulate = background.modulate
 	
@@ -494,7 +446,6 @@ func next_stage():
 	start_tile.replace(new_pos)
 	camera.position = new_camera_pos
 	player.replace(new_pos + start_tile.get_player_offset())
-	
 	start_tile.tile_coords = board_size - Vector2(1,1)
 	player.player_coords = board_size - Vector2(1,1)
 	start_tile.position = new_pos
@@ -508,11 +459,7 @@ func next_stage():
 	emit_signal("next_stage_started")
 	next_turn()
 
-func update_hp(amount):
-	camera.get_node("PlayerHP").text = str(player.hp) + "/" + str(player.max_hp)
-	if player.hp == 0:
-		restart_game()
-	
+
 func light_up_tiles(coords_arr, color = "premove"):
 	if !restarting:
 		for coords in coords_arr:
@@ -558,7 +505,7 @@ func restart_game(flag = "none"):
 	
 	background.reset()
 	
-	_ready()
+	start_game()
 
 func destroy_all_tiles(flag = "cascade", parameters = []):
 	if flag == "cascade":
@@ -569,14 +516,14 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 				if player:
 					difference = Vector2(tile.tile_coords - player.player_coords)
 				if abs(difference.x) + abs(difference.y) == board_size.x + board_size.y - i:
-					tile.destroy()
+					tile.default_destroy()
 					found = true
 			if found:
 				await get_tree().create_timer(0.2 / G.animation_time_scale).timeout
 		if get_tile(player.player_coords):
 			await get_tree().create_timer(0.1 / G.animation_time_scale).timeout
 			if get_tile(player.player_coords):
-				await get_tile(player.player_coords).destroy("leave_player")
+				await get_tile(player.player_coords).default_destroy("leave_player")
 		while get_node("TileManager").get_children().size() != 0:
 			await get_tree().process_frame
 		return
@@ -587,7 +534,7 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 				for tile in get_node("TileManager").get_children():
 					var difference = tile.tile_coords
 					if abs(difference.x) + abs(difference.y) == board_size.x + board_size.y - i and tile.tile_coords != Vector2.ZERO:
-						tile.destroy("no_shake")
+						tile.default_destroy("no_shake")
 						found = true
 				if found:
 					await get_tree().create_timer(G.tile_destroy_time / G.animation_time_scale / 2).timeout
@@ -602,12 +549,12 @@ func destroy_all_tiles(flag = "cascade", parameters = []):
 				if player:
 					difference = Vector2(tile.tile_coords - player.player_coords)
 				if abs(difference.x) + abs(difference.y) == board_size.x + board_size.y - i:
-					tile.destroy()
+					tile.default_destroy()
 					found = true
 			if found:
 				await get_tree().create_timer(0.2 / G.animation_time_scale).timeout
 		if get_tile(player.player_coords):
-			await get_tile(player.player_coords).destroy("leave_player")
+			await get_tile(player.player_coords).default_destroy("leave_player")
 		while get_node("TileManager").get_children().size() != 0:
 			await get_tree().process_frame
 		return
@@ -674,14 +621,14 @@ func delete_tile(tile, from_deck = true):
 		tile_deck.pop_at(tile_deck.find(tile))
 		tile.queue_free()
 
+func update_hp(amount):
+	camera.set_hp(amount)
+	
 func update_money(amount):
-	camera.get_node("PlayerMoney").text = str(amount)
+	camera.set_money(amount)
 
-func update_shield(shield):
-	if shield == 0:
-		camera.get_node("PlayerShield").text = ""
-	else:
-		camera.get_node("PlayerShield").text = str(shield)
+func update_shield(amount):
+	camera.set_shield(amount)
 
 func delete_all_progress():
 	for child in camera.get_children():
@@ -696,8 +643,8 @@ func erase_deck():
 	var delay_time = 0.1 / G.animation_time_scale
 	var trash = get_node("Stuff/Trash")
 	var nodes = []
-	camera.get_node("NextTile").texture = null
-	for effect in camera.get_node("NextTile/Effects").get_children():
+	camera.hud_next_tile.texture = null
+	for effect in camera.hud_next_tile.get_node("Effects").get_children():
 		effect.queue_free()
 	for i in range(0, current_deck.size()):
 		var tile = current_deck[current_deck.size() - i - 1] 
@@ -709,7 +656,7 @@ func erase_deck():
 		if tile.get_sprite().size() == 3:
 			sprite.position = tile.get_sprite()[2]
 		node.add_child(sprite)
-		node.global_position = camera.get_node("NextTile").global_position
+		node.global_position = camera.hud_next_tile.global_position
 		nodes.push_front(node)
 	for node in nodes:
 		drop(node, drop_time)
@@ -721,7 +668,7 @@ func get_tile_scene(tile):
 	return load("res://scenes/tiles/" + tile + "_tile.tscn").instantiate()
 
 func drop(node, time):
-	G.GS.camera.get_node("DeckLeft").text = "x" + str(max(int(G.GS.camera.get_node("DeckLeft").text) - 1, 0))
+	G.GS.camera.hud_deck_left.text = "x" + str(max(int(G.GS.camera.hud_deck_left.text) - 1, 0))
 	var variety = randf_range(-200.0,200.0)
 	var start_position = node.position
 	var f = func(x):

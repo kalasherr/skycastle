@@ -22,4 +22,3 @@ func destroy(flag = ""):
 						if !found and !G.GS.get_tile(tile_coords + Vector2(i,j)).is_destroying:
 							G.GS.get_tile(tile_coords + Vector2(i,j)).destroy()
 		default_destroy()
-		queue_free()

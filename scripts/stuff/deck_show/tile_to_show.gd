@@ -9,14 +9,13 @@ var hover_shift = Vector2(0,-40)
 
 func init():
 	var f = func(x):
-		return - ((x - 1) ** 2) + 1
-
+		return - ((x - 1.0) ** 2) + 1.0
 	var init_position = position
 	var init_time = 0.4
 	var curr_time = 0.0
 	moving = true
 	while curr_time < init_time:
-		position = init_position * f.call(1 - curr_time / init_time) + final_position * f.call(curr_time / init_time)
+		position.x = init_position.x * (1.0 -f.call( curr_time / init_time)) + final_position.x * f.call(curr_time / init_time)
 		curr_time += get_process_delta_time()
 		await get_tree().process_frame
 	moving = false
@@ -29,3 +28,6 @@ func _process(delta):
 	elif !moving:
 		self.position = final_position
 		get_node("Button").position = button_shift - G.tile_size / 2
+
+func destroy():
+	queue_free()

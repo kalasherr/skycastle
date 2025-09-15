@@ -10,7 +10,7 @@ var destroy_time = 0.2
 func _process(delta):
 	if inited:
 		time += delta
-		light.energy = (sin(time * 2) + 1) / 2 * 10
+		light.energy = (sin(time * 2) + 1) / 2
 
 func destroy():
 	inited = false

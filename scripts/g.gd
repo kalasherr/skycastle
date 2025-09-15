@@ -9,7 +9,7 @@ var AC
 var CONSOLE
 
 var tile_size = Vector2(64,64)
-var animation_time_scale = 1
+var animation_time_scale = 2
 var tile_destroy_time = 0.3
 var tile_shake_time = 0.3
 var card_apply_time = 0.8
@@ -51,4 +51,11 @@ func get_sin_card_pool():
 			arr.append(a)
 	return arr
 	
-
+func get_all_children(node):
+	var children = []
+	children.append_array(node.get_children())
+	for child in node.get_children():
+		if child.get_children() != []:
+			children.append_array(G.get_all_children(child))
+	return children
+	

@@ -3,7 +3,7 @@ extends Card
 class_name CandleCard
 
 func apply():
-	G.GS.camera.add_child(CandleTile.new())
+	G.GS.camera.hud_next_tile.get_parent().add_child(CandleTile.new())
 
 #translate
 func get_text():

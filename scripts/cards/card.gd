@@ -64,6 +64,9 @@ func default_init():
 	define_sprite()
 	add_button()
 	add_labels()
+	for child in G.get_all_children(self):
+		if child is Node2D or child is Control:
+			child.light_mask = 2
 
 func init_effects():
 	pass
@@ -83,12 +86,12 @@ func add_button():
 func _process(delta):
 	if check_hover():
 		if (self.position - (init_position + (get_global_mouse_position() - global_position) * 0.1)).length() / 10 > follow_threshold:
-			position += (init_position + (get_global_mouse_position() - global_position) * 0.1 - position).normalized() * max((init_position + (get_global_mouse_position() - global_position) * 0.1 - position).length() / 10, follow_threshold)
+			position += (init_position + (get_global_mouse_position() - global_position) * 0.1 - position).normalized() * max((init_position + (get_global_mouse_position() - global_position) * 0.1 - position).length() / 10, follow_threshold) * 60 * get_process_delta_time()
 		else:
 			self.position = init_position + (get_global_mouse_position() - global_position) * 0.1
 	else:
 		if (position - init_position).length() / 10 > follow_threshold:
-			position += (init_position - position).normalized() * max((init_position - position).length() / 10, follow_threshold)
+			position += (init_position - position).normalized() * max((init_position - position).length() / 10, follow_threshold) * 60 * get_process_delta_time()
 		else:
 			position = init_position
 

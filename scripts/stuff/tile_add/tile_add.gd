@@ -11,7 +11,7 @@ func play(sprite, sender = null):
 	if !playing:
 		var f = func(x):
 			return (((x * 3.0 - 1.0) ** 2.0) - 1) / 3
-		var next_tile = G.GS.camera.get_node("NextTile")
+		var next_tile = G.GS.camera.hud_next_tile
 		playing = true
 		var node = Sprite2D.new()
 		node.scale = 0.3 * Vector2(1,1)
@@ -19,7 +19,7 @@ func play(sprite, sender = null):
 		node.modulate[3] = 1
 		node.texture = sprite
 		node.global_position = G.player.global_position
-		G.GS.camera.get_node("NextTile").add_child(node)
+		G.GS.camera.hud_next_tile.add_child(node)
 		var start_position = G.player.global_position
 		var final_position = next_tile.global_position + Vector2(0,0)
 		var init_time = 0.6

@@ -19,51 +19,7 @@ script = ExtResource("1_w5aja")
 
 [node name="Camera" type="Camera2D" parent="."]
 z_index = 1
-zoom = Vector2(2, 2)
 script = ExtResource("2_utbpp")
-
-[node name="NextTile" type="Sprite2D" parent="Camera"]
-position = Vector2(400, 0)
-
-[node name="Effects" type="Sprite2D" parent="Camera/NextTile"]
-
-[node name="DeckLeft" type="Label" parent="Camera"]
-offset_left = 291.0
-offset_top = -20.0
-offset_right = 391.0
-offset_bottom = 20.0
-text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PlayerHP" type="Label" parent="Camera"]
-modulate = Color(0.700626, 0.233734, 0.200222, 1)
-offset_left = 350.0
-offset_top = -126.0
-offset_right = 450.0
-offset_bottom = -86.0
-text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PlayerMoney" type="Label" parent="Camera"]
-modulate = Color(0.776177, 0.591227, 0, 1)
-offset_left = 350.0
-offset_top = -170.0
-offset_right = 450.0
-offset_bottom = -130.0
-text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PlayerShield" type="Label" parent="Camera"]
-modulate = Color(0.141176, 0.458824, 0.929412, 1)
-offset_left = 350.0
-offset_top = -212.0
-offset_right = 450.0
-offset_bottom = -172.0
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="CardManager" parent="Camera" instance=ExtResource("2_onqr8")]
 
@@ -84,6 +40,106 @@ metadata/_custom_type_script = "uid://b1i3ju4ale47t"
 [node name="SinCardManager" parent="Camera" instance=ExtResource("6_kk2rg")]
 
 [node name="AppliedSinCards" parent="Camera" instance=ExtResource("7_b5spy")]
+
+[node name="HUD" type="Control" parent="Camera"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -480.0
+offset_top = -270.0
+offset_right = 480.0
+offset_bottom = 270.0
+mouse_filter = 2
+
+[node name="DeckLeft" type="Label" parent="Camera/HUD"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_top = -68.0
+offset_right = -40.0
+offset_bottom = -28.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerHP" type="Label" parent="Camera/HUD"]
+modulate = Color(0.700626, 0.233734, 0.200222, 1)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_top = -99.0
+offset_right = -40.0
+offset_bottom = -59.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerMoney" type="Label" parent="Camera/HUD"]
+modulate = Color(0.776177, 0.591227, 0, 1)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_top = -128.0
+offset_right = -40.0
+offset_bottom = -88.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerShield" type="Label" parent="Camera/HUD"]
+modulate = Color(0.141176, 0.458824, 0.929412, 1)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -141.0
+offset_top = -154.0
+offset_right = -41.0
+offset_bottom = -114.0
+grow_horizontal = 0
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NextTileContainer" type="Control" parent="Camera/HUD"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -123.0
+offset_top = -32.0
+offset_right = -59.0
+offset_bottom = 32.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NextTile" type="Sprite2D" parent="Camera/HUD/NextTileContainer"]
+position = Vector2(32, 32)
+
+[node name="Effects" type="Sprite2D" parent="Camera/HUD/NextTileContainer/NextTile"]
 
 [node name="TileMoves" type="Node2D" parent="."]
 

@@ -3,7 +3,7 @@ extends Node2D
 class_name CandleTile
 
 var sprite 
-var x_offset = 60
+var x_offset = 40
 func _ready():
 	z_index = -1
 	self.name = "CandleTile"

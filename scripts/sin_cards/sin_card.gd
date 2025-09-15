@@ -36,6 +36,9 @@ func default_init():
 	define_sprite()
 	add_button()
 	add_labels()
+	for child in G.get_all_children(self):
+		if child is Node2D or child is Control:
+			child.light_mask = 2
 
 func init_effects():
 	pass

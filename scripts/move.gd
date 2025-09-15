@@ -8,9 +8,9 @@ var arrow = false
 func _process(delta):
 	if self.is_hovered() and get_children().size() > 0:
 		if self.modulate[3] != 0:
-			get_node("Sprite").texture = G.GS.camera.get_node("NextTile").texture
-			get_node("Sprite").rotation = G.GS.camera.get_node("NextTile").rotation
-			get_node("Sprite").global_position = position + G.tile_size / 2 + (G.GS.camera.get_node("NextTile").position - G.GS.next_tile_default_position)
+			get_node("Sprite").texture = G.GS.camera.hud_next_tile.texture
+			get_node("Sprite").rotation = G.GS.camera.hud_next_tile.rotation
+			get_node("Sprite").global_position = position + G.tile_size / 2 + G.GS.camera.hud_next_tile.position - G.GS.camera.default_next_position
 			if !G.GS.focused or G.GS.focused_tile != self:
 				G.GS.focused_tile = self
 				var array = []
