@@ -29,26 +29,81 @@ func set_money(amount):
 	hud_money.text = str(amount)
 
 func set_shield(amount):
-	hud_money.text = str(amount)
+	hud_shield.text = str(amount)
 
 func set_deck_left(amount):
 	hud_deck_left.text = str(amount)
 
 func set_next_tile(array, effects):
-	var texture = array[0]
-	var texture_rotation = array[1]
-	var next = hud_next_tile
+	if G.GS.game_phase == "player":
+		var found = false
+		var candle_tile = hud_next_tile.get_parent().get_node("CandleTile")
+		if candle_tile:
+			found = true
+			var f = func(x):
+				return sin(x * PI / 2)
+			var init_time = 0.2
+			var curr_time = 0.0
+			var start_scale = candle_tile.scale
+			var end_scale = Vector2(1,1)
+			var start_pos = candle_tile.global_position
+			var end_pos = default_next_position + candle_tile.get_parent().global_position
+			while curr_time < init_time:
+				candle_tile.scale = start_scale * (1 - f.call(curr_time / init_time)) + end_scale * f.call(curr_time / init_time)
+				candle_tile.global_position = start_pos * (1 - f.call(curr_time / init_time)) + end_pos * f.call(curr_time / init_time)
+				curr_time += get_process_delta_time()
+				await get_tree().process_frame
+			candle_tile.position = Vector2(candle_tile.get_parent().get_node("NextTile").position.x + candle_tile.x_offset, 0)
+			candle_tile.scale = candle_tile.default_scale
+			var texture = array[0]
+			var texture_rotation = array[1]
+			var next = hud_next_tile
+			
+			next.texture = texture
+			next.rotation = texture_rotation
+			if array.size() == 3:
+				next.position = default_next_position + array[2]
+			else:
+				next.position = default_next_position
+			for child in next.get_node("Effects").get_children():
+				child.queue_free()
+			for effect in effects:
+				next.get_node("Effects").add_child(Sprite2D.new())
+				next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).rotation = - next.rotation
+				next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).texture = effect
+			hud_deck_left.text = "x" + str(G.GS.current_deck.size())
+		else:
+			var texture = array[0]
+			var texture_rotation = array[1]
+			var next = hud_next_tile
+			
+			next.texture = texture
+			next.rotation = texture_rotation
+			if array.size() == 3:
+				next.position = default_next_position + array[2]
+			else:
+				next.position = default_next_position
+			for child in next.get_node("Effects").get_children():
+				child.queue_free()
+			for effect in effects:
+				next.get_node("Effects").add_child(Sprite2D.new())
+				next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).rotation = - next.rotation
+				next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).texture = effect
+			hud_deck_left.text = "x" + str(G.GS.current_deck.size())
 	
-	next.texture = texture
-	next.rotation = texture_rotation
-	if array.size() == 3:
-		next.position = default_next_position + array[2]
-	else:
-		next.position = default_next_position
-	for child in next.get_node("Effects").get_children():
-		child.queue_free()
-	for effect in effects:
-		next.get_node("Effects").add_child(Sprite2D.new())
-		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).rotation = - next.rotation
-		next.get_node("Effects").get_child(next.get_node("Effects").get_children().size() - 1).texture = effect
-	hud_deck_left.text = "x" + str(G.GS.current_deck.size())
+
+func play_tile_deploy(end_pos):
+	var f = func(x):
+		return sin(x * PI / 2)
+
+	var start_pos = hud_next_tile.global_position
+	var init_time = 0.5
+	var curr_time = 0.0
+	while curr_time < init_time:
+		curr_time += get_process_delta_time() * G.animation_time_scale
+		hud_next_tile.global_position = f.call(curr_time / init_time) * end_pos + start_pos * (1 - f.call(curr_time / init_time))
+		await get_tree().process_frame
+	hud_next_tile.global_position = end_pos
+	hud_next_tile.texture = null
+	hud_next_tile.position = default_next_position
+	return

@@ -30,9 +30,10 @@ signal previous_stage_ended
 @onready var hud = camera.hud_root
 
 func _ready():
-	var card = CandleCard.new()
 	
 	start_game()
+	var card = CandleCard.new()
+		
 	card.apply()
 
 func start_game():
@@ -51,6 +52,7 @@ func start_game():
 	add_player()
 	generating = false
 	update_hp(player.hp)
+
 	emit_signal("ready_to_play")
 	next_turn()
 
@@ -322,7 +324,7 @@ func next_turn(flag = "none"):
 	emit_signal("next_move")
 		
 func update_next_tile(array, effects = []):
-	camera.set_next_tile(array, effects)
+	await camera.set_next_tile(array, effects)
 	emit_signal("next_tile_updated")
 
 func get_tile(coords):
@@ -380,6 +382,8 @@ func tile_move():
 				coords = Vector2(move.tile_coords.x, board_size.y)
 		if coords:
 			tile = current_deck[0]
+			
+			await camera.play_tile_deploy(G.tile_size.x * coords + get_node("TileManager").global_position)
 			current_deck.pop_front()
 			get_node("TileManager").add_child(tile)
 			tile.tile_coords = coords

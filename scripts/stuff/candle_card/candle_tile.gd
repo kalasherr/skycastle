@@ -4,6 +4,7 @@ class_name CandleTile
 
 var sprite 
 var x_offset = 40
+var default_scale = Vector2(0.7,0.7)
 func _ready():
 	z_index = -1
 	self.name = "CandleTile"
@@ -11,7 +12,7 @@ func _ready():
 	add_child(sprite_scene)
 	sprite = sprite_scene
 	self.position.x = get_parent().get_node("NextTile").position.x + x_offset
-	self.scale = Vector2(0.7,0.7)
+	self.scale = default_scale
 	var effects = Node2D.new()
 	sprite.add_child(effects)
 	effects.name = "Effects"
