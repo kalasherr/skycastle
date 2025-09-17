@@ -14,38 +14,18 @@ func _ready():
 	init()
 
 func init():
-	var init_time = spawn_time
-	var curr_time = 0.0
-	while curr_time < init_time:
-		self.modulate[3] = curr_time / init_time
-		curr_time += get_process_delta_time() * G.animation_time_scale
-		await get_tree().process_frame
+	await T.tween(self, "modulate", Color(1,1,1,1), spawn_time)
 	self.modulate[3] = 1
 		
 func destroy():
-	var init_time = spawn_time
-	var curr_time = 0.0
-	while curr_time < init_time:
-		self.modulate[3] = 1 - curr_time / init_time
-		curr_time += get_process_delta_time() * G.animation_time_scale
-		await get_tree().process_frame
+	await T.tween(self, "modulate", Color(1,1,1,0), spawn_time)
 	self.modulate[3] = 0
 	queue_free()
 
 func hide_smoke():
-	var init_time = spawn_time
-	var curr_time = 0.0
-	while curr_time < init_time:
-		self.modulate[3] = 1 - curr_time / init_time
-		curr_time += get_process_delta_time() * G.animation_time_scale
-		await get_tree().process_frame
+	await T.tween(self, "modulate", Color(1,1,1,0), spawn_time)
 	self.modulate[3] = 0
 
 func show_smoke():
-	var init_time = 1.0
-	var curr_time = 0.0
-	while curr_time < init_time:
-		self.modulate[3] = curr_time / init_time
-		curr_time += get_process_delta_time() * G.animation_time_scale
-		await get_tree().process_frame
+	await T.tween(self, "modulate", Color(1,1,1,1), spawn_time)
 	self.modulate[3] = 1

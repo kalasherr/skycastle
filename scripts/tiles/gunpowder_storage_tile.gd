@@ -2,6 +2,8 @@ extends Tile
 
 class_name GunpowderStorageTile
 
+var exploded = false
+
 func get_sprite():
 	var sprite
 	var rot = 0
@@ -9,12 +11,12 @@ func get_sprite():
 	return [sprite,rot, offset]
 
 func destroy(flag = ""):
-	if !is_destroying:
-		is_destroying = true
+	if !is_destroying and !exploded:
+		exploded = true
 		if !G.GS.stage_transfer:
 			for i in [-1,0,1]:
 				for j in [-1,0,1]:
-					if G.GS.get_tile(tile_coords + Vector2(i,j)):
+					if G.GS.get_tile(tile_coords + Vector2(i,j)) and (i != 0 or j != 0) and tile_coords.x + i >= 0 and tile_coords.y + j >= 0 and tile_coords.x + i < G.GS.board_size.x and tile_coords.y + j < G.GS.board_size.y:
 						var found = false
 						for effect in G.GS.get_tile(tile_coords + Vector2(i,j)).get_node("Effects").get_children():
 							if effect is CrownEffect:

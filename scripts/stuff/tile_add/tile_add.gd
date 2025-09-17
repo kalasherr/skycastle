@@ -18,28 +18,21 @@ func play(sprite, sender = null):
 		node.z_index = -1
 		node.modulate[3] = 1
 		node.texture = sprite
-		node.global_position = G.player.global_position
 		G.GS.camera.hud_next_tile.add_child(node)
-		var start_position = G.player.global_position
-		var final_position = next_tile.global_position + Vector2(0,0)
-		var init_time = 0.6
-		var curr_time = 0.0
-		var threshold_time = 0.2
+		node.global_position = G.player.global_position
+		
 		var launched = false
-		while curr_time < init_time:
-			curr_time += get_process_delta_time() * G.animation_time_scale
-			node.scale = (0.3 + ((curr_time / init_time) * 0.7)) * Vector2(1,1)
-			if curr_time < init_time:
-				node.global_position = f.call(curr_time / init_time) * final_position + f.call(1 - curr_time / init_time) * start_position
-			else:
-				node.global_position = final_position
-			if curr_time > threshold_time and !launched:
-				playing = false
-				launched = true
-				if queue != []:
-					play(queue[0][0], queue[0][1])
-					queue.pop_front()
-			await get_tree().process_frame
+		T.tween(node, "global_position", next_tile.global_position, 0.6, f)
+		T.tween(node, "scale", Vector2(1,1), 0.6)
+	
+		await get_tree().create_timer(0.2).timeout
+		if !launched:
+			playing = false
+			if queue != []:
+				play(queue[0][0], queue[0][1])
+				queue.pop_front()
+
+		await get_tree().create_timer(0.4).timeout
 		node.queue_free()
 		if queue == []:
 			return

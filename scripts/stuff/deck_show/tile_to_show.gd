@@ -8,16 +8,13 @@ var button_shift = Vector2(0,0)
 var hover_shift = Vector2(0,-40)
 
 func init():
+	moving = true
+	
 	var f = func(x):
 		return - ((x - 1.0) ** 2) + 1.0
-	var init_position = position
-	var init_time = 0.4
-	var curr_time = 0.0
-	moving = true
-	while curr_time < init_time:
-		position.x = init_position.x * (1.0 -f.call( curr_time / init_time)) + final_position.x * f.call(curr_time / init_time)
-		curr_time += get_process_delta_time()
-		await get_tree().process_frame
+
+	await T.tween(self, "position", final_position, 0.5, f)
+	
 	moving = false
 	position = final_position
 

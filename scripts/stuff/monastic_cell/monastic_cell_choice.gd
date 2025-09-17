@@ -30,18 +30,13 @@ func init():
 		set_text()
 
 func choose(tile):
-	G.GS.add_tile_to_deck(tile, G.GS.get_tile_moves(tile))
 	for child in get_children():
 		if child is TileChoice:
-			child.get_node("Button").disabled = false
-	var init_time = 1.0
-	var curr_time = 0.0
-	var curr_scale = get_child(0).scale
-	while curr_time < init_time:
-		for child in get_children():
-			child.scale = curr_scale * (1 - curr_time / init_time)
-		await get_tree().process_frame
-		curr_time += get_process_delta_time() * G.animation_time_scale
+			child.get_node("Button").disabled = true
+	G.GS.add_tile_to_deck(tile, G.GS.get_tile_moves(tile))
+	for child in get_children():
+		T.tween(child, "scale", Vector2(0,0), 1.0)
+	await get_tree().create_timer(1).timeout
 	for child in get_children():
 		child.queue_free()
 	emit_signal("event_ended")

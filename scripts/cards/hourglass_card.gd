@@ -24,8 +24,6 @@ func delete_chambers():
 			if tile is MirrorChamberTile and deleted < threshold:
 				deleted += 1
 				G.GS.delete_tile(tile)
-		print("deleted")
 	else:
 		counter += 1
-		print(counter)
 	return

@@ -2,6 +2,8 @@ extends Tile
 
 class_name MausoleumTile 
 
+
+
 func get_sprite():
 	var sprite
 	var rot = 0
@@ -16,14 +18,13 @@ func define_sprite():
 
 func destroy(flag = ""):
 	if !is_destroying:
-		if tile_coords.x < 0 or tile_coords.y < 0 or tile_coords.x >= G.GS.board_size.x or tile_coords.y >= G.GS.board_size.y:
-			var to_pick = []
-			for tile in get_parent().get_children():
-				if tile.get_node("Effects").get_children() == [] and tile != self and tile.tile_in_deck and tile.tile_moves.size() > 0:
-					to_pick.append(tile)
-			for i in range(0, min(3, to_pick.size() - 1)):
-				var tile = to_pick.pick_random()
-				to_pick.pop_at(to_pick.find(tile))
-				tile.add_effect("spikes", true)
-				tile.tile_in_deck.add_effect("spikes")
+		var to_pick = []
+		for tile in get_parent().get_children():
+			if tile.get_node("Effects").get_children() == [] and tile != self and tile.tile_in_deck and tile.tile_moves.size() > 0:
+				to_pick.append(tile)
+		for i in range(0, min(3, to_pick.size() - 1)):
+			var tile = to_pick.pick_random()
+			to_pick.pop_at(to_pick.find(tile))
+			tile.add_effect("spikes", true)
+			tile.tile_in_deck.add_effect("spikes")
 		default_destroy()

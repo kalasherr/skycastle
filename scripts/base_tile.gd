@@ -52,13 +52,8 @@ func init():
 		return (-((x * 3 - 2)) ** 2 + 5) / 4
 		
 	if self.tile_coords.x < G.GS.board_size.x and self.tile_coords.x >= 0 and self.tile_coords.y < G.GS.board_size.y and self.tile_coords.y >= 0:
-		var init_time = 0.3
-		var curr_time = 0
-		while curr_time < init_time:
-			var curr_scale = f.call(curr_time / init_time)
-			scale = Vector2(curr_scale, curr_scale)
-			await get_tree().process_frame
-			curr_time += get_process_delta_time() * G.animation_time_scale
+		await T.tween(self, "scale", Vector2(1,1), 0.3, f)
+
 	self.scale = Vector2(1,1)
 
 	return
@@ -148,7 +143,6 @@ func able():
 		get_node("Button").visible = true
 
 func move(coords):
-	var old_position = position
 	var move_player = false
 	
 	if G.player.player_coords == tile_coords:
@@ -157,20 +151,12 @@ func move(coords):
 		G.GS.get_tile(coords).move(coords * 2 - tile_coords)
 	tile_coords = coords
 	
-	var timer = Timer.new()
-	add_child(timer)
-	timer.start(50)
-	var init_time = 0.5
-	var current_time = init_time
+	if move_player:
+		T.tween(G.player, ["position"], [tile_size * tile_coords], 0.5)
+	process_mode = Node.PROCESS_MODE_DISABLED
+	await T.tween(self, ["curr_position","position"], [tile_size * tile_coords,tile_size * tile_coords], 0.5)
+	process_mode = Node.PROCESS_MODE_INHERIT
 	
-	var i = 0
-	while current_time > 0:
-		i += 1
-		if move_player:
-			G.player.replace(tile_size * tile_coords * (1 - current_time / init_time) + current_time / init_time * old_position  + get_player_offset())
-		replace(tile_size * tile_coords * (1 - current_time / init_time) + current_time / init_time * old_position)
-		current_time -= get_process_delta_time() * G.animation_time_scale
-		await get_tree().process_frame
 	replace(tile_size * tile_coords)
 
 	if move_player:
@@ -191,12 +177,11 @@ func default_destroy(flag = ""):
 	if !is_destroying:
 		is_destroying = true
 		
-		var init_time = G.tile_shake_time
+		var duration = G.tile_shake_time
 		var curr_time = 0.0
-		var start_scale = scale 
 		var finish_scale = Vector2(0.0,0.0)
-		var start_modulate = modulate[3]
-		var finish_modulate = 0
+		var start_modulate = modulate
+		var finish_modulate = Color(start_modulate[0], start_modulate[1], start_modulate[2], 0)
 		var start_position = position
 		
 		var fx = func(x):
@@ -207,34 +192,33 @@ func default_destroy(flag = ""):
 			return x * x
 		
 		disable()
-		var multiplier_x = randf_range(-1.0, 1.0)
-		var multiplier_y = randf_range(-1.0, 1.0)
+
 		var amplitude = 5
 		
 		if flag != "no_shake":
-			while curr_time < init_time:
-				var shake_x = sin(curr_time / init_time * 60.0) * amplitude * randf()
-				var shake_y = cos(curr_time / init_time * 75.0) * amplitude * randf()
-				position = start_position + Vector2(shake_x, shake_y)
-				curr_time += get_process_delta_time()
-				await get_tree().process_frame
-			
-		curr_time = 0.0
-		init_time = G.tile_destroy_time
-		
+			if G.player.player_coords != tile_coords:
+				while curr_time < duration:
+					var shake_x = sin(curr_time / duration * 60.0) * amplitude * randf()
+					var shake_y = cos(curr_time / duration * 75.0) * amplitude * randf()
+					position = start_position + Vector2(shake_x, shake_y)
+					curr_time += get_process_delta_time()
+					await get_tree().process_frame
+			else:
+				var pl_pos = G.player.global_position
+				while curr_time < duration:
+					var shake_x = sin(curr_time / duration * 60.0) * amplitude * randf()
+					var shake_y = cos(curr_time / duration * 75.0) * amplitude * randf()
+					G.player.global_position = pl_pos + Vector2(shake_x, shake_y)
+					position = start_position + Vector2(shake_x, shake_y)
+					curr_time += get_process_delta_time()
+					await get_tree().process_frame
+
 		var destroy_player = false
+		T.tween(self, ["scale"], [finish_scale], G.tile_destroy_time, fx)
 		if G.player:
 			if G.player.player_coords == tile_coords:
-				destroy_player = true
-		while curr_time < init_time:
-			scale.x = (1 - fx.call(curr_time / init_time)) * start_scale.x + fx.call(curr_time / init_time) * finish_scale.x
-			scale.y = (1 - fy.call(curr_time / init_time)) * start_scale.y + fy.call(curr_time / init_time) * finish_scale.y
-			modulate[3] = (1 - fm.call(curr_time / init_time)) * start_modulate + fm.call(curr_time / init_time) * finish_modulate
-			if G.player:
-				if destroy_player:
-					G.player.scale = Vector2(max(scale.x, scale.y), max(scale.x, scale.y))
-			curr_time += get_process_delta_time() * G.animation_time_scale
-			await get_tree().process_frame
+				T.tween(G.player, ["scale"], [finish_scale], G.tile_destroy_time, fx)
+		await T.tween(self, ["modulate"], [finish_modulate], G.tile_destroy_time, fm)
 		if destroy_player and flag != "leave_player" and !G.GS.restarting:
 			G.GS.disable_buttons()
 			G.GS.restart_game()

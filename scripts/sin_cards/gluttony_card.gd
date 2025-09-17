@@ -19,6 +19,7 @@ func apply():
 					if effect is BandageEffect:
 						effect.destroy()
 						G.GS.get_tile(Vector2(i,j)).add_effect("spikes", true)
+	G.GS.next_turn()
 	return
 	
 #translate

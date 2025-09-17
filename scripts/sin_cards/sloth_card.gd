@@ -5,6 +5,7 @@ class_name SlothCard
 func apply():
 	add_stones()
 	G.GS.choice_modifier -= 1
+	G.GS.next_turn()
 	return
 
 #translate

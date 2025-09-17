@@ -16,7 +16,7 @@ func hide_cards(next_turn = false):
 	shown = false
 	if !next_turn:
 		G.GS.game_phase = last_turn
-		G.GS.next_turn()
+		G.GS.next_turn("skip_next_tile_update")
 
 func click():
 	if shown:

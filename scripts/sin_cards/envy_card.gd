@@ -12,6 +12,7 @@ func apply():
 		while card is EnvyCard:
 			card = G.ASC.get_node("Cards").get_children().pick_random()
 		await card.apply()
+	G.GS.next_turn()
 	return
 	
 #translate

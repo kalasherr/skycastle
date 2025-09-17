@@ -30,10 +30,8 @@ signal previous_stage_ended
 @onready var hud = camera.hud_root
 
 func _ready():
-	
 	start_game()
 	var card = CandleCard.new()
-		
 	card.apply()
 
 func start_game():
@@ -52,13 +50,14 @@ func start_game():
 	add_player()
 	generating = false
 	update_hp(player.hp)
-
+	update_next_tile(current_deck[0].get_sprite())
 	emit_signal("ready_to_play")
-	next_turn()
+	next_turn("skip_next_tile_update")
 
 func _process(delta):
 	if !G.CONSOLE.visible and controller_enabled: 
 		keyboard_controller()
+# 	print(Engine.get_frames_per_second())
 		
 func keyboard_controller():
 	if Input.is_action_just_pressed("ui_accept"):
@@ -116,9 +115,15 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):
-		var tile = MonasticCellTile.new()
+		var tile = MausoleumTile.new()
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
+		tile_deck.append(tile)
+	for i in range (0,5):
+		var tile = GunpowderStorageTile.new()
+		var moves = get_tile_moves(tile)
+		tile.tile_moves = moves
+		tile.add_effect("spikes")
 		tile_deck.append(tile)
 	rotate_deck(tile_deck)
 	
@@ -288,7 +293,8 @@ func next_turn(flag = "none"):
 			for effect in tile.effects_to_add:
 				if dir.get_files().find(effect + "_effect.png") != -1:
 					effects.append(load("res://sprites/effects/" + effect + "_effect.png"))
-			update_next_tile(tile.get_sprite(), effects)
+			if flag != "skip_next_tile_update":
+				update_next_tile(tile.get_sprite(), effects)
 	else:
 		camera.hud_next_tile.texture = null
 		for effect in camera.hud_next_tile.get_node("Effects").get_children():
@@ -339,7 +345,7 @@ func get_player_moves():
 	if tile:
 		for move in tile.tile_moves:
 			if get_tile(tile.tile_coords + move):
-				if get_tile(tile.tile_coords + move).tile_moves.has(-move) and !get_tile(tile.tile_coords + move).is_destroying:
+				if get_tile(tile.tile_coords + move).tile_moves.has(-move) and !get_tile(tile.tile_coords + move).is_destroying and !get_tile(player.player_coords).is_destroying:
 					moves.append(get_tile(tile.tile_coords + move))
 	else:
 		restart_game()
@@ -423,39 +429,30 @@ func next_stage():
 		board_size.y += 1
 	else:
 		board_size.x += 1
-	var init_time = 2.0
-	var curr_time = 0.0
-	var old_pos = start_tile.position
+
 	var new_pos = (board_size - Vector2(1,1)) * G.tile_size
-	var old_camera_pos = camera.position
 	var new_camera_pos = G.tile_size * board_size / 2 - G.tile_size / 2
-	var graph = func(curr):
-		if curr < 0.4:
-			return 0.75 * (((curr/init_time - 0.1) ** 2) * 10.0 - 0.1)
+
+	var f = func(x):
+		if x < 0.2:
+			return (((x - 0.1) ** 2) * 10.0 - 0.1)
 		else:
-			return - ((curr/init_time - 1) ** 2) * 1.25 * 1.25 + 1
+			return - ((x - 1) ** 2) * 1.25 * 1.25 + 1
 	card_manager.call_cards()
 
 	await card_manager.card_applied
-	var background_current_modulate = background.modulate
 	
-	while curr_time < init_time:
-		for i in range(0,4):
-			background.modulate[i] = background.get_next_stage_modulate()[i] * (curr_time / init_time) + background_current_modulate[i] * (1 - curr_time/init_time)
-		start_tile.replace(graph.call(curr_time) * new_pos + (1 - graph.call(curr_time)) * old_pos)
-		camera.position = graph.call(curr_time) * new_camera_pos + (1 - graph.call(curr_time)) * old_camera_pos
-		player.replace(graph.call(curr_time) * new_pos + (1 - graph.call(curr_time)) * old_pos + start_tile.get_player_offset())
-		curr_time += get_process_delta_time() * G.animation_time_scale
-		await get_tree().process_frame
-	start_tile.replace(new_pos)
-	camera.position = new_camera_pos
-	player.replace(new_pos + start_tile.get_player_offset())
+	T.tween(background, "modulate", background.get_next_stage_modulate(), 2.0)
+	T.tween(start_tile, ["curr_position", "position"], [new_pos,new_pos], 2.0, f)
+	T.tween(player, ["curr_position", "position"], [new_pos,new_pos], 2.0, f)
+	await T.tween(camera, "position", new_camera_pos, 2.0, f)
+	
 	start_tile.tile_coords = board_size - Vector2(1,1)
 	player.player_coords = board_size - Vector2(1,1)
 	start_tile.position = new_pos
 	
 	await generate_field()
-	await disable_buttons()
+	disable_buttons()
 	game_phase = "player"
 	stage_transfer = false
 	update_shield(0)
@@ -487,7 +484,7 @@ func restart_game(flag = "none"):
 	erase_deck()
 	await deck_erased
 	get_node("Stuff/SmokeManager").destroy_all_smokes()
-	await disable_buttons()
+	disable_buttons()
 	if flag != "forced":	
 		await destroy_all_tiles()
 	else:
@@ -626,7 +623,7 @@ func delete_tile(tile, from_deck = true):
 		tile.queue_free()
 
 func update_hp(amount):
-	camera.set_hp(amount)
+	camera.set_hp(amount)	
 	
 func update_money(amount):
 	camera.set_money(amount)
@@ -673,18 +670,18 @@ func get_tile_scene(tile):
 
 func drop(node, time):
 	G.GS.camera.hud_deck_left.text = "x" + str(max(int(G.GS.camera.hud_deck_left.text) - 1, 0))
-	var variety = randf_range(-200.0,200.0)
+	var variety = randf_range(-50.0,50.0)
+	
 	var start_position = node.position
+
 	var f = func(x):
-		return - (((x - 1) ** 2) - 1) * 50
-	var init_time = time
-	var curr_time = 0.0
-	while curr_time < init_time:
-		node.position.x = start_position.x + (curr_time / init_time) * variety
-		node.position.y = start_position.y - f.call(curr_time / init_time * 3)
-		node.modulate[3] = 1 - ((curr_time / init_time) ** 2)
-		curr_time += get_process_delta_time()
-		await get_tree().process_frame
+		return start_position + Vector2(x * variety, (((x * 2 - 1) ** 2) - 1) * 50)
+	var f2 = func(x):
+		return x * x
+
+	T.tween(node, "modulate", Color(1,1,1,0), time, f2)
+	await T.animate(node, "position", null, time, f)
+	
 	node.queue_free()
 	
 func fill_cards():

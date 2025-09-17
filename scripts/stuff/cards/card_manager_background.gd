@@ -14,13 +14,8 @@ func _process(delta):
 
 func destroy():
 	inited = false
-	var curr_light = light.energy
-	var init_time = destroy_time
-	var curr_time = 0.0
-	var curr_modulate = modulate[3]
-	while curr_time < init_time:
-		curr_time += get_process_delta_time() * G.animation_time_scale
-		light.energy = curr_light * (1 - curr_time / init_time)
-		modulate[3] = curr_modulate * (1 - curr_time / init_time)
-		await get_tree().process_frame
+
+	T.tween(light, "energy", 0, destroy_time)
+	await T.tween(self, "modulate", Color(1,1,1,0), destroy_time)
+	
 	queue_free()

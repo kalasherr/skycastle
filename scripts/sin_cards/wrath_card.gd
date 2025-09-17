@@ -13,6 +13,7 @@ func apply():
 						await tile.add_effect("spikes", true)
 						if tile.tile_moves != [] and tile.tile_in_deck :
 							tile.tile_in_deck.add_effect("spikes")
+	G.GS.next_turn()
 	return
 
 #translate
