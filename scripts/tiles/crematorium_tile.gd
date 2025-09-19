@@ -14,3 +14,6 @@ func get_sprite():
 
 func rotatable():
 	return false
+
+func get_key():
+	return "crematorium"

@@ -30,6 +30,10 @@ window/size/viewport_height=540
 theme/custom_font="uid://dnudkxbni5b0y"
 theme/default_font_antialiasing=0
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://stuff/translation/translations.en_US.translation", "res://stuff/translation/translations.ru_RU.translation")
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

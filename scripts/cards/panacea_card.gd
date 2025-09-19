@@ -14,10 +14,8 @@ func init():
 	G.GS.connect("next_stage_started", heal)
 	default_init()
 
-#translate
-func get_text():
-	values["value1"] = 1
-	return ["Panacea", "[color={add}]Add[/color] infirmary tile to your deck and [color={add}]heals[/color] {value1} health when stage starts".format(values)]
+func set_values():
+	values.values1 = 1
 
-func get_illustration():
-	return "res://sprites/cards/panacea_card.png"
+func get_key():
+	return "panacea"

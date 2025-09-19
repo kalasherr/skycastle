@@ -18,4 +18,5 @@ func get_sprite():
 			rot = deg_to_rad(180)
 	return [sprite,rot, offset]
 
-
+func get_key():
+	return "monastic_cell"

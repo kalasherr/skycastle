@@ -74,3 +74,6 @@ func get_sprite():
 		4:
 			sprite = load("res://sprites/tiles/basic_crossroad.png")
 	return [sprite, rot, offset]
+
+func get_key():
+	return "basic"

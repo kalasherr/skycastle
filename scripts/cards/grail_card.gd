@@ -10,6 +10,5 @@ func apply():
 	moves = G.GS.get_tile_moves(tile)
 	G.GS.add_tile_to_deck(tile, moves)	
 
-#translate
-func get_text():
-	return ["Grail", "[color={add}]Add[/color] mausoleum and monastic cell to your deck".format(values)]
+func get_key():
+	return "grail"

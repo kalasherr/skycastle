@@ -16,3 +16,6 @@ func destroy(flag = ""):
 		if !G.GS.restarting and !G.GS.stage_transfer:
 			G.GS.add_tile_to_deck("mirror_chamber")
 		default_destroy()
+
+func get_key():
+	return "mirror_chamber"

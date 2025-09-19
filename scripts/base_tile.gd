@@ -44,7 +44,7 @@ func init():
 	self.scale = Vector2.ZERO
 	replace(tile_size.x * tile_coords)
 	define_sprite()
-	
+	add_hover_area()
 	add_button()
 	init_effects()
 	add_all_effects()
@@ -69,16 +69,15 @@ func replace(coords):
 	
 func _process(delta):
 	if !is_destroying:
-		time_from_init += get_process_delta_time() * G.animation_time_scale
 		if G.GS.player or G.GS.generating:
 			if G.GS.player:
 				if G.GS.player.player_coords == tile_coords:
 					position = curr_position
 				else:
-					position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
+					position.y = curr_position.y + sin(3 * (G.GS.elapsed_time + (position.x + curr_position.y) / 50)) * 2
 	
 			else:
-				position.y = curr_position.y + sin(3 * (time_from_init + (position.x + curr_position.y) / 50)) * 2
+				position.y = curr_position.y + sin(3 * (G.GS.elapsed_time + (position.x + curr_position.y) / 50)) * 2
 
 func define_sprite():
 	main_sprite.texture = get_sprite()[0]
@@ -136,11 +135,12 @@ func button_press():
 func disable():
 	get_node("Button").disabled = true
 	get_node("Button").visible = false
+	get_node("Button").mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func able():
 	get_node("Button").disabled = false
-	while get_node("Button").visible == false:
-		get_node("Button").visible = true
+	get_node("Button").visible = true
+	get_node("Button").mouse_filter = Control.MOUSE_FILTER_PASS
 
 func move(coords):
 	var move_player = false
@@ -257,3 +257,13 @@ func rotatable():
 
 func get_spawn_priority():
 	return 0
+
+func add_hover_area():
+	var area = load("res://scenes/stuff/tile/hover_area.tscn").instantiate()
+	add_child(area)
+
+func get_tooltip():
+	return tr(get_key() + "_tooltip_name") + "\n" + tr(get_key() + "_tooltip_description")
+
+func get_key():
+	return "default"

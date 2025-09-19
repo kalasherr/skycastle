@@ -17,3 +17,6 @@ func get_sprite():
 
 func init_effects():
 	add_effect("dungeon")
+
+func get_key():
+	return "dungeon"

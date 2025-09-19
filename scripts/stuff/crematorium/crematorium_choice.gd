@@ -30,7 +30,8 @@ func choose(tile):
 	if tile:
 		G.GS.delete_tile(tile)
 		for child in get_children():
-			child.get_node("Button").disabled = true
+			if child is TileChoice:
+				child.get_node("Button").disabled = true
 			T.tween(child, "scale", Vector2(0,0), 1)
 		await get_tree().create_timer(1).timeout
 		
@@ -46,9 +47,10 @@ func choose(tile):
 
 func set_text():
 	var label = Label.new()
+	label.pivot_offset = Vector2(200,100)
 	add_child(label)
 	label.text = "Choose tile to delete from deck"
-	label.position = Vector2(-400,-200)
+	label.position = Vector2(-200,-100)
 	label.modulate = Color.RED
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

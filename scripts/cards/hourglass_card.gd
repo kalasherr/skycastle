@@ -3,6 +3,7 @@ extends Card
 class_name HourglassCard
 
 var counter = 0
+
 func apply():
 	for i in range(0,values["value1"]):
 		var tile = MirrorChamberTile.new()
@@ -10,11 +11,9 @@ func apply():
 		G.GS.add_tile_to_deck(tile, moves)	
 	G.GS.connect("previous_stage_ended", delete_chambers)
 
-#translate
-func get_text():
+func set_values():
 	values["value1"] = 3
-	values["value2"] = 2
-	return ["Hourglass", "[color={add}]Add[/color] {value1} mirror chambers to your deck. After {value2} stages deletes {value1} mirror chambers from your deck".format(values)]
+	values["value2"] = 2	
 
 func delete_chambers():
 	if counter == values["value2"]:
@@ -27,3 +26,6 @@ func delete_chambers():
 	else:
 		counter += 1
 	return
+
+func get_key():
+	return "hourglass"

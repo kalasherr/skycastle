@@ -11,10 +11,8 @@ func apply():
 	var moves = G.GS.get_tile_moves(tile)
 	G.GS.add_tile_to_deck(tile, moves)	
 
-#translate
-func get_text():
+func set_values():
 	values["value1"] = 2
-	return ["Wildfire", "[color={add}]Add[/color] {value1} bonfires and crematorium to your deck".format(values)]
 
-func get_illustration():
-	return "res://sprites/cards/wildfire_card.png"
+func get_key():
+	return "wildfire"

@@ -10,3 +10,6 @@ func get_sprite():
 func define_sprite():
 	main_sprite.texture = get_sprite()[0]
 	main_sprite.rotation = get_sprite()[1]
+
+func get_key():
+	return "stone"

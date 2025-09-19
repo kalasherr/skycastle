@@ -12,3 +12,6 @@ func get_sprite():
 
 func init_effects():
 	add_effect("weaponry")
+
+func get_key():
+	return "weaponry"

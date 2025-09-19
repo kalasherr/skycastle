@@ -22,3 +22,6 @@ func get_sprite():
 		rot = deg_to_rad(90)
 
 	return [sprite,rot, offset]
+
+func get_key():
+	return "torture_chamber"

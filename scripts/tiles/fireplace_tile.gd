@@ -28,3 +28,6 @@ func deploy_effect():
 	if G.player.hp > 1:
 		G.player.take_damage(1)
 		add_effect("fireplace")
+
+func get_key():
+	return "fireplace"

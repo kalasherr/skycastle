@@ -10,6 +10,5 @@ func apply():
 	moves = G.GS.get_tile_moves(tile)
 	G.GS.add_tile_to_deck(tile, moves)	
 
-#translate
-func get_text():
-	return ["Smite", "[color={add}]Add[/color] weaponry and gunpowder storage to your deck".format(values)]
+func get_key():
+	return "smite"

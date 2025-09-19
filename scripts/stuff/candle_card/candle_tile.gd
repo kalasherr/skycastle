@@ -5,6 +5,7 @@ class_name CandleTile
 var sprite 
 var x_offset = 40
 var default_scale = Vector2(0.7,0.7)
+
 func _ready():
 	z_index = -1
 	self.name = "CandleTile"
@@ -16,7 +17,6 @@ func _ready():
 	var effects = Node2D.new()
 	sprite.add_child(effects)
 	effects.name = "Effects"
-	G.GS.connect("next_tile_updated", update)
 
 func update():
 	if G.GS.current_deck.size() > 1:
@@ -40,7 +40,11 @@ func update():
 			sprite.get_node("Effects").get_child(sprite.get_node("Effects").get_children().size() - 1).rotation = - sprite.rotation
 			sprite.get_node("Effects").get_child(sprite.get_node("Effects").get_children().size() - 1).texture = effect
 		self.position.y = offset.y
-		
+		sprite.get_node("Effects").position.y = -offset.y
+		print(self.position)
+		await get_tree().process_frame
+		print(self.position)
+		print("========")
 	else:
 		sprite.texture = null
 		for effect in sprite.get_node("Effects").get_children():

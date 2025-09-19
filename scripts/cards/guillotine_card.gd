@@ -13,9 +13,5 @@ func apply():
 	moves = G.GS.get_tile_moves(tile)
 	G.GS.add_tile_to_deck(tile, moves)	
 
-#translate
-func get_text():
-	return ["Guillotine", "[color={add}]Add[/color] torture chamber, dungeon and ritual room to your deck".format(values)]
-
-func get_illustration():
-	return "res://sprites/cards/guillotine_card.png"
+func get_key():
+	return "guillotine"

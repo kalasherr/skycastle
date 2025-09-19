@@ -2,7 +2,6 @@ extends Node2D
 
 class_name Card
 
-var card_name = "default"
 var init_position = Vector2.ZERO
 var card_size = Vector2(290, 470)
 var option = ""
@@ -144,7 +143,16 @@ func add_tile_to_deck(tile, moves):
 	G.GS.add_tile_to_deck(tile, moves)
 
 func get_text():
-	pass
+	set_values()
+	var card_name = tr(get_key() + "_card_name")
+	var card_desc = tr(get_key() + "_card_description")
+	return [card_name, card_desc.format(values)]
 
 func get_illustration():
-	return "res://sprites/cards/candle_card.png"
+	return "res://sprites/cards/" + get_key() + "_card.png"
+
+func get_key():
+	return "default"
+
+func set_values():
+	pass

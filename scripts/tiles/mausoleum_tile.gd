@@ -28,3 +28,6 @@ func destroy(flag = ""):
 			tile.add_effect("spikes", true)
 			tile.tile_in_deck.add_effect("spikes")
 		default_destroy()
+
+func get_key():
+	return "mausoleum"

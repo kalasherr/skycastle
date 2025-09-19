@@ -19,3 +19,6 @@ func destroy(flag = ""):
 		self.tile_coords = Vector2(10000,10000)
 		queue_free()
 		G.GS.get_node("Stuff/SmokeManager").refresh_smokes()
+
+func get_key():
+	return "ritual_room"

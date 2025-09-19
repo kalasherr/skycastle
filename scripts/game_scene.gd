@@ -16,6 +16,7 @@ var choice_modifier = 0
 var unused_sin_cards = []
 var unused_cards = []
 var controller_enabled = true
+var elapsed_time = 0.0
 
 signal next_move
 signal ready_to_play
@@ -55,6 +56,7 @@ func start_game():
 	next_turn("skip_next_tile_update")
 
 func _process(delta):
+	elapsed_time += get_process_delta_time()
 	if !G.CONSOLE.visible and controller_enabled: 
 		keyboard_controller()
 # 	print(Engine.get_frames_per_second())
@@ -120,7 +122,7 @@ func fill_deck():
 		tile.tile_moves = moves
 		tile_deck.append(tile)
 	for i in range (0,5):
-		var tile = GunpowderStorageTile.new()
+		var tile = AlmshouseTile.new()
 		var moves = get_tile_moves(tile)
 		tile.tile_moves = moves
 		tile.add_effect("spikes")

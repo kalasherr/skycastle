@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://crl5l38yo7veq"]
+
+[ext_resource type="Script" uid="uid://wwnf0pm7uxh0" path="res://scripts/stuff/tile/hover_area.gd" id="1_5qdv2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dsowg"]
+size = Vector2(64, 64)
+
+[node name="HoverArea" type="Area2D"]
+script = ExtResource("1_5qdv2")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_dsowg")
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

@@ -24,3 +24,6 @@ func destroy(flag = ""):
 						if !found and !G.GS.get_tile(tile_coords + Vector2(i,j)).is_destroying:
 							G.GS.get_tile(tile_coords + Vector2(i,j)).destroy()
 		default_destroy()
+
+func get_key():
+	return "gunpowder_storage"

@@ -29,3 +29,6 @@ func deploy_effect():
 		for j in [-1,0,1]:
 			if G.GS.get_tile(tile_coords + Vector2(i,j)) and (i != 0 or j != 0) and !(G.GS.get_tile(tile_coords + Vector2(i,j)) is CrownTile):
 				G.GS.get_tile(tile_coords + Vector2(i,j)).destroy()
+
+func get_key():
+	return "campfire"

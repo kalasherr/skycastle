@@ -12,8 +12,6 @@ func apply():
 		var moves = G.GS.get_tile_moves(tile)
 		G.GS.add_tile_to_deck(tile, moves)	
 
-#translate
-func get_text():
-	values["value1"] = 2
-	values["value2"] = 1	
-	return ["Crusader", "[color={add}]Add[/color] chapel and {value1} armories to your deck".format(values)]
+func get_key():
+	return "crusader"
+	

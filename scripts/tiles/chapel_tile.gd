@@ -17,3 +17,6 @@ func get_sprite():
 
 func init_effects():
 	add_effect("fireplace")
+
+func get_key():
+	return "chapel"

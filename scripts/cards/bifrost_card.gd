@@ -8,7 +8,8 @@ func apply():
 		var moves = G.GS.get_tile_moves(tile)
 		G.GS.add_tile_to_deck(tile, moves)
 
-#translate
-func get_text():
-	values["value1"] = 7
-	return ["Bifrost", "[color={add}]Add[/color] {value1} bridges to your deck".format(values)]
+func set_values():
+	values.value1 = 7
+	
+func get_key():
+	return "bifrost"
